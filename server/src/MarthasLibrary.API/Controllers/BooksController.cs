@@ -51,5 +51,44 @@ namespace MarthasLibrary.API.Controllers
         return BadRequest(e.Message);
       }
     }
+
+    [HttpGet("{bookId}", Name = "GetBookById")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetById.Response>> GetBookById(
+      [FromRoute] Guid bookId,
+      CancellationToken cancellationToken)
+    {
+      try
+      {
+        return await _mediator.Send(new GetById.Request(bookId), cancellationToken);
+      }
+      catch (BookNotFoundException e)
+      {
+        return NotFound(e.Message);
+      }
+    }
+
+    [HttpPut("{bookId}", Name = "UpdateBookById")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> UpdateBookById(
+      [FromRoute] Guid bookId,
+      [FromBody] UpdateById.Request.UpdatedDetails updatedDetails,
+      CancellationToken cancellationToken)
+    {
+      try
+      {
+        await _mediator.Send(new UpdateById.Request(bookId, updatedDetails), cancellationToken);
+        return NoContent();
+      }
+      catch (BookNotFoundException e)
+      {
+        return NotFound(e.Message);
+      }
+    }
   }
 }

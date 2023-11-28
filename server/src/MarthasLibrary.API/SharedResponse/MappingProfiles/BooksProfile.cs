@@ -25,5 +25,8 @@ public class BooksProfile : Profile
 
     CreateMap<Book, Create.Response>()
       .ForCtorParam(nameof(Create.Response.Id), op => op.MapFrom(x => x.Id));
+
+    CreateMap<Book, GetById.Response>()
+      .ConstructUsing((src, context) => new GetById.Response(context.Mapper.Map<BookDetails>(src)));
   }
 }
