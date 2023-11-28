@@ -19,10 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\MarthasLibrary.Application\MarthasLibrary.Application.csproj" />
     <ProjectReference Include="..\MarthasLibrary.Infrastructure\MarthasLibrary.Infrastructure.csproj" />
   </ItemGroup>
 

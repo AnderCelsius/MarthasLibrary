@@ -1,4 +1,3 @@
-using MarthasLibrary.API;
 using MarthasLibrary.API.Extensions;
 using MarthasLibrary.Infrastructure.Data;
 
@@ -13,6 +12,6 @@ if (app.Environment.IsDevelopment())
   await app.Services.MigrateDatabaseToLatestVersion<LibraryDbContext>();
 }
 
-app.ConfigurePipeline();
+app.ConfigurePipeline(builder);
 
 app.Run();
