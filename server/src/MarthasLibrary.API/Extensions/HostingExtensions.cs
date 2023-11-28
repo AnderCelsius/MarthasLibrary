@@ -1,13 +1,16 @@
 ﻿using MarthasLibrary.API.Configuration;
-using MarthasLibrary.API.Extensions;
+using MarthasLibrary.API.ErrorHandling;
+using MarthasLibrary.Application.InfrastructureImplementations;
 using MarthasLibrary.Core.Entities;
+using MarthasLibrary.Core.Repository;
 using MarthasLibrary.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using System.Net;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace MarthasLibrary.API;
+namespace MarthasLibrary.API.Extensions;
 
 public static class HostingExtensions
 {
@@ -21,7 +24,7 @@ public static class HostingExtensions
     });
 
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGenWithExtraSetup(nameof(Features));
 
     builder.Services.AddHealthChecks()
       .AddDbContextCheck<LibraryDbContext>();
@@ -30,6 +33,8 @@ public static class HostingExtensions
       c.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
     builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+    builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
     builder.Services.AddHttpClient();
 
@@ -44,19 +49,27 @@ public static class HostingExtensions
   /// Configures the HTTP request pipeline.
   /// </summary>
   /// <param name="app">Web Application</param>
-  public static void ConfigurePipeline(this WebApplication app)
+  public static void ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
   {
     if (!app.Environment.IsProduction())
     {
       Log.Information("Seeding database...");
       SeedData.EnsureSeedUserData(app);
       Log.Information("Done seeding database. Exiting.");
+
+      app.UseDeveloperExceptionPage();
       app.UseSwagger().UseSwaggerUI();
     }
+
+    app.UseHealthChecks("/health");
 
     app.UseHttpsRedirection();
 
     app.UseAuthorization();
+
+    app.UseErrorHandling(
+      !builder.Environment.IsProduction(),
+      new Dictionary<Type, HttpStatusCode>());
 
     app.MapControllers();
   }
