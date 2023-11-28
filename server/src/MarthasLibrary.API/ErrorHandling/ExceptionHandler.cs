@@ -1,4 +1,3 @@
-using MarthasLibrary.API.Features.Books;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -53,7 +52,7 @@ public class ExceptionHandler
         problemDetails.Status = StatusCodes.Status404NotFound;
         problemDetails.Detail = error.Message;
       }
-      else if (error is InvalidOperationException or ArgumentNullException or BookAlreadyExistsException)
+      else if (error is InvalidOperationException or ArgumentNullException)
       {
         problemDetails.Status = StatusCodes.Status400BadRequest;
         problemDetails.Detail = error.Message;
