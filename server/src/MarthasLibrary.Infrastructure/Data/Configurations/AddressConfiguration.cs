@@ -33,11 +33,15 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
     .IsRequired();
 
     builder.Property(a => a.UpdatedAt)
-    .IsRequired(false);
-
-    builder.HasOne(a => a.Customer)
-    .WithMany(c => c.Addresses)
-    .HasForeignKey(a => a.CustomerId)
     .IsRequired();
+
+    builder.Property(a => a.CustomerId)
+      .IsRequired();
+
+    builder.HasOne<Customer>()
+    .WithMany()
+    .HasForeignKey(a => a.CustomerId)
+    .IsRequired()
+    .OnDelete(DeleteBehavior.Cascade);
   }
 }

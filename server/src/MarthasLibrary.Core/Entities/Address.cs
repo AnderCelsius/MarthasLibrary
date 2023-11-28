@@ -2,15 +2,14 @@
 
 public class Address : IAuditableBase
 {
-  private Address(Customer customer, string street, string city, string state, string country, string zipCode)
+  private Address(string customerId, string street, string city, string state, string country, string zipCode)
   {
-    CustomerId = customer.Id;
+    CustomerId = customerId;
     Street = street;
     City = city;
     State = state;
     Country = country;
     ZipCode = zipCode;
-    Customer = customer;
     CreatedAt = DateTime.Now;
     UpdatedAt = DateTime.Now;
   }
@@ -25,11 +24,8 @@ public class Address : IAuditableBase
   public DateTimeOffset CreatedAt { get; set; }
   public DateTimeOffset UpdatedAt { get; set; }
 
-  // Navigation property back to the Customer
-  public Customer Customer { get; set; }
-
-  public static Address CreateInstance(Customer customer, string street, string city, string state, string country, string zipCode)
+  public static Address CreateInstance(string customerId, string street, string city, string state, string country, string zipCode)
   {
-    return new Address(customer, street, city, state, country, zipCode);
+    return new Address(customerId, street, city, state, country, zipCode);
   }
 }
