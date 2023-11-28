@@ -1,3 +1,4 @@
+using MarthasLibrary.API.Features.Books;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -6,18 +7,18 @@ namespace MarthasLibrary.API.ErrorHandling;
 
 public class ExceptionHandler
 {
-  private readonly RequestDelegate next;
-  private readonly bool includeStackTrace;
-  private readonly Dictionary<Type, HttpStatusCode>? errorMapping;
+  private readonly RequestDelegate _next;
+  private readonly bool _includeStackTrace;
+  private readonly Dictionary<Type, HttpStatusCode>? _errorMapping;
 
   public ExceptionHandler(
     RequestDelegate next,
     bool includeStackTrace,
     Dictionary<Type, HttpStatusCode>? errorMapping = null)
   {
-    this.next = next;
-    this.includeStackTrace = includeStackTrace;
-    this.errorMapping = errorMapping;
+    _next = next;
+    _includeStackTrace = includeStackTrace;
+    _errorMapping = errorMapping;
   }
 
   public async Task InvokeAsync(HttpContext context)
@@ -37,7 +38,7 @@ public class ExceptionHandler
         Title = errorType.Name,
       };
 
-      if (errorMapping?.TryGetValue(errorType, out var httpStatusCode) == true)
+      if (_errorMapping?.TryGetValue(errorType, out var httpStatusCode) == true)
       {
         problemDetails.Status = (int)httpStatusCode;
         problemDetails.Detail = error.Message;
@@ -52,7 +53,7 @@ public class ExceptionHandler
         problemDetails.Status = StatusCodes.Status404NotFound;
         problemDetails.Detail = error.Message;
       }
-      else if (error is InvalidOperationException or ArgumentNullException)
+      else if (error is InvalidOperationException or ArgumentNullException or BookAlreadyExistsException)
       {
         problemDetails.Status = StatusCodes.Status400BadRequest;
         problemDetails.Detail = error.Message;
@@ -66,7 +67,7 @@ public class ExceptionHandler
       {
         problemDetails.Status = StatusCodes.Status500InternalServerError;
 
-        if (includeStackTrace)
+        if (_includeStackTrace)
         {
           problemDetails.Detail = error.ToString();
         }

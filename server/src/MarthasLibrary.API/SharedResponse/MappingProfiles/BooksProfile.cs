@@ -19,5 +19,8 @@ public class BooksProfile : Profile
     // Mapping from a collection of Book entities to the GetAll.Response record.
     CreateMap<List<Book>, GetAll.Response>()
       .ConstructUsing((src, context) => new GetAll.Response(context.Mapper.Map<IReadOnlyCollection<GetAll.Response.Book>>(src)));
+
+    CreateMap<Book, Create.Response>()
+      .ForCtorParam(nameof(Create.Response.Id), op => op.MapFrom(x => x.Id));
   }
 }
