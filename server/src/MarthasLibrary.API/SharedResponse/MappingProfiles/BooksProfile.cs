@@ -17,7 +17,6 @@ public class BooksProfile : Profile
       .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate));
 
     // Mapping from a collection of Book entities to the GetAll.Response record.
-    // ConstructUsing is used to create the Response object with the required constructor argument.
     CreateMap<List<Book>, GetAll.Response>()
       .ConstructUsing((src, context) => new GetAll.Response(context.Mapper.Map<IReadOnlyCollection<GetAll.Response.Book>>(src)));
   }
