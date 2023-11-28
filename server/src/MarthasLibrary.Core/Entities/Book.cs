@@ -2,17 +2,17 @@
 
 public class Book : IAuditableBase
 {
-  private Book(string title, string author, string isbn, DateTime publishedDate)
+  private Book(string title, string author, string isbn, DateTimeOffset publishedDate)
   {
     Title = title;
     Author = author;
     Isbn = isbn;
     PublishedDate = publishedDate;
-    CreatedAt = DateTime.Now;
-    UpdatedAt = DateTime.Now;
+    CreatedAt = DateTimeOffset.UtcNow;
+    UpdatedAt = DateTimeOffset.UtcNow;
   }
 
-  public static Book CreateInstance(string title, string author, string isbn, DateTime publishedDate)
+  public static Book CreateInstance(string title, string author, string isbn, DateTimeOffset publishedDate)
   {
     return new Book(title, author, isbn, publishedDate);
   }
