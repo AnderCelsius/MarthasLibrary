@@ -103,6 +103,9 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Isbn")
+                        .IsUnique();
+
                     b.ToTable("Books");
                 });
 

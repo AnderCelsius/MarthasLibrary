@@ -46,7 +46,7 @@ namespace MarthasLibrary.API.Controllers
         var response = await _mediator.Send(request, cancellationToken);
         return Created(new Uri($"/books/{response.Id}", UriKind.Relative), response);
       }
-      catch (BookAlreadyExistsException e)
+      catch (BookWithIsbnAlreadyExistsException e)
       {
         return BadRequest(e.Message);
       }
@@ -84,6 +84,10 @@ namespace MarthasLibrary.API.Controllers
       {
         await _mediator.Send(new UpdateById.Request(bookId, updatedDetails), cancellationToken);
         return NoContent();
+      }
+      catch (BookWithIsbnAlreadyExistsException e)
+      {
+        return BadRequest(e.Message);
       }
       catch (BookNotFoundException e)
       {

@@ -11,7 +11,6 @@ public static class UpdateById
   {
     public record UpdatedDetails(string Title, string Author, string Isbn, DateTimeOffset PublishedDate)
     {
-
       public static explicit operator Book.BookUpdate(UpdatedDetails d) =>
         new(Title: d.Title, Author: d.Author, Isbn: d.Isbn, PublishedDate: d.PublishedDate);
     }
@@ -24,11 +23,17 @@ public static class UpdateById
     public async Task Handle(Request request, CancellationToken cancellationToken)
     {
       var book = await _bookRepository.Table
-        .SingleOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
+                   .SingleOrDefaultAsync(book => book.Id == request.BookId, cancellationToken) ??
+                 throw new BookNotFoundException($"Could not find a user with ID {request.BookId}.");
 
-      if (book is null)
+      var potentialDuplicate = await _bookRepository.Table
+        .SingleOrDefaultAsync(
+          b => request.BookId != b.Id && request.Details.Isbn == b.Isbn,
+          cancellationToken);
+
+      if (potentialDuplicate is not null)
       {
-        throw new BookNotFoundException($"Could not find a user with ID {request.BookId}.");
+        throw new BookWithIsbnAlreadyExistsException("A different book with this Isbn already exists.");
       }
 
       book.UpdateDetails((Book.BookUpdate)request.Details);

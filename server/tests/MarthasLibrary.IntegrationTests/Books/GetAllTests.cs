@@ -40,7 +40,7 @@ public sealed class GetAllTests : IDisposable
     };
 
 
-    await SeedData(books);
+    await Seeder.SeedData(books, _context);
 
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
       "api/Books");
@@ -61,7 +61,7 @@ public sealed class GetAllTests : IDisposable
     };
 
 
-    await SeedData(books);
+    await Seeder.SeedData(books, _context);
 
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
       "api/Books");
@@ -81,11 +81,5 @@ public sealed class GetAllTests : IDisposable
 
     Assert.NotNull(response);
     Assert.Empty(response!.Books);
-  }
-
-  private async Task SeedData(List<Book> books)
-  {
-    await _context.Books.AddRangeAsync(books);
-    await _context.SaveChangesAsync();
   }
 }

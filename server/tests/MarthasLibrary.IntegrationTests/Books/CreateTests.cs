@@ -74,7 +74,7 @@ public sealed class CreateTests : IDisposable
         };
 
 
-        await SeedData(books);
+        await Seeder.SeedData(books, _context);
 
         var response = await _fixture.Client.PostAsJsonAsync<Books_Create_Request>(
             "api/Books",
@@ -88,7 +88,7 @@ public sealed class CreateTests : IDisposable
             JsonSerializerOptions);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Contains($"A book with Isbn: {isbn} already exist in record",
+        Assert.Contains($"A different book with this Isbn: '{isbn}' already exist in record",
             await response.Content.ReadAsStringAsync());
     }
 
@@ -117,11 +117,5 @@ public sealed class CreateTests : IDisposable
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var responseContent = await response.Content.ReadAsStringAsync();
         Assert.Contains("One or more validation errors occurred", responseContent);
-    }
-
-    private async Task SeedData(List<Book> books)
-    {
-        await _context.Books.AddRangeAsync(books);
-        await _context.SaveChangesAsync();
     }
 }

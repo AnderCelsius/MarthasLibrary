@@ -31,7 +31,7 @@ public class Create
       var potentialDuplicate = _bookRepository.Table.SingleOrDefault(user => user.Isbn == request.Isbn);
       if (potentialDuplicate != null)
       {
-        throw new BookAlreadyExistsException($"A book with Isbn: {request.Isbn} already exist in record");
+        throw new BookWithIsbnAlreadyExistsException($"A different book with this Isbn: '{request.Isbn}' already exist in record");
       }
 
       var book = Book.CreateInstance(request.Title, request.Author, request.Isbn, request.PublishedDate);
