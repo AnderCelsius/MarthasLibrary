@@ -4,6 +4,7 @@ using MarthasLibrary.Infrastructure.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServices();
+builder.AddFluentValidationExtension();
 
 var app = builder.Build();
 

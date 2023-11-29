@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
+using System.Text.RegularExpressions;
 
 namespace MarthasLibrary.API.Features.Books;
 public class Create
@@ -37,6 +39,35 @@ public class Create
       await _bookRepository.SaveAsync(cancellationToken);
 
       return _mapper.Map<Response>(book);
+    }
+  }
+
+  public class CreateBookValidator : AbstractValidator<Request>
+  {
+    public CreateBookValidator()
+    {
+      // Title validation: not empty, no digits, and a reasonable length limit
+      RuleFor(request => request.Title)
+        .NotEmpty().WithMessage("Title is required.")
+        .Must(title => !Regex.IsMatch(title, @"\d")).WithMessage("Title must not contain digits.")
+        .Length(1, 255).WithMessage("Title must be between 1 and 255 characters long.");
+
+      // Author validation: not empty and no digits
+      RuleFor(request => request.Author)
+        .NotEmpty().WithMessage("Author is required.")
+        .Must(author => !Regex.IsMatch(author, @"\d")).WithMessage("Author must not contain digits.")
+        .Length(2, 255).WithMessage("Author must be between 1 and 255 characters long.");
+
+      // ISBN validation: exactly 13 digits (ISBN-13 format)
+      RuleFor(request => request.Isbn)
+        .NotEmpty().WithMessage("ISBN is required.")
+        .Length(13).WithMessage("ISBN must be exactly 13 digits long.")
+        .Matches(new Regex("^[0-9]+$")).WithMessage("ISBN must only contain digits.");
+
+      // PublishedDate validation: not in the future
+      RuleFor(request => request.PublishedDate)
+        .NotEmpty().WithMessage("PublishedDate is required.")
+        .LessThanOrEqualTo(DateTimeOffset.Now).WithMessage("Published date cannot be in the future.");
     }
   }
 }
