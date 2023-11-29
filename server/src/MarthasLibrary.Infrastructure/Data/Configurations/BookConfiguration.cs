@@ -22,6 +22,10 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
       .HasMaxLength(13)
       .IsUnicode(false);
 
+    builder
+      .HasIndex(b => b.Isbn)
+      .IsUnique();
+
     builder.Property(b => b.PublishedDate)
       .IsRequired();
 

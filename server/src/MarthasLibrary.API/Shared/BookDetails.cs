@@ -1,4 +1,4 @@
-﻿namespace MarthasLibrary.API.SharedResponse;
+﻿namespace MarthasLibrary.API.Shared;
 
 public record BookDetails(
   Guid Id,

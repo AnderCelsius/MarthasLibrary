@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarthasLibrary.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20231128160044_InitialMigration")]
+    [Migration("20231129114710_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -105,6 +105,9 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Isbn")
+                        .IsUnique();
 
                     b.ToTable("Books");
                 });

@@ -4,11 +4,10 @@ namespace MarthasLibrary.Core.Entities;
 
 public class Customer : IdentityUser, IAuditableBase
 {
-    public Customer(string firstName, string lastName, string email)
+    public Customer(string firstName, string lastName)
     {
         FirstName = firstName;
         LastName = lastName;
-        Email = email;
         Addresses = new HashSet<Address>();
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;

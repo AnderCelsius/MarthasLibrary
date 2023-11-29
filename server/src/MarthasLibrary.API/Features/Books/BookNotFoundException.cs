@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace MarthasLibrary.API.Features.Books
+﻿namespace MarthasLibrary.API.Features.Books
 {
   [Serializable]
   internal class BookNotFoundException : Exception
@@ -14,10 +12,6 @@ namespace MarthasLibrary.API.Features.Books
     }
 
     public BookNotFoundException(string? message, Exception? innerException) : base(message, innerException)
-    {
-    }
-
-    protected BookNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
   }

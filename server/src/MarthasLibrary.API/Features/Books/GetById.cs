@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MarthasLibrary.API.SharedResponse;
+using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
@@ -20,12 +20,12 @@ public static class GetById
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var book = await _bookRepository.Table
+      var book = await _bookRepository.TableNoTracking
         .SingleOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
 
       if (book is null)
       {
-        throw new BookNotFoundException($"Could not find a user with ID {request.BookId}.");
+        throw new BookNotFoundException($"Could not find a book with ID {request.BookId}.");
       }
 
       return _mapper.Map<Response>(book);
