@@ -8,15 +8,13 @@ namespace MarthasLibrary.IntegrationTests.Utilities;
 
 public static class WireMockAuthenticationExtensions
 {
-    public const string MockAdminEmail = "admin@rapha.com";
+    public const string MockAdminEmail = "admin@marthaslib.com";
 
     public const string MockFirstName = "John";
 
-    public const string MockMiddleName = "Chidera";
-
     public const string MockLastName = "Doe";
 
-    public const string MockRegularEmail = "regular.user@rapha.com";
+    public const string MockRegularEmail = "regular.user@example.com";
 
     public const string BearerToken = "some-random-string";
 
@@ -29,7 +27,7 @@ public static class WireMockAuthenticationExtensions
     private static readonly Customer MockRegularUser = new("Regular", "Person")
     {
         Email = MockRegularEmail,
-        PhoneNumber = "+2348023415243"
+        PhoneNumber = "+2348023546789"
     };
 
     public static void MockAuthentication(this WireMockServer wireMockServer, bool allowAdmin = false, bool isUppercaseEmail = false)

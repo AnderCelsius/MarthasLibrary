@@ -17,13 +17,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.API", "server\src\MarthasLibrary.API\MarthasLibrary.API.csproj", "{E91E412D-40CA-45B4-A878-8A3BB4D12C35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.Application", "server\src\MarthasLibrary.Application\MarthasLibrary.Application.csproj", "{DB9812E2-011C-49F1-8EEC-4DB0198FE37B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.Application", "server\src\MarthasLibrary.Application\MarthasLibrary.Application.csproj", "{DB9812E2-011C-49F1-8EEC-4DB0198FE37B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.IntegrationTests", "server\tests\MarthasLibrary.IntegrationTests\MarthasLibrary.IntegrationTests.csproj", "{E193CCBA-FA6B-4E02-94DF-EF1FC83D34EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.IntegrationTests", "server\tests\MarthasLibrary.IntegrationTests\MarthasLibrary.IntegrationTests.csproj", "{E193CCBA-FA6B-4E02-94DF-EF1FC83D34EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.UnitTests", "server\tests\MarthasLibrary.UnitTests\MarthasLibrary.UnitTests.csproj", "{912257D6-5C47-4839-B294-2732B0A0A060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.UnitTests", "server\tests\MarthasLibrary.UnitTests\MarthasLibrary.UnitTests.csproj", "{912257D6-5C47-4839-B294-2732B0A0A060}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.Web", "client\MarthasLibrary.Web\MarthasLibrary.Web.csproj", "{B6C3F672-28FF-4A64-9E26-7A2980C68E97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.Web", "client\MarthasLibrary.Web\MarthasLibrary.Web.csproj", "{B6C3F672-28FF-4A64-9E26-7A2980C68E97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.Tests.Common", "server\tests\MarthasLibrary.Tests.Common\MarthasLibrary.Tests.Common.csproj", "{FECEF76D-745E-4B1C-82C0-EA82171508D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{B6C3F672-28FF-4A64-9E26-7A2980C68E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6C3F672-28FF-4A64-9E26-7A2980C68E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6C3F672-28FF-4A64-9E26-7A2980C68E97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FECEF76D-745E-4B1C-82C0-EA82171508D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FECEF76D-745E-4B1C-82C0-EA82171508D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FECEF76D-745E-4B1C-82C0-EA82171508D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FECEF76D-745E-4B1C-82C0-EA82171508D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{E193CCBA-FA6B-4E02-94DF-EF1FC83D34EB} = {D869BE49-F152-44DA-8BEC-474AEA6A5D3C}
 		{912257D6-5C47-4839-B294-2732B0A0A060} = {D869BE49-F152-44DA-8BEC-474AEA6A5D3C}
 		{B6C3F672-28FF-4A64-9E26-7A2980C68E97} = {198C53BB-475B-4750-B0AD-E52693392B2B}
+		{FECEF76D-745E-4B1C-82C0-EA82171508D9} = {D869BE49-F152-44DA-8BEC-474AEA6A5D3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0AACB0B4-A937-497A-A4E7-E2F8E7214A3F}

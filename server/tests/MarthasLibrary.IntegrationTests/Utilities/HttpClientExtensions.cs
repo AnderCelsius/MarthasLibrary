@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace RaphaIdServer.Tests.Common.Helpers;
+namespace MarthasLibrary.IntegrationTests.Utilities;
 
 public static class HttpClientExtensions
 {
