@@ -16,7 +16,7 @@ public static class SeedData
         using var scope = app.Services.GetRequiredService<IServiceScopeFactory>()
             .CreateScope();
         var context = scope.ServiceProvider.GetService<LibraryDbContext>();
-        context.Database.Migrate();
+        context!.Database.Migrate();
 
         var userMgr = scope.ServiceProvider
             .GetRequiredService<UserManager<Customer>>();

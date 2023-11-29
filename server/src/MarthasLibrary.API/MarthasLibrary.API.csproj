@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MarthasLibrary.Application\MarthasLibrary.Application.csproj" />
+    <ProjectReference Include="..\MarthasLibrary.APIClient\MarthasLibrary.APIClient.csproj" />
     <ProjectReference Include="..\MarthasLibrary.Infrastructure\MarthasLibrary.Infrastructure.csproj" />
   </ItemGroup>
 

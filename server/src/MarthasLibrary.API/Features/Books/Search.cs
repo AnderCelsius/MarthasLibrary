@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MarthasLibrary.API.SharedResponse;
+using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;

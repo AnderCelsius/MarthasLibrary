@@ -15,22 +15,17 @@ public class TestFixture : IDisposable
 {
   private readonly WebApplicationFactory<Program> _applicationFactory;
 
-  public TestFixture(IEnumerable<KeyValuePair<string, string>>? configurationOverride = null)
+  public TestFixture()
   {
     MockServer = WireMockServer.Start();
     MockServer.MockAuthentication(true);
 
-    // Define default configurations for testing
-    var configBuilder = new ConfigurationBuilder();
-
-    configurationOverride ??= new List<KeyValuePair<string, string>>();
-    configBuilder.AddInMemoryCollection(configurationOverride);
-
-    var config = configBuilder.Build();
+    var config = new ConfigurationBuilder().Build();
 
     _applicationFactory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
     {
-      builder.ConfigureServices(services =>
+      builder.UseEnvironment("Testing")
+        .ConfigureServices(services =>
         {
           // Remove the existing DbContext configuration
           var dbContextDescriptor = services.SingleOrDefault(
@@ -77,22 +72,13 @@ public class TestFixture : IDisposable
     var dbContextFactory = Server.Services.GetRequiredService<IDbContextFactory<LibraryDbContext>>();
     using var dbContext = dbContextFactory.CreateDbContext();
     dbContext.Database.EnsureDeleted();
-    // Optionally seed data here if needed for your tests
-    // Example: SeedTestData(dbContext);
   }
+
 
   public LibraryDbContext GetDbContext()
   {
     var dbContextFactory = Server.Services
       .GetRequiredService<IDbContextFactory<LibraryDbContext>>();
-    using var dbContext = dbContextFactory.CreateDbContext();
-
-    return dbContext;
+    return dbContextFactory.CreateDbContext();
   }
-
-  // Optional: Method to seed test data
-  //private void SeedTestData(ApplicationContext dbContext)
-  //{
-  //    // Add your test data seeding logic here
-  //}
 }

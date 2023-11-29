@@ -2,7 +2,7 @@
 using MarthasLibrary.API.Features.Books;
 using MarthasLibrary.Core.Entities;
 
-namespace MarthasLibrary.API.SharedResponse.MappingProfiles;
+namespace MarthasLibrary.API.Shared.MappingProfiles;
 
 public class BooksProfile : Profile
 {

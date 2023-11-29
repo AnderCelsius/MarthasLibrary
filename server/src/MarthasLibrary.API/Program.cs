@@ -7,7 +7,7 @@ builder.AddServices();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsProduction() && !app.Environment.IsTesting())
 {
   await app.Services.MigrateDatabaseToLatestVersion<LibraryDbContext>();
 }

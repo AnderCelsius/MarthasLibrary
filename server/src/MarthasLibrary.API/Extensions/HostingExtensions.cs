@@ -1,5 +1,6 @@
 ﻿using MarthasLibrary.API.Configuration;
 using MarthasLibrary.API.ErrorHandling;
+using MarthasLibrary.APIClient;
 using MarthasLibrary.Application.InfrastructureImplementations;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
@@ -43,6 +44,8 @@ public static class HostingExtensions
 
     builder.Services.AddDatabase<LibraryDbContext>(builder.Configuration
       .GetRequiredSection("Database").Get<DatabaseConfiguration>());
+
+    builder.Services.AddScoped<IMarthasLibraryAPIClient, MarthasLibraryAPIClient>();
   }
 
   /// <summary>
@@ -51,7 +54,7 @@ public static class HostingExtensions
   /// <param name="app">Web Application</param>
   public static void ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
   {
-    if (!app.Environment.IsProduction())
+    if (!app.Environment.IsProduction() && !app.Environment.IsTesting())
     {
       Log.Information("Seeding database...");
       SeedData.EnsureSeedUserData(app);
