@@ -63,8 +63,9 @@ public static class SeedData
         var alice = userMgr.FindByNameAsync("alice").Result;
         if (alice == null)
         {
-            alice = new Customer("alice.smith@email.com", "Alice", "Smith")
+            alice = new Customer("Alice", "Smith")
             {
+                Email = "alice.smith@email.com",
                 UserName = nameof(alice),
                 EmailConfirmed = true,
                 IsActive = true
@@ -98,8 +99,9 @@ public static class SeedData
         var obai = userMgr.FindByNameAsync("obai").Result;
         if (obai == null)
         {
-            obai = new Customer("oasiegbulam@gmail.com", "Obinna", "Asiegbulam")
+            obai = new Customer("Obinna", "Asiegbulam")
             {
+                Email = "oasiegbulam@gmail.com",
                 UserName = nameof(obai),
                 EmailConfirmed = true,
                 IsActive = true
