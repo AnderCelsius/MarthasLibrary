@@ -25,7 +25,7 @@ public static class GetById
 
       if (book is null)
       {
-        throw new BookNotFoundException($"Could not find a user with ID {request.BookId}.");
+        throw new BookNotFoundException($"Could not find a book with ID {request.BookId}.");
       }
 
       return _mapper.Map<Response>(book);

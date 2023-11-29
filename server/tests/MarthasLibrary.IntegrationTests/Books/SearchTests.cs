@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MarthasLibrary.IntegrationTests.Books;
 
+[Collection("test collection")]
 public sealed class SearchTests : IDisposable
 {
   private readonly TestFixture _fixture;

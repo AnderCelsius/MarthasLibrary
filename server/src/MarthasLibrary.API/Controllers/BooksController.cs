@@ -94,5 +94,23 @@ namespace MarthasLibrary.API.Controllers
         return NotFound(e.Message);
       }
     }
+
+    [HttpDelete("{bookId}", Name = "DeleteBook")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Unit>> DeleteBook(
+      [FromRoute] Guid bookId,
+      CancellationToken cancellationToken)
+    {
+      try
+      {
+        await _mediator.Send(new DeleteById.Request(bookId), cancellationToken);
+        return NoContent();
+      }
+      catch (BookNotFoundException ex)
+      {
+        return NotFound(ex.Message);
+      }
+    }
   }
 }

@@ -49,7 +49,6 @@ public class Create
       // Title validation: not empty, no digits, and a reasonable length limit
       RuleFor(request => request.Title)
         .NotEmpty().WithMessage("Title is required.")
-        .Must(title => !Regex.IsMatch(title, @"\d")).WithMessage("Title must not contain digits.")
         .Length(1, 255).WithMessage("Title must be between 1 and 255 characters long.");
 
       // Author validation: not empty and no digits

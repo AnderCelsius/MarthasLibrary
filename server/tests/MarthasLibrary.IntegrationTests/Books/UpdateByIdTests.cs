@@ -5,6 +5,7 @@ using MarthasLibrary.IntegrationTests.Fixtures;
 using MarthasLibrary.IntegrationTests.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using System.Net.Http.Json;
 
 namespace MarthasLibrary.IntegrationTests.Books;
 
@@ -88,9 +89,7 @@ public sealed class UpdateByIdTests : IDisposable
     };
 
     // act
-    var response = await _fixture.Client.PutAsJsonAsync<Books_UpdateById_Request_UpdatedDetails>(
-      $"/api/books/{book.Id}",
-      update);
+    var response = await _fixture.Client.PutAsJsonAsync($"api/books/{book.Id}", update);
 
     // assert
     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -100,5 +99,37 @@ public sealed class UpdateByIdTests : IDisposable
     Assert.Equal(update.Title, updatedBook?.Book.Title);
     Assert.Equal(update.Author, updatedBook?.Book.Author);
     Assert.Equal(update.Isbn, updatedBook?.Book.Isbn);
+  }
+
+  [Theory]
+  [InlineData("1984", "George Orwell", "string", "2023-11-29T10:39:26.435Z")]
+  [InlineData("", "George Orwell", "9780451524989", "2023-11-29T10:39:26.435Z")]
+  [InlineData("1984", "", "9780451654935", "2023-11-29T10:39:26.435Z")]
+  [InlineData("1984", "H", "9780451524935", "2023-11-29T10:39:26.435Z")]
+  [InlineData("1984", "George Orwell", "9780451524935", null)]
+  public async Task UpdateBook_ReturnsBadRequest_OnInvalidInput(string title, string author, string isbn,
+    DateTimeOffset publishedDate)
+  {
+    // Arrange 
+    var book = Book.CreateInstance("1984", "George", "9780451524935", new DateTime(1949, 6, 8));
+
+    await _context.AddAsync(book);
+    await _context.SaveChangesAsync();
+
+    // Act
+    var response = await _fixture.Client.PutAsJsonAsync<Books_UpdateById_Request_UpdatedDetails>(
+      $"api/Books/{book.Id}",
+      new()
+      {
+        Title = title,
+        Author = author,
+        Isbn = isbn,
+        PublishedDate = publishedDate,
+      });
+
+    // Assert
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    var responseContent = await response.Content.ReadAsStringAsync();
+    Assert.Contains("One or more validation errors occurred", responseContent);
   }
 }
