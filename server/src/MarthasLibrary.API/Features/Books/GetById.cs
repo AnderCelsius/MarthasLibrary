@@ -20,7 +20,7 @@ public static class GetById
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var book = await _bookRepository.Table
+      var book = await _bookRepository.TableNoTracking
         .SingleOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
 
       if (book is null)
