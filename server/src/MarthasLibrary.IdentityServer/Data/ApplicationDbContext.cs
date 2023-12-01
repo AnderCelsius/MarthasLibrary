@@ -1,4 +1,4 @@
-﻿using MarthasLibrary.IdentityServer.Models;
+﻿using MarthasLibrary.IdentityServer.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-﻿using MarthasLibrary.IdentityServer.Models;
+﻿using MarthasLibrary.IdentityServer.Entities;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;

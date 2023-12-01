@@ -1,9 +1,10 @@
 using Duende.IdentityServer;
 using MarthasLibrary.IdentityServer.Data;
-using MarthasLibrary.IdentityServer.Models;
+using MarthasLibrary.IdentityServer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Reflection;
 
 namespace MarthasLibrary.IdentityServer
 {
@@ -14,11 +15,14 @@ namespace MarthasLibrary.IdentityServer
             builder.Services.AddRazorPages();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Identity")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            var migrationsAssembly = typeof(Program).GetTypeInfo()
+                .Assembly.GetName().Name;
 
             builder.Services
                 .AddIdentityServer(options =>
@@ -31,9 +35,28 @@ namespace MarthasLibrary.IdentityServer
                     // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                     options.EmitStaticAudienceClaim = true;
                 })
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients)
+                //.AddInMemoryIdentityResources(Config.IdentityResources)
+                //.AddInMemoryApiScopes(Config.ApiScopes)
+                //.AddInMemoryClients(Config.Clients)
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = optionsBuilder =>
+                        optionsBuilder.UseSqlServer(
+                            builder.Configuration
+                                .GetConnectionString("IdentityServer"),
+                            sqlOptions => sqlOptions
+                                .MigrationsAssembly(migrationsAssembly));
+                })
+                .AddConfigurationStoreCache()
+                .AddOperationalStore(options =>
+                {
+                    options.ConfigureDbContext = optionsBuilder =>
+                        optionsBuilder.UseSqlServer(builder.Configuration
+                                .GetConnectionString("IdentityServer"),
+                            sqlOptions => sqlOptions
+                                .MigrationsAssembly(migrationsAssembly));
+                    options.EnableTokenCleanup = true;
+                })
                 .AddAspNetIdentity<ApplicationUser>();
 
             builder.Services.AddAuthentication()

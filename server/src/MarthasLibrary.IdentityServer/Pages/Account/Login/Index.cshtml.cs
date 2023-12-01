@@ -2,14 +2,15 @@ using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
-using MarthasLibrary.IdentityServer.Models;
+using MarthasLibrary.IdentityServer.Entities;
+using MarthasLibrary.IdentityServer.Pages.Login;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace MarthasLibrary.IdentityServer.Pages.Login
+namespace MarthasLibrary.IdentityServer.Pages.Account.Login
 {
     [SecurityHeaders]
     [AllowAnonymous]

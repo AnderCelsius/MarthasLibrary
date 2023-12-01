@@ -1,6 +1,6 @@
 ﻿using IdentityModel;
 using MarthasLibrary.IdentityServer.Data;
-using MarthasLibrary.IdentityServer.Models;
+using MarthasLibrary.IdentityServer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -12,76 +12,84 @@ namespace MarthasLibrary.IdentityServer
     {
         public static void EnsureSeedData(WebApplication app)
         {
-            using (var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+            context.Database.Migrate();
+
+            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            SeedUsers(userMgr);
+        }
+
+        private static void SeedUsers(UserManager<ApplicationUser> userMgr)
+        {
+            var alice = userMgr.FindByNameAsync("alice").Result;
+            if (alice == null)
             {
-                var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-                context.Database.Migrate();
-
-                var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var alice = userMgr.FindByNameAsync("alice").Result;
-                if (alice == null)
+                alice = new ApplicationUser
                 {
-                    alice = new ApplicationUser
-                    {
-                        UserName = "alice",
-                        Email = "AliceSmith@email.com",
-                        EmailConfirmed = true,
-                    };
-                    var result = userMgr.CreateAsync(alice, "Pass123$").Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
-
-                    result = userMgr.AddClaimsAsync(alice, new Claim[]{
-                                new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                                new Claim(JwtClaimTypes.GivenName, "Alice"),
-                                new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                                new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                            }).Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
-                    Log.Debug("alice created");
-                }
-                else
+                    Id = "f0611528-36f2-4a0e-80ce-96dea6ebd13f",
+                    UserName = "alice",
+                    Email = "AliceSmith@email.com",
+                    EmailConfirmed = true,
+                };
+                var result = userMgr.CreateAsync(alice, "Pass123$").Result;
+                if (!result.Succeeded)
                 {
-                    Log.Debug("alice already exists");
+                    throw new Exception(result.Errors.First().Description);
                 }
 
-                var bob = userMgr.FindByNameAsync("bob").Result;
-                if (bob == null)
+                result = userMgr.AddClaimsAsync(alice, new Claim[]
                 {
-                    bob = new ApplicationUser
-                    {
-                        UserName = "bob",
-                        Email = "BobSmith@email.com",
-                        EmailConfirmed = true
-                    };
-                    var result = userMgr.CreateAsync(bob, "Pass123$").Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
+          new Claim(JwtClaimTypes.Name, "Alice Smith"),
+          new Claim(JwtClaimTypes.GivenName, "Alice"),
+          new Claim(JwtClaimTypes.FamilyName, "Smith"),
+          new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
+                }).Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
 
-                    result = userMgr.AddClaimsAsync(bob, new Claim[]{
-                                new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                                new Claim(JwtClaimTypes.GivenName, "Bob"),
-                                new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                                new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
-                                new Claim("location", "somewhere")
-                            }).Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
-                    Log.Debug("bob created");
-                }
-                else
+                Log.Debug("alice created");
+            }
+            else
+            {
+                Log.Debug("alice already exists");
+            }
+
+            var obai = userMgr.FindByNameAsync("obai").Result;
+            if (obai == null)
+            {
+                obai = new ApplicationUser
                 {
-                    Log.Debug("bob already exists");
+                    Id = "83ec2132-9104-4615-814b-11cba2374e41",
+                    UserName = "obai",
+                    Email = "oasiegbulam@gmail.com",
+                    EmailConfirmed = true
+                };
+                var result = userMgr.CreateAsync(obai, "Pass123$").Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
                 }
+
+                result = userMgr.AddClaimsAsync(obai, new Claim[]
+                {
+          new Claim(JwtClaimTypes.Name, "Obinna Asiegbulam"),
+          new Claim(JwtClaimTypes.GivenName, "Obinna"),
+          new Claim(JwtClaimTypes.FamilyName, "Asiegbulam"),
+          new Claim(JwtClaimTypes.WebSite, "http://obai.com"),
+                }).Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                Log.Debug("obai created");
+            }
+            else
+            {
+                Log.Debug("obai already exists");
             }
         }
     }
