@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MarthasLibrary.IdentityServer.Data.Migrations.IdentityServer
+namespace MarthasLibrary.IdentityServer.Data.Migrations.IdentityServer.ConfigurationDb
 {
     public partial class InitializeConfigurationDb : Migration
     {

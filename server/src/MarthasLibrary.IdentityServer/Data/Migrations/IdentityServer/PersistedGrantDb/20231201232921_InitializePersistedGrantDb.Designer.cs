@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MarthasLibrary.IdentityServer.Data.Migrations.IdentityServer
+namespace MarthasLibrary.IdentityServer.Data.Migrations.IdentityServer.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20231201232610_InitializePersistedGrantDb")]
+    [Migration("20231201232921_InitializePersistedGrantDb")]
     partial class InitializePersistedGrantDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
