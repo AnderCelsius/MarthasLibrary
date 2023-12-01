@@ -1,4 +1,4 @@
-﻿using MarthasLibrary.Core.Entities;
+﻿using MarthasLibrary.IdentityProvider.Models;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -18,14 +18,18 @@ public static class WireMockAuthenticationExtensions
 
     public const string BearerToken = "some-random-string";
 
-    private static readonly Customer MockAdminUser = new(MockFirstName, MockLastName)
+    private static readonly ApplicationUser MockAdminUser = new()
     {
+        FirstName = MockFirstName,
+        LastName = MockLastName,
         Email = MockAdminEmail,
         PhoneNumber = "+2348023415243"
     };
 
-    private static readonly Customer MockRegularUser = new("Regular", "Person")
+    private static readonly ApplicationUser MockRegularUser = new()
     {
+        FirstName = "Regular",
+        LastName = "Person",
         Email = MockRegularEmail,
         PhoneNumber = "+2348023546789"
     };
@@ -35,7 +39,7 @@ public static class WireMockAuthenticationExtensions
         var userData = allowAdmin ? MockAdminUser : MockRegularUser;
         wireMockServer
             .Given(Request.Create().WithPath("/your-endpoint").UsingPost()
-            .WithHeader("Authorization", $"Bearer {BearerToken}"))
+                .WithHeader("Authorization", $"Bearer {BearerToken}"))
             .RespondWith(Response.Create()
                 .WithStatusCode(200)
                 .WithBodyAsJson(JsonSerializer.Serialize(userData)));

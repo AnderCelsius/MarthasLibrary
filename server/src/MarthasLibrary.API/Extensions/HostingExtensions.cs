@@ -3,10 +3,8 @@ using MarthasLibrary.API.ErrorHandling;
 using MarthasLibrary.API.Middleware;
 using MarthasLibrary.APIClient;
 using MarthasLibrary.Application.InfrastructureImplementations;
-using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MarthasLibrary.Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
 using Serilog;
 using System.Net;
 using System.Reflection;
@@ -43,9 +41,6 @@ public static class HostingExtensions
         builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
         builder.Services.AddHttpClient();
-
-        builder.Services.AddIdentity<Customer, IdentityRole>()
-          .AddEntityFrameworkStores<LibraryDbContext>();
 
         builder.Services.AddDatabase<LibraryDbContext>(builder.Configuration
           .GetRequiredSection("Database").Get<DatabaseConfiguration>());

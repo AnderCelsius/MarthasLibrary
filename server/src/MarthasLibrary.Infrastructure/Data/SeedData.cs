@@ -1,11 +1,8 @@
-using IdentityModel;
 using MarthasLibrary.Core.Entities;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using System.Security.Claims;
 
 namespace MarthasLibrary.Infrastructure.Data;
 
@@ -18,11 +15,8 @@ public static class SeedData
         var context = scope.ServiceProvider.GetService<LibraryDbContext>();
         context!.Database.Migrate();
 
-        var userMgr = scope.ServiceProvider
-            .GetRequiredService<UserManager<Customer>>();
-
-        SeedCustomers(userMgr);
-        SeedAddresses(context, userMgr);
+        SeedCustomers(context);
+        SeedAddresses(context);
         SeedBooks(context);
     }
 
@@ -39,55 +33,35 @@ public static class SeedData
         }
     }
 
-    private static void SeedAddresses(LibraryDbContext context, UserManager<Customer> userMgr)
+    private static void SeedAddresses(LibraryDbContext context)
     {
         if (!context.Addresses.Any())
         {
-            var alice = userMgr.FindByNameAsync("alice").Result;
-            var bob = userMgr.FindByNameAsync("bob").Result;
+            var alice = context.Customers.FirstOrDefaultAsync(c => c.Email == "alice.smith@email.com").Result;
+            var obai = context.Customers.FirstOrDefaultAsync(c => c.Email == "oasiegbulam@gmail.com").Result;
 
-            if (alice != null && bob != null)
+            if (alice != null && obai != null)
             {
                 context.Addresses.AddRange(
                     Address.CreateInstance(alice.Id, "123 Main St", "Metropolis", "Metro", "USA", "12345"),
-                    Address.CreateInstance(bob.Id, "456 Elm St", "Smallville", "Kansas", "USA", "67890")
-                // Add more addresses as needed
+                    Address.CreateInstance(obai.Id, "456 Elm St", "Smallville", "Kansas", "USA", "67890")
                 );
                 context.SaveChanges();
             }
         }
     }
 
-    private static void SeedCustomers(UserManager<Customer> userMgr)
+    private static void SeedCustomers(LibraryDbContext context)
     {
-        var alice = userMgr.FindByNameAsync("alice").Result;
+        var alice = context.Customers.FirstOrDefaultAsync(c => c.Email == "alice.smith@email.com").Result;
+
         if (alice == null)
         {
-            alice = new Customer("Alice", "Smith")
-            {
-                Email = "alice.smith@email.com",
-                UserName = nameof(alice),
-                EmailConfirmed = true,
-                IsActive = true
-            };
-            var result = userMgr.CreateAsync(alice, "Pass123$").Result;
-            if (!result.Succeeded)
-            {
-                throw new Exception(result.Errors.First().Description);
-            }
+            alice = new("Alice", "Smith", "alice.smith@email.com", "f0611528-36f2-4a0e-80ce-96dea6ebd13f");
+            alice.SetAsActive();
 
-            result = userMgr.AddClaimsAsync(alice, new Claim[]
-            {
-                new(JwtClaimTypes.Name, "Alice Smith"),
-                new(JwtClaimTypes.GivenName, "Alice"),
-                new(JwtClaimTypes.FamilyName, "Smith"),
-                new(JwtClaimTypes.WebSite, "http://alice.com")
-            }).Result;
-
-            if (!result.Succeeded)
-            {
-                throw new Exception(result.Errors.First().Description);
-            }
+            context.Customers.Add(alice);
+            context.SaveChanges();
 
             Log.Debug("alice created");
         }
@@ -96,34 +70,15 @@ public static class SeedData
             Log.Debug("alice already exists");
         }
 
-        var obai = userMgr.FindByNameAsync("obai").Result;
+        var obai = context.Customers.FirstOrDefaultAsync(c => c.Email == "oasiegbulam@gmail.com").Result;
+
         if (obai == null)
         {
-            obai = new Customer("Obinna", "Asiegbulam")
-            {
-                Email = "oasiegbulam@gmail.com",
-                UserName = nameof(obai),
-                EmailConfirmed = true,
-                IsActive = true
-            };
-            var result = userMgr.CreateAsync(obai, "Pass123$").Result;
-            if (!result.Succeeded)
-            {
-                throw new Exception(result.Errors.First().Description);
-            }
+            obai = new("Obinna", "Asiegbulam", "oasiegbulam@gmail.com", "83ec2132-9104-4615-814b-11cba2374e41");
+            obai.SetAsActive();
 
-            result = userMgr.AddClaimsAsync(obai, new Claim[]
-            {
-                new(JwtClaimTypes.Name, "Obinna Asiegbulam"),
-                new(JwtClaimTypes.GivenName, "Obinna"),
-                new(JwtClaimTypes.FamilyName, "Asiegbulam"),
-                new(JwtClaimTypes.WebSite, "http://asiegbulam.com")
-            }).Result;
-
-            if (!result.Succeeded)
-            {
-                throw new Exception(result.Errors.First().Description);
-            }
+            context.Customers.Add(obai);
+            context.SaveChanges();
 
             Log.Debug("obai created");
         }
