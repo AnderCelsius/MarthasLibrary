@@ -32,6 +32,7 @@
     <ProjectReference Include="..\..\src\MarthasLibrary.API\MarthasLibrary.API.csproj" />
     <ProjectReference Include="..\..\src\MarthasLibrary.Core\MarthasLibrary.Core.csproj" />
     <ProjectReference Include="..\..\src\MarthasLibrary.IdentityProvider\MarthasLibrary.IdentityProvider.csproj" />
+    <ProjectReference Include="..\..\src\MarthasLibrary.IdentityServer\MarthasLibrary.IdentityServer.csproj" />
   </ItemGroup>
 
 </Project>
