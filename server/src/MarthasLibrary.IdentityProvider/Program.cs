@@ -1,4 +1,5 @@
-﻿using MarthasLibrary.IdentityProvider;
+﻿using MarthasLibrary.Common.Extensions;
+using MarthasLibrary.IdentityProvider;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -22,7 +23,7 @@ try
 
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.
-    if (args.Contains("/seed"))
+    if (!app.Environment.IsProduction() && !app.Environment.IsTesting())
     {
         Log.Information("Seeding database...");
         SeedData.EnsureSeedData(app);
