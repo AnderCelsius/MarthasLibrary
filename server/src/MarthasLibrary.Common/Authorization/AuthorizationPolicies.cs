@@ -8,7 +8,7 @@ namespace MarthasLibrary.Common.Authorization
         {
             return new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireRole("Admin")
+                .RequireRole(Policies.IsAdmin)
                 .Build();
         }
     }

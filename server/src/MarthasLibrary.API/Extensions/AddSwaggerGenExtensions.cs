@@ -17,6 +17,7 @@ public static class AddSwaggerGenExtensions
   /// <returns>services.</returns>
   public static IServiceCollection AddSwaggerGenWithExtraSetup(
     this IServiceCollection services,
+    IConfiguration config,
     string? dtoModelNamespace)
   {
     services.AddSwaggerGen(opt =>
@@ -47,6 +48,42 @@ public static class AddSwaggerGenExtensions
           },
           new List<string>()
         },
+      });
+
+      opt.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+      {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+          AuthorizationCode = new OpenApiOAuthFlow
+          {
+            AuthorizationUrl =
+              new Uri(
+                $"{config.GetSection("DuendeISP:Authority").Value}/connect/authorize"),
+            TokenUrl =
+              new Uri(
+                $"{config.GetSection("DuendeISP:Authority").Value}/connect/token"),
+            Scopes = new Dictionary<string, string>
+            {
+              { "marthaslibraryapi.write", "Marthas Library Write" },
+              { "marthaslibraryapi.read", "Marthas Library Read" }
+            },
+          }
+        }
+      });
+      opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+      {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+              { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+          },
+          new[]
+          {
+            "marthaslibraryapi.read", "marthaslibraryapi.write"
+          }
+        }
       });
     });
 

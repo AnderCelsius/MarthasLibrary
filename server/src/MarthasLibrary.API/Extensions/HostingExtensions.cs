@@ -24,7 +24,7 @@ public static class HostingExtensions
         });
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGenWithExtraSetup(nameof(Features));
+        builder.Services.AddSwaggerGenWithExtraSetup(builder.Configuration, nameof(Features));
 
         builder.Services.AddHealthChecks()
           .AddDbContextCheck<LibraryDbContext>();
@@ -46,6 +46,8 @@ public static class HostingExtensions
           .GetRequiredSection("Database").Get<DatabaseConfiguration>());
 
         builder.Services.AddScoped<IMarthasLibraryAPIClient, MarthasLibraryAPIClient>();
+
+        builder.AddExternalServiceAuthentication();
     }
 
     /// <summary>

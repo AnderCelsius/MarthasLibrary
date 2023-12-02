@@ -49,17 +49,21 @@ public static class Config
         ClientName = "Marthas Library Web App",
         ClientId = "marthaslibraryclient",
         AllowedGrantTypes = GrantTypes.Code,
-        AccessTokenType = AccessTokenType.Reference,
+        AccessTokenType = AccessTokenType.Jwt,
         AllowOfflineAccess = true,
         UpdateAccessTokenClaimsOnRefresh = true,
         AccessTokenLifetime = 120,
         RedirectUris =
         {
-          "https://localhost:7184/signin-oidc"
+          "https://localhost:7155/signin-oidc",
+          "https://localhost:7155/swagger/oauth2-redirect.html",
+          "https://localhost:7155/signin-oidc",
+          "https://oauth.pstmn.io/v1/callback",
+          "https://localhost:7155/swagger/oauth2-redirect.html"
         },
         PostLogoutRedirectUris =
         {
-          "https://localhost:7184/signout-callback-oidc"
+          "https://localhost:7155/signout-callback-oidc"
         },
         AllowedScopes =
         {
@@ -71,8 +75,9 @@ public static class Config
         },
         ClientSecrets =
         {
-          new Secret("secret".Sha256())
+          new Secret("apisecret".Sha256())
         },
+        AllowAccessTokensViaBrowser = true,
       }
     };
 }
