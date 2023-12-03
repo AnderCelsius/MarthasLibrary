@@ -13,6 +13,21 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public IQueryable<T> TableNoTracking => _dbSet.AsNoTracking();
 
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken)
+    {
+        await _context.Database.BeginTransactionAsync(cancellationToken);
+    }
+
+    public async Task CommitTransactionAsync(CancellationToken cancellationToken)
+    {
+        await _context.Database.CommitTransactionAsync(cancellationToken);
+    }
+
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken)
+    {
+        await _context.Database.RollbackTransactionAsync(cancellationToken);
+    }
+
     public GenericRepository(LibraryDbContext context)
     {
         _context = context;

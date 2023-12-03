@@ -102,7 +102,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                 newName: "Customers");
 
             migrationBuilder.AddColumn<int>(
-                name: "BookStatus",
+                name: "Status",
                 table: "Books",
                 type: "int",
                 nullable: false,
@@ -117,7 +117,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                 oldType: "nvarchar(450)");
 
             migrationBuilder.AlterColumn<DateTimeOffset>(
-                name: "UpdatedAt",
+                name: "ExpiryDate",
                 table: "Customers",
                 type: "datetimeoffset",
                 nullable: true,
@@ -372,7 +372,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                 table: "Customers");
 
             migrationBuilder.DropColumn(
-                name: "BookStatus",
+                name: "Status",
                 table: "Books");
 
             migrationBuilder.DropColumn(
@@ -399,7 +399,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                 oldType: "uniqueidentifier");
 
             migrationBuilder.AlterColumn<DateTimeOffset>(
-                name: "UpdatedAt",
+                name: "ExpiryDate",
                 table: "AspNetUsers",
                 type: "datetimeoffset",
                 nullable: false,

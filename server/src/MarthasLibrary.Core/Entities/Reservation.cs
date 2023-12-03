@@ -1,12 +1,12 @@
 ﻿namespace MarthasLibrary.Core.Entities;
 
-public class Reservation : IAuditableBase
+public class Reservation
 {
     public Guid Id { get; private set; }
     public Guid BookId { get; private set; }
     public Guid CustomerId { get; private set; }
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTimeOffset ReservedDate { get; set; }
+    public DateTimeOffset? ExpiryDate { get; set; }
 
 
     public static Reservation CreateInstance(Guid bookId, Guid customerId)
@@ -19,8 +19,8 @@ public class Reservation : IAuditableBase
             Id = Guid.NewGuid(),
             BookId = bookId,
             CustomerId = customerId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            ReservedDate = DateTime.UtcNow,
+            ExpiryDate = DateTime.UtcNow.AddDays(1),
         };
     }
 }

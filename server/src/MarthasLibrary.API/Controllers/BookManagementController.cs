@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MarthasLibrary.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/books")]
     [ApiController]
     [Authorize]
-    public class BooksController : ControllerBase
+    public class BookManagementController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public BooksController(IMediator mediator)
+        public BookManagementController(IMediator mediator)
         {
             _mediator = mediator;
         }

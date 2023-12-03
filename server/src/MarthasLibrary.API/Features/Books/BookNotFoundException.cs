@@ -1,7 +1,7 @@
 ﻿namespace MarthasLibrary.API.Features.Books
 {
   [Serializable]
-  internal class BookNotFoundException : Exception
+  public class BookNotFoundException : Exception
   {
     public BookNotFoundException()
     {

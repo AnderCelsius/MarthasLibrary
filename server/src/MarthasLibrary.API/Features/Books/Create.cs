@@ -6,7 +6,7 @@ using MediatR;
 using System.Text.RegularExpressions;
 
 namespace MarthasLibrary.API.Features.Books;
-public class Create
+public static class Create
 {
   public record Request(string Title, string Author, string Isbn, DateTimeOffset PublishedDate) : IRequest<Response>;
 

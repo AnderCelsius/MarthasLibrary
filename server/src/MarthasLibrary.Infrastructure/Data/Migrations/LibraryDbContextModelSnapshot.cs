@@ -38,7 +38,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTimeOffset>("ReservedDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CustomerId")
@@ -54,7 +54,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("ExpiryDate")
                         .IsRequired()
                         .HasColumnType("datetimeoffset");
 
@@ -87,10 +87,10 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("BookStatus")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTimeOffset>("ReservedDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Isbn")
@@ -107,7 +107,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("ExpiryDate")
                         .IsRequired()
                         .HasColumnType("datetimeoffset");
 
@@ -159,7 +159,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTimeOffset>("ReservedDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Email")
@@ -186,7 +186,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("ExpiryDate")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
@@ -240,13 +240,13 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                     b.Property<Guid>("BookId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<DateTimeOffset>("ReservedDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("ExpiryDate")
                         .IsRequired()
                         .HasColumnType("datetimeoffset");
 

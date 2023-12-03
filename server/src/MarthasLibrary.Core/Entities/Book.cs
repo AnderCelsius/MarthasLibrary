@@ -12,7 +12,7 @@ public class Book : IAuditableBase
         PublishedDate = publishedDate;
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
-        BookStatus = BookStatus.Available;
+        Status = BookStatus.Available;
     }
 
     public Guid Id { get; private set; }
@@ -20,7 +20,7 @@ public class Book : IAuditableBase
     public string Author { get; private set; }
     public string Isbn { get; private set; }
     public DateTimeOffset PublishedDate { get; private set; }
-    public BookStatus BookStatus { get; private set; }
+    public BookStatus Status { get; private set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
 
@@ -40,20 +40,28 @@ public class Book : IAuditableBase
     }
 
     // Example of a domain behavior
+    public void MarkAsReserved()
+    {
+        if (Status != BookStatus.Available)
+            throw new InvalidOperationException("Only available books can be marked as reserved.");
+
+        Status = BookStatus.Reserved;
+    }
+
     public void MarkAsBorrowed()
     {
-        if (BookStatus != BookStatus.Reserved)
+        if (Status != BookStatus.Reserved)
             throw new InvalidOperationException("Only reserved books can be marked as borrowed.");
 
-        BookStatus = BookStatus.Borrowed;
+        Status = BookStatus.Borrowed;
     }
 
     public void MarkAsAvailable()
     {
-        if (BookStatus != BookStatus.Reserved || BookStatus != BookStatus.Borrowed)
+        if (Status != BookStatus.Reserved || Status != BookStatus.Borrowed)
             throw new InvalidOperationException("Only reserved books or borrowed can be marked as available.");
 
-        BookStatus = BookStatus.Available;
+        Status = BookStatus.Available;
     }
 
     public record BookUpdate(string Title, string Author, string Isbn, DateTimeOffset PublishedDate);

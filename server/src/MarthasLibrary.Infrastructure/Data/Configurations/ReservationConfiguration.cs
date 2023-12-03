@@ -24,14 +24,14 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 
         builder.HasIndex(r => r.CustomerId);
 
-        builder.Property(r => r.CreatedAt)
+        builder.Property(r => r.ReservedDate)
           .IsRequired();
 
-        builder.Property(r => r.UpdatedAt)
+        builder.Property(r => r.ExpiryDate)
           .IsRequired();
 
 
-        builder.Property(r => r.CreatedAt).HasColumnType("datetimeoffset");
-        builder.Property(r => r.UpdatedAt).HasColumnType("datetimeoffset");
+        builder.Property(r => r.ReservedDate).HasColumnType("datetimeoffset");
+        builder.Property(r => r.ExpiryDate).HasColumnType("datetimeoffset");
     }
 }
