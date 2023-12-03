@@ -8,10 +8,28 @@ using System.Text.RegularExpressions;
 
 namespace MarthasLibrary.API.Features.Books;
 
+/// <summary>
+/// Provides functionality for updating an existing book's details by its identifier.
+/// </summary>
+/// <remarks>
+/// This static class contains nested types to handle the request and logic for updating a book based on its unique identifier.
+/// </remarks>
 public static class UpdateById
 {
+  /// <summary>
+  /// Represents a request to update a book.
+  /// </summary>
+  /// <param name="BookId">The unique identifier of the book to be updated.</param>
+  /// <param name="Details">The updated details of the book.</param>
   public record Request(Guid BookId, Request.UpdatedDetails Details) : IRequest
   {
+    /// <summary>
+    /// Represents the updated details of the book.
+    /// </summary>
+    /// <param name="Title">The updated title of the book.</param>
+    /// <param name="Author">The updated author of the book.</param>
+    /// <param name="Isbn">The updated ISBN of the book.</param>
+    /// <param name="PublishedDate">The updated publication date of the book.</param>
     public record UpdatedDetails(string Title, string Author, string Isbn, DateTimeOffset PublishedDate)
     {
       public static explicit operator Book.BookUpdate(UpdatedDetails d) =>
@@ -19,10 +37,25 @@ public static class UpdateById
     }
   }
 
+  /// <summary>
+  /// Handles the process of updating a book's details.
+  /// </summary>
+  /// <remarks>
+  /// This class is responsible for locating the book by its identifier, ensuring no ISBN conflicts, and applying the updated details.
+  /// </remarks>
+  /// <param name="bookRepository">Repository for accessing book entities.</param>
+  /// <exception cref="ArgumentException">Thrown when a null argument is passed for the book repository.</exception>
+  /// <exception cref="BookNotFoundException">Thrown when the specified book is not found in the repository.</exception>
+  /// <exception cref="BookWithIsbnAlreadyExistsException">Thrown when another book with the same ISBN already exists.</exception>
   public class Handler(IGenericRepository<Book> bookRepository) : IRequestHandler<Request>
   {
     private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
 
+    /// <summary>
+    /// Handles the incoming request to update a book's details.
+    /// </summary>
+    /// <param name="request">The request containing the book ID and updated details.</param>
+    /// <param name="cancellationToken">A token for cancelling the operation if necessary.</param>
     public async Task Handle(Request request, CancellationToken cancellationToken)
     {
       var book = await _bookRepository.Table

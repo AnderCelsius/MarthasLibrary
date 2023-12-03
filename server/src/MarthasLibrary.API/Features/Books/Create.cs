@@ -7,20 +7,55 @@ using MediatR;
 using System.Text.RegularExpressions;
 
 namespace MarthasLibrary.API.Features.Books;
+
+/// <summary>
+/// Provides functionality for creating a new book entry in the library.
+/// </summary>
+/// <remarks>
+/// This static class contains nested types to handle the request, response, and logic for creating a new book.
+/// </remarks>
 public static class Create
 {
+  /// <summary>
+  /// Represents a request to create a new book.
+  /// </summary>
+  /// <param name="Title">The title of the book.</param>
+  /// <param name="Author">The author of the book.</param>
+  /// <param name="Isbn">The ISBN of the book.</param>
+  /// <param name="PublishedDate">The publication date of the book.</param>
   public record Request(string Title, string Author, string Isbn, DateTimeOffset PublishedDate) : IRequest<Response>;
 
+  /// <summary>
+  /// Represents the response after creating a new book.
+  /// </summary>
+  /// <param name="Id">The unique identifier of the created book.</param>
+  /// <param name="Title">The title of the created book.</param>
   public record Response(
     Guid Id,
     string Title);
 
+  /// <summary>
+  /// Handles the process of creating a new book.
+  /// </summary>
+  /// <remarks>
+  /// This class is responsible for validating the book information, checking for duplicates, and adding the new book to the repository.
+  /// </remarks>
+  /// <param name="bookRepository">Repository for accessing book entities.</param>
+  /// <param name="mapper">An instance of AutoMapper for object mapping.</param>
+  /// <exception cref="ArgumentException">Thrown when a null argument is passed for the book repository or the mapper.</exception>
+  /// <exception cref="BookWithIsbnAlreadyExistsException">Thrown when a book with the same ISBN already exists.</exception>
   public class Handler(IGenericRepository<Book> bookRepository, IMapper mapper) : IRequestHandler<Request, Response>
   {
     private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
 
     private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
+    /// <summary>
+    /// Handles the incoming request to create a new book.
+    /// </summary>
+    /// <param name="request">The request to create a new book.</param>
+    /// <param name="cancellationToken">A token for cancelling the operation if necessary.</param>
+    /// <returns>A task representing the asynchronous operation, with a result of the response containing the details of the created book.</returns>
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
       var potentialDuplicate = _bookRepository.Table.SingleOrDefault(user => user.Isbn == request.Isbn);
@@ -37,6 +72,12 @@ public static class Create
     }
   }
 
+  /// <summary>
+  /// Validator for the book creation request.
+  /// </summary>
+  /// <remarks>
+  /// This class provides validation rules for book creation requests, including title, author, ISBN, and publication date.
+  /// </remarks>
   public class CreateBookValidator : AbstractValidator<Request>
   {
     public CreateBookValidator()
