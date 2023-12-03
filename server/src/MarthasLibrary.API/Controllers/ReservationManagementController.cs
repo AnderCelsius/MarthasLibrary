@@ -30,7 +30,7 @@ namespace MarthasLibrary.API.Controllers
       try
       {
         var response = await mediator.Send(request, cancellationToken);
-        return Created(new Uri($"/books/reserve/{response.ReservationId}", UriKind.Relative), response);
+        return Created(new Uri($"/books/reserve/{response.ReservationDetails.ReservationId}", UriKind.Relative), response);
       }
       catch (BookNotAvailableException e)
       {

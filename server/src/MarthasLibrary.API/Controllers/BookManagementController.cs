@@ -8,9 +8,10 @@ namespace MarthasLibrary.API.Controllers
 {
   [Route("api/books")]
   [ApiController]
-  [Authorize]
+  //[Authorize]
   public class BookManagementController(IMediator mediator) : ControllerBase
   {
+    [AllowAnonymous]
     [HttpGet(Name = "GetAllBooks")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

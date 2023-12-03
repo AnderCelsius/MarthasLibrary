@@ -8,7 +8,7 @@ namespace MarthasLibrary.API.Features.Borrow;
 
 public static class ReturnBook
 {
-  public record Request(Guid CustomerId, Guid BookId) : IRequest;
+  public record Request(Guid BorrowId) : IRequest;
 
   public class Handler(IGenericRepository<Book> bookRepository,
       IGenericRepository<Core.Entities.Borrow> borrowRepository, ILogger<Handler> logger)
@@ -29,12 +29,12 @@ public static class ReturnBook
         await _bookRepository.BeginTransactionAsync(cancellationToken);
 
         var borrowedBook = await _borrowRepository.Table
-          .SingleOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
+          .SingleOrDefaultAsync(borrow => borrow.Id == request.BorrowId, cancellationToken);
 
         if (borrowedBook is null)
         {
           throw new BorrowNotFoundException(
-            $"Couldn't find any borrowing with for book-id: {request.BookId} and customer: {request.CustomerId}.");
+            $"Couldn't find any borrowing with id: {request.BorrowId}.");
         }
 
         _borrowRepository.Delete(borrowedBook);

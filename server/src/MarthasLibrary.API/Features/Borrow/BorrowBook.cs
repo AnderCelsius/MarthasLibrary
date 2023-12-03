@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MarthasLibrary.API.Features.Exceptions;
+using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Enums;
 using MarthasLibrary.Core.Repository;
@@ -12,8 +13,7 @@ public static class BorrowBook
 {
   public record Request(Guid CustomerId, Guid BookId) : IRequest<Response>;
 
-  public record Response(
-    Guid BorrowId);
+  public record Response(BorrowDetails BorrowDetails);
 
   public class Handler(IGenericRepository<Book> bookRepository, IMapper mapper,
       IGenericRepository<Core.Entities.Borrow> borrowRepository, ILogger<Handler> logger)

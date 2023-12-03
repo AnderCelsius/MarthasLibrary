@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MarthasLibrary.API.Features.Exceptions;
+using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
@@ -12,8 +13,7 @@ public static class MakeReservation
 {
   public record Request(Guid CustomerId, Guid BookId) : IRequest<Response>;
 
-  public record Response(
-    Guid ReservationId);
+  public record Response(ReservationDetails ReservationDetails);
 
   public class Handler(IGenericRepository<Book> bookRepository, IMapper mapper,
       IGenericRepository<Reservation> reservationRepository, ILogger<Handler> logger)
@@ -32,14 +32,22 @@ public static class MakeReservation
         var book = await _bookRepository.Table.FirstOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
         if (book is null)
         {
-          throw new BookNotAvailableException("Book is not available.");
+          throw new BookNotFoundException($"Could not find book with Id: {request.BookId}");
         }
 
         var reservation = Reservation.CreateInstance(request.BookId, request.CustomerId);
         await _reservationRepository.InsertAsync(reservation);
         await _reservationRepository.SaveAsync(cancellationToken);
 
-        book.MarkAsReserved();
+        try
+        {
+          book.MarkAsReserved();
+        }
+        catch
+        {
+          _logger.LogWarning("Invalid operation.");
+          throw new BookNotAvailableException("Book is already reserved.");
+        }
         try
         {
           await _bookRepository.SaveAsync(cancellationToken);
@@ -54,7 +62,7 @@ public static class MakeReservation
 
         return _mapper.Map<Response>(book);
       }
-      catch
+      catch (DbUpdateConcurrencyException)
       {
         _logger.LogError("Transaction failed... Could not make reservation.");
         await _bookRepository.RollbackTransactionAsync(cancellationToken);

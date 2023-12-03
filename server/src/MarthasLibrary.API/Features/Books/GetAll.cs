@@ -23,7 +23,7 @@ public static class GetAll
     {
       var books = await _bookRepository.TableNoTracking.ToListAsync(cancellationToken);
 
-      return _mapper.Map<Response>(books.AsReadOnly());
+      return _mapper.Map<Response>(books);
     }
   }
 }

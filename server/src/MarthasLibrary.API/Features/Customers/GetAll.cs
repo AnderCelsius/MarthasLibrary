@@ -30,7 +30,7 @@ public static class GetAll
         .AsNoTracking()
         .ToListAsync(cancellationToken);
 
-      return new Response(customerDetails.AsReadOnly());
+      return new Response(customerDetails);
     }
   }
 }
