@@ -20,11 +20,27 @@ namespace MarthasLibrary.API.Controllers
 
     [HttpGet("/reserve/{customerId}", Name = "GetReservationsForCustomer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetReservationByCustomerId.Response>> GetReservationsForCustomer(
+    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsForCustomer(
       [FromRoute] Guid customerId,
       CancellationToken cancellationToken)
     {
-      return Ok(await mediator.Send(new GetReservationByCustomerId.Request(customerId), cancellationToken));
+      return Ok(await mediator.Send(new GetReservationsByCustomerId.Request(customerId), cancellationToken));
+    }
+
+    [HttpGet("/reservation/{reservationId}", Name = "GetReservationById")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetById.Response>> GetReservationById(
+      [FromRoute] Guid reservationId,
+      CancellationToken cancellationToken)
+    {
+      try
+      {
+        return Ok(await mediator.Send(new GetById.Request(reservationId), cancellationToken));
+      }
+      catch (ReservationNotFoundException e)
+      {
+        return BadRequest(e.Message);
+      }
     }
 
     [HttpPost("/reserve", Name = "ReserveBook")]
@@ -39,7 +55,8 @@ namespace MarthasLibrary.API.Controllers
       try
       {
         var response = await mediator.Send(request, cancellationToken);
-        return Created(new Uri($"/books/reserve/{response.ReservationDetails.ReservationId}", UriKind.Relative), response);
+        return Created(new Uri($"/books/reserve/{response.ReservationDetails.ReservationId}", UriKind.Relative),
+          response);
       }
       catch (BookNotAvailableException e)
       {

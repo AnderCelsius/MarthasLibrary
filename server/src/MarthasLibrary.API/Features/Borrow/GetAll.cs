@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MarthasLibrary.API.Shared;
+using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,9 @@ public static class GetAll
   public record Response(IReadOnlyCollection<BorrowDetails> Books);
 
   public class Handler
-    (IMapper mapper, IGenericRepository<Core.Entities.Borrow> borrowRepository) : IRequestHandler<Request, Response>
+  (IMapper mapper, IGenericRepository<Core.Entities.Borrow> borrowRepository,
+    IGenericRepository<Book> bookRepository) : BaseBorrowHandler(bookRepository, mapper),
+    IRequestHandler<Request, Response>
   {
     private readonly IGenericRepository<Core.Entities.Borrow> _borrowRepository =
       borrowRepository ?? throw new ArgumentException(nameof(borrowRepository));
@@ -22,9 +25,11 @@ public static class GetAll
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var books = await _borrowRepository.TableNoTracking.ToListAsync(cancellationToken);
+      var borrows = await _borrowRepository.TableNoTracking.ToListAsync(cancellationToken);
 
-      return _mapper.Map<Response>(books);
+      var borrowDetails = await GetBorrowDetails(borrows, cancellationToken);
+
+      return _mapper.Map<Response>(borrowDetails);
     }
   }
 }

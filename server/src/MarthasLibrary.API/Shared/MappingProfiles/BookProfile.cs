@@ -14,6 +14,7 @@ public class BookProfile : Profile
       .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
       .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
       .ForMember(dest => dest.Isbn, opt => opt.MapFrom(src => src.Isbn))
+      .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
       .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate));
 
     // Mapping from a collection of Book entities to the GetAll.Response record.

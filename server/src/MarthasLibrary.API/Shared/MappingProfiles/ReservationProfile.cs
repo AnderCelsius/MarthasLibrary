@@ -21,6 +21,7 @@ public class ReservationProfile : Profile
         return new ReservationDetails(
           reservation.Id,
           reservation.BookId,
+          reservation.CustomerId,
           title,
           reservation.ReservedDate,
           reservation.ExpiryDate ?? default(DateTimeOffset));
