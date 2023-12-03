@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarthasLibrary.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20231203154631_InitializeDb")]
+    [Migration("20231203170326_InitializeDb")]
     partial class InitializeDb
     {
         /// <inheritdoc />
@@ -30,6 +30,9 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AddressType")
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()

@@ -5,9 +5,9 @@ public record CustomerDetails(
   string Email,
   string FirstName,
   string LastName,
-  CustomerDetails.AddressDetails PrimaryAddress,
-  string PhoneNumber,
-  DateTimeOffset CreatedAt // Date of account creation
+  CustomerDetails.AddressDetails? PrimaryAddress,
+  string? PhoneNumber,
+  DateTimeOffset CreatedAt
 )
 {
   public record AddressDetails(

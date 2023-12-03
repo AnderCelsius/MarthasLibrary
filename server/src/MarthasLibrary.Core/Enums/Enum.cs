@@ -15,5 +15,5 @@ public enum NotificationStatus
 
 public enum AddressType
 {
-  Primary = 1
+  Primary = 0
 }

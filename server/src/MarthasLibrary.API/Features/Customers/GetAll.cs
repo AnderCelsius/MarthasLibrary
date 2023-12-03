@@ -24,13 +24,11 @@ public static class GetAll
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      // Use AutoMapper's ProjectTo to project directly to the DTO
-      var customerDetailsQuery = _customerRepository.TableNoTracking
+      var customerDetails = await _customerRepository.TableNoTracking
         .Where(c => c.IsActive)
         .ProjectTo<CustomerDetails>(_mapper.ConfigurationProvider)
-        .AsNoTracking();
-
-      var customerDetails = await customerDetailsQuery.ToListAsync(cancellationToken);
+        .AsNoTracking()
+        .ToListAsync(cancellationToken);
 
       return new Response(customerDetails.AsReadOnly());
     }
