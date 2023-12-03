@@ -6,15 +6,8 @@ namespace MarthasLibrary.API.Controllers
 {
   [Route("api/books/reserve")]
   [ApiController]
-  public class ReservationManagementController : ControllerBase
+  public class ReservationManagementController(IMediator mediator) : ControllerBase
   {
-    private readonly IMediator _mediator;
-
-    public ReservationManagementController(IMediator mediator)
-    {
-      _mediator = mediator;
-    }
-
     [HttpPost(Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -25,12 +18,30 @@ namespace MarthasLibrary.API.Controllers
     {
       try
       {
-        var response = await _mediator.Send(request, cancellationToken);
+        var response = await mediator.Send(request, cancellationToken);
         return Created(new Uri($"/books/reserve/{response.ReservationId}", UriKind.Relative), response);
       }
       catch (BookNotAvailableException e)
       {
         return BadRequest(e.Message);
+      }
+    }
+
+    [HttpDelete("{reservationId}", Name = "CancelReservation")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Unit>> CancelReservation(
+      [FromRoute] Guid reservationId,
+      CancellationToken cancellationToken)
+    {
+      try
+      {
+        await mediator.Send(new CancelReservation.Request(reservationId), cancellationToken);
+        return NoContent();
+      }
+      catch (ReservationNotFoundException ex)
+      {
+        return NotFound(ex.Message);
       }
     }
   }

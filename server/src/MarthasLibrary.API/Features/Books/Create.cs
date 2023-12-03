@@ -14,17 +14,11 @@ public static class Create
     Guid Id,
     string Title);
 
-  public class Handler : IRequestHandler<Request, Response>
+  public class Handler(IGenericRepository<Book> bookRepository, IMapper mapper) : IRequestHandler<Request, Response>
   {
-    private readonly IGenericRepository<Book> _bookRepository;
+    private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
 
-    private readonly IMapper _mapper;
-
-    public Handler(IGenericRepository<Book> bookRepository, IMapper mapper)
-    {
-      _bookRepository = bookRepository;
-      _mapper = mapper;
-    }
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {

@@ -15,8 +15,8 @@ public static class GetById
 
   public class Handler(IGenericRepository<Book> bookRepository, IMapper mapper) : IRequestHandler<Request, Response>
   {
-    private readonly IGenericRepository<Book> _bookRepository = bookRepository;
-    private readonly IMapper _mapper = mapper;
+    private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {

@@ -20,7 +20,7 @@ public static class UpdateById
 
   public class Handler(IGenericRepository<Book> bookRepository) : IRequestHandler<Request>
   {
-    private readonly IGenericRepository<Book> _bookRepository = bookRepository;
+    private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
 
     public async Task Handle(Request request, CancellationToken cancellationToken)
     {
