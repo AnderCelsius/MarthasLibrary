@@ -21,7 +21,7 @@ public static class GetAll
   /// <remarks>
   /// This record is a marker type used to indicate a request for fetching all books in the library. It does not contain any properties.
   /// </remarks>
-  public record Request() : IRequest<Response>;
+  public record Request(int PageNumber, int PageSize) : IRequest<Response>;
 
   /// <summary>
   /// Represents the response containing all books.
@@ -43,7 +43,8 @@ public static class GetAll
   /// <exception cref="ArgumentException">Thrown when a null argument is passed for either the book repository or the mapper.</exception>
   public class Handler(IMapper mapper, IGenericRepository<Book> bookRepository) : IRequestHandler<Request, Response>
   {
-    private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
+    private readonly IGenericRepository<Book> _bookRepository =
+      bookRepository ?? throw new ArgumentException(nameof(bookRepository));
 
     private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
@@ -55,7 +56,10 @@ public static class GetAll
     /// <returns>A task representing the asynchronous operation, with a result of the response containing all book details.</returns>
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var books = await _bookRepository.TableNoTracking.ToListAsync(cancellationToken);
+      var books = await _bookRepository.TableNoTracking
+        .Skip((request.PageNumber - 1) * request.PageSize)
+        .Take(request.PageSize)
+        .ToListAsync(cancellationToken);
 
       return _mapper.Map<Response>(books);
     }

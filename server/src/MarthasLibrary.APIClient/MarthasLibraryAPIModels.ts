@@ -41,12 +41,90 @@ export interface Books_UpdateById_Request_UpdatedDetails {
     publishedDate: string;
 }
 
+export interface Borrow_BorrowBook_Request {
+    reservationId: string;
+}
+
+export interface Borrow_BorrowBook_Response {
+    borrowDetails: BorrowDetails;
+}
+
+export interface Borrow_GetAll_Response {
+    books: BorrowDetails[];
+}
+
+export interface Borrow_GetByCustomerId_Response {
+    reservations: BorrowDetails[];
+}
+
+export interface Customers_GetAll_Response {
+    customers: CustomerDetails[];
+}
+
+export interface Reservations_GetAll_Response {
+    books: ReservationDetails[];
+}
+
+export interface Reservations_GetById_Response {
+    reservation: ReservationDetails;
+}
+
+export interface Reservations_GetReservationsByCustomerId_Response {
+    reservations: ReservationDetails[];
+}
+
+export interface Reservations_MakeReservation_Request {
+    customerId: string;
+    bookId: string;
+}
+
+export interface Reservations_MakeReservation_Response {
+    reservationDetails: ReservationDetails;
+}
+
 export interface BookDetails {
     id: string;
     title: string;
     author: string;
     isbn: string;
+    status: string;
     publishedDate: string;
+}
+
+export interface BorrowDetails {
+    borrowId: string;
+    customerId: string;
+    bookId: string;
+    title: string;
+    borrowDate: string;
+    dueDate: string;
+}
+
+export interface CustomerDetails {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    primaryAddress?: AddressDetails | undefined;
+    phoneNumber?: string | undefined;
+    createdAt: string;
+}
+
+export interface AddressDetails {
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+}
+
+export interface ReservationDetails {
+    reservationId: string;
+    bookId: string;
+    customerId: string;
+    title: string;
+    reservedDate: string;
+    expiryDate: string;
 }
 
 export interface ProblemDetails {

@@ -5,12 +5,32 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Books": {
+    "/api/books": {
       "get": {
         "tags": [
-          "Books"
+          "BookManagement"
         ],
         "operationId": "GetAllBooks",
+        "parameters": [
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -56,7 +76,7 @@
       },
       "post": {
         "tags": [
-          "Books"
+          "BookManagement"
         ],
         "operationId": "CreateBook",
         "requestBody": {
@@ -154,10 +174,10 @@
         }
       }
     },
-    "/api/Books/search": {
+    "/api/books/search": {
       "get": {
         "tags": [
-          "Books"
+          "BookManagement"
         ],
         "operationId": "Search",
         "parameters": [
@@ -189,34 +209,14 @@
                 }
               }
             }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
-                }
-              }
-            }
           }
         }
       }
     },
-    "/api/Books/{bookId}": {
+    "/api/books/{bookId}": {
       "get": {
         "tags": [
-          "Books"
+          "BookManagement"
         ],
         "operationId": "GetBookById",
         "parameters": [
@@ -295,7 +295,7 @@
       },
       "put": {
         "tags": [
-          "Books"
+          "BookManagement"
         ],
         "operationId": "UpdateBookById",
         "parameters": [
@@ -405,6 +405,711 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "BookManagement"
+        ],
+        "operationId": "DeleteBook",
+        "parameters": [
+          {
+            "name": "bookId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/borrowed": {
+      "get": {
+        "tags": [
+          "BorrowManagement"
+        ],
+        "operationId": "GetAllBorrowedBooks",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetAll_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetAll_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetAll_Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/borrow": {
+      "post": {
+        "tags": [
+          "BorrowManagement"
+        ],
+        "operationId": "BorrowBook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_BorrowBook_Request"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_BorrowBook_Request"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_BorrowBook_Request"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_BorrowBook_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_BorrowBook_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_BorrowBook_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/borrow/history/{customerId}": {
+      "get": {
+        "tags": [
+          "BorrowManagement"
+        ],
+        "operationId": "GetBorrowingsByCustomerId",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/return/{borrowId}": {
+      "post": {
+        "tags": [
+          "BorrowManagement"
+        ],
+        "operationId": "ReturnBook",
+        "parameters": [
+          {
+            "name": "borrowId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers": {
+      "get": {
+        "tags": [
+          "CustomerManagement"
+        ],
+        "operationId": "GetAllCustomers",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Customers_GetAll_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Customers_GetAll_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Customers_GetAll_Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reservations": {
+      "get": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "GetAllReservations",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetAll_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetAll_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetAll_Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserve/{customerId}": {
+      "get": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "GetReservationsForCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reservation/{reservationId}": {
+      "get": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "GetReservationById",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetById_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetById_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetById_Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserve": {
+      "post": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "ReserveBook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_MakeReservation_Request"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_MakeReservation_Request"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_MakeReservation_Request"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_MakeReservation_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_MakeReservation_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_MakeReservation_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reserve/{reservationId}": {
+      "delete": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "CancelReservation",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -461,7 +1166,7 @@
           "books": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MarthasLibrary.API.SharedResponse.BookDetails"
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BookDetails"
             }
           }
         },
@@ -476,7 +1181,7 @@
           "book": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/MarthasLibrary.API.SharedResponse.BookDetails"
+                "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BookDetails"
               }
             ]
           }
@@ -492,7 +1197,7 @@
           "books": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MarthasLibrary.API.SharedResponse.BookDetails"
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BookDetails"
             }
           }
         },
@@ -523,12 +1228,167 @@
         },
         "additionalProperties": false
       },
-      "MarthasLibrary.API.SharedResponse.BookDetails": {
+      "MarthasLibrary.API.Features.Borrow_BorrowBook_Request": {
+        "required": [
+          "reservationId"
+        ],
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Borrow_BorrowBook_Response": {
+        "required": [
+          "borrowDetails"
+        ],
+        "type": "object",
+        "properties": {
+          "borrowDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Borrow_GetAll_Response": {
+        "required": [
+          "books"
+        ],
+        "type": "object",
+        "properties": {
+          "books": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response": {
+        "required": [
+          "reservations"
+        ],
+        "type": "object",
+        "properties": {
+          "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Customers_GetAll_Response": {
+        "required": [
+          "customers"
+        ],
+        "type": "object",
+        "properties": {
+          "customers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.CustomerDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Reservations_GetAll_Response": {
+        "required": [
+          "books"
+        ],
+        "type": "object",
+        "properties": {
+          "books": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.ReservationDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Reservations_GetById_Response": {
+        "required": [
+          "reservation"
+        ],
+        "type": "object",
+        "properties": {
+          "reservation": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarthasLibrary.API.Shared.ReservationDetails"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response": {
+        "required": [
+          "reservations"
+        ],
+        "type": "object",
+        "properties": {
+          "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.ReservationDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Reservations_MakeReservation_Request": {
+        "required": [
+          "bookId",
+          "customerId"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Reservations_MakeReservation_Response": {
+        "required": [
+          "reservationDetails"
+        ],
+        "type": "object",
+        "properties": {
+          "reservationDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarthasLibrary.API.Shared.ReservationDetails"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Shared.BookDetails": {
         "required": [
           "author",
           "id",
           "isbn",
           "publishedDate",
+          "status",
           "title"
         ],
         "type": "object",
@@ -546,7 +1406,154 @@
           "isbn": {
             "type": "string"
           },
+          "status": {
+            "type": "string"
+          },
           "publishedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Shared.BorrowDetails": {
+        "required": [
+          "bookId",
+          "borrowDate",
+          "borrowId",
+          "customerId",
+          "dueDate",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "borrowId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "borrowDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Shared.CustomerDetails": {
+        "required": [
+          "createdAt",
+          "email",
+          "firstName",
+          "id",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "primaryAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarthasLibrary.API.Shared.CustomerDetails.AddressDetails"
+              }
+            ],
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Shared.CustomerDetails.AddressDetails": {
+        "required": [
+          "city",
+          "country",
+          "state",
+          "street",
+          "zipCode"
+        ],
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "zipCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Shared.ReservationDetails": {
+        "required": [
+          "bookId",
+          "customerId",
+          "expiryDate",
+          "reservationId",
+          "reservedDate",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "reservedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiryDate": {
             "type": "string",
             "format": "date-time"
           }
@@ -587,12 +1594,31 @@
         "description": "Please enter a valid token",
         "scheme": "Bearer",
         "bearerFormat": "JWT"
+      },
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://localhost:5001/connect/authorize",
+            "tokenUrl": "https://localhost:5001/connect/token",
+            "scopes": {
+              "marthaslibraryapi.write": "Marthas Library Write",
+              "marthaslibraryapi.read": "Marthas Library Read"
+            }
+          }
+        }
       }
     }
   },
   "security": [
     {
       "Bearer": []
+    },
+    {
+      "oauth2": [
+        "marthaslibraryapi.read",
+        "marthaslibraryapi.write"
+      ]
     }
   ]
 }
