@@ -5,13 +5,13 @@ using MarthasLibrary.Core.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MarthasLibrary.API.Features.Borrow;
+namespace MarthasLibrary.API.Features.Reservations;
 
-public static class GetBorrowingsByCustomerId
+public static class GetAll
 {
-  public record Request(Guid CustomerId) : IRequest<Response>;
+  public record Request() : IRequest<Response>;
 
-  public record Response(IReadOnlyCollection<ReservationDetails> Reservations);
+  public record Response(IReadOnlyCollection<ReservationDetails> Books);
 
   public class Handler
   (IGenericRepository<Reservation> reservationRepository,
@@ -28,9 +28,7 @@ public static class GetBorrowingsByCustomerId
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var reservations = await _reservationRepository.TableNoTracking
-        .Where(r => r.Id == request.CustomerId)
-        .ToListAsync(cancellationToken);
+      var reservations = await _reservationRepository.TableNoTracking.ToListAsync(cancellationToken);
 
       var bookIds = reservations.Select(r => r.BookId).Distinct().ToList();
 
@@ -50,7 +48,7 @@ public static class GetBorrowingsByCustomerId
         return _mapper.Map(reservation, options);
       }).ToList();
 
-      return new Response(reservationDetails);
+      return _mapper.Map<Response>(reservationDetails);
     }
   }
 }

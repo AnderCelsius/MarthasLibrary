@@ -9,7 +9,16 @@ namespace MarthasLibrary.API.Controllers
   [ApiController]
   public class ReservationManagementController(IMediator mediator) : ControllerBase
   {
-    [HttpGet("{customerId}", Name = "GetReservationsForCustomer")]
+    [HttpGet("/reservations", Name = "GetAllReservations")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<GetAll.Response>> GetAllReservations(
+      CancellationToken cancellationToken)
+    {
+      return await mediator.Send(new GetAll.Request(), cancellationToken);
+    }
+
+    [HttpGet("/reserve/{customerId}", Name = "GetReservationsForCustomer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<GetReservationByCustomerId.Response>> GetReservationsForCustomer(
       [FromRoute] Guid customerId,
@@ -18,7 +27,7 @@ namespace MarthasLibrary.API.Controllers
       return Ok(await mediator.Send(new GetReservationByCustomerId.Request(customerId), cancellationToken));
     }
 
-    [HttpPost(Name = "ReserveBook")]
+    [HttpPost("/reserve", Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -43,7 +52,7 @@ namespace MarthasLibrary.API.Controllers
       }
     }
 
-    [HttpDelete("{reservationId}", Name = "CancelReservation")]
+    [HttpDelete("/reserve/{reservationId}", Name = "CancelReservation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Unit>> CancelReservation(

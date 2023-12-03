@@ -1,6 +1,7 @@
 ﻿using MarthasLibrary.API.Features.Borrow;
 using MarthasLibrary.API.Features.Exceptions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarthasLibrary.API.Controllers
@@ -9,6 +10,16 @@ namespace MarthasLibrary.API.Controllers
   [ApiController]
   public class BorrowManagementController(IMediator mediator) : ControllerBase
   {
+    [AllowAnonymous]
+    [HttpGet("/borrowed", Name = "GetAllBorrowedBooks")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<GetAll.Response>> GetAllBorrowedBooks(
+      CancellationToken cancellationToken)
+    {
+      return await mediator.Send(new GetAll.Request(), cancellationToken);
+    }
+
     [HttpPost("/borrow", Name = "BorrowBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -28,6 +39,18 @@ namespace MarthasLibrary.API.Controllers
       }
     }
 
+    [HttpGet("/borrow/history/{customerId}", Name = "GetBorrowingsByCustomerId")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetByCustomerId.Response>> GetBorrowingsByCustomerId(
+      [FromRoute] Guid customerId,
+      CancellationToken cancellationToken)
+    {
+      return Ok(await mediator.Send(new GetByCustomerId.Request(customerId), cancellationToken));
+    }
+
     [HttpPost("/return/{borrowId}", Name = "ReturnBook")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -45,6 +68,5 @@ namespace MarthasLibrary.API.Controllers
         return NotFound(ex.Message);
       }
     }
-
   }
 }
