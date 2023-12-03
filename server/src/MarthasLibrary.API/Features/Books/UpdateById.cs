@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;

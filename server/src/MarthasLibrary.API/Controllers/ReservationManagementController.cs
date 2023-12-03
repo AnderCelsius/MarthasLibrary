@@ -1,4 +1,5 @@
-﻿using MarthasLibrary.API.Features.Reservations;
+﻿using MarthasLibrary.API.Features.Exceptions;
+using MarthasLibrary.API.Features.Reservations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

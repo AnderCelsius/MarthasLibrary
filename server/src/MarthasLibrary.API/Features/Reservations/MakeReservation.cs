@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
@@ -21,6 +22,7 @@ public static class MakeReservation
     private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
     private readonly IGenericRepository<Reservation> _reservationRepository = reservationRepository ?? throw new ArgumentException(nameof(reservationRepository));
     private readonly ILogger<Handler> _logger = logger ?? throw new ArgumentException(nameof(logger));
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
       try
@@ -42,9 +44,9 @@ public static class MakeReservation
 
         await _bookRepository.CommitTransactionAsync(cancellationToken);
 
-        return mapper.Map<Response>(book);
+        return _mapper.Map<Response>(book);
       }
-      catch (Exception e)
+      catch
       {
         _logger.LogError("Transaction failed... Could not make reservation.");
         await _bookRepository.RollbackTransactionAsync(cancellationToken);

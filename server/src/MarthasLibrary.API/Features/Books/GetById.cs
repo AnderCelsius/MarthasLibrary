@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
