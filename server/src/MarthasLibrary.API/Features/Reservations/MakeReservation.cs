@@ -40,7 +40,15 @@ public static class MakeReservation
         await _reservationRepository.SaveAsync(cancellationToken);
 
         book.MarkAsReserved();
-        await _bookRepository.SaveAsync(cancellationToken);
+        try
+        {
+          await _bookRepository.SaveAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+          _logger.LogWarning("Concurrency conflict occurred when trying to reserve the book.");
+          throw new ConcurrencyConflictException("The book has been modified by another transaction.");
+        }
 
         await _bookRepository.CommitTransactionAsync(cancellationToken);
 

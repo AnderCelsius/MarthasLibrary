@@ -13,6 +13,7 @@ namespace MarthasLibrary.API.Controllers
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MakeReservation.Response>> ReserveBook(
         [FromBody] MakeReservation.Request request,
         CancellationToken cancellationToken)
@@ -25,6 +26,10 @@ namespace MarthasLibrary.API.Controllers
       catch (BookNotAvailableException e)
       {
         return BadRequest(e.Message);
+      }
+      catch (ConcurrencyConflictException)
+      {
+        return Conflict("The operation could not be completed due to a conflicting update by another user. Please reload the data and try again.");
       }
     }
 
