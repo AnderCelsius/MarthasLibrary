@@ -34,7 +34,7 @@ public static class BorrowBook
       {
         await _bookRepository.BeginTransactionAsync(cancellationToken);
 
-        var book = await _bookRepository.TableNoTracking
+        var book = await _bookRepository.Table
           .SingleOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
 
         if (book is null || book.Status != BookStatus.Available)
