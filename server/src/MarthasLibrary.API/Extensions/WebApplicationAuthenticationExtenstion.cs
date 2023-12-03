@@ -1,52 +1,52 @@
 ﻿using MarthasLibrary.Common.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+
 namespace MarthasLibrary.API.Extensions;
 
 public static class WebApplicationAuthenticationExtenstion
 {
   public static void AddExternalServiceAuthentication(
-      this WebApplicationBuilder builder)
+    this WebApplicationBuilder builder)
   {
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(opt =>
+    builder.Services.AddAuthentication("token")
+      .AddJwtBearer("token", opt =>
+      {
+        opt.RequireHttpsMetadata = false;
+        opt.Authority = builder.Configuration["DuendeISP:Authority"];
+        opt.Audience = builder.Configuration["DuendeISP:Audience"];
+        opt.TokenValidationParameters = new TokenValidationParameters
         {
-          opt.RequireHttpsMetadata = false;
-          opt.Authority = builder.Configuration["DuendeISP:Authority"];
-          opt.Audience = builder.Configuration["DuendeISP:Audience"];
-          opt.TokenValidationParameters = new TokenValidationParameters
-          {
-            NameClaimType = "given_name",
-            RoleClaimType = "role",
-            ValidTypes = new[] { "at+jwt" },
-          };
-          opt.ForwardDefaultSelector = ForwardReferenceToken();
-        })
-        .AddOAuth2Introspection(options =>
-        {
-          options.Authority = "https://localhost:44300";
-          options.ClientId = "imagegalleryapi";
-          options.ClientSecret = "apisecret";
-          options.NameClaimType = "given_name";
-          options.RoleClaimType = "role";
-        });
+          NameClaimType = "given_name",
+          RoleClaimType = "role",
+          ValidTypes = new[] { "at+jwt" },
+        };
+        opt.ForwardDefaultSelector = ForwardReferenceToken();
+      })
+      .AddOAuth2Introspection(options =>
+      {
+        options.Authority = builder.Configuration["DuendeISP:Authority"];
+        options.ClientId = builder.Configuration["DuendeISP:ClientId"];
+        options.ClientSecret = builder.Configuration["DuendeISP:ClientSecret"];
+        options.NameClaimType = "given_name";
+        options.RoleClaimType = "role";
+      });
 
     builder.Services.AddAuthorization(authorizationOptions =>
     {
       authorizationOptions.AddPolicy(
-              Policies.UserCanAddBook, AuthorizationPolicies.CanAddBook());
+        Policies.UserCanAddBook, AuthorizationPolicies.CanAddBook());
       authorizationOptions.AddPolicy(
-              Policies.ClientApplicationCanWrite,
-              policyBuilder => { policyBuilder.RequireClaim("scope", "marthaslibraryapi.write"); });
+        Policies.ClientApplicationCanWrite,
+        policyBuilder => { policyBuilder.RequireClaim("scope", "marthaslibraryapi.write"); });
       authorizationOptions.AddPolicy(
-              Policies.CanApproveBorrowRequest, policyBuilder =>
-              {
-              policyBuilder.RequireAuthenticatedUser()
-                      .RequireRole(Policies.IsAdmin);
-            });
+        Policies.CanApproveBorrowRequest, policyBuilder =>
+        {
+          policyBuilder.RequireAuthenticatedUser()
+            .RequireRole(Policies.IsAdmin);
+        });
     });
   }
 
@@ -55,9 +55,9 @@ public static class WebApplicationAuthenticationExtenstion
   /// </summary>
   /// <param name="introspectionScheme">Scheme name of the introspection handler</param>
   /// <returns></returns>
-  public static Func<HttpContext, string> ForwardReferenceToken(string introspectionScheme = "introspection")
+  public static Func<HttpContext, string?> ForwardReferenceToken(string? introspectionScheme = "introspection")
   {
-    string Select(HttpContext context)
+    string? Select(HttpContext context)
     {
       var (scheme, credential) = GetSchemeAndCredential(context);
       if (scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase) &&

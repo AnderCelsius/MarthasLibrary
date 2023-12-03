@@ -44,6 +44,26 @@ public static class Config
   public static IEnumerable<Client> Clients =>
     new Client[]
     {
+      // interactive ASP.NET Core Web App
+      new()
+      {
+        ClientId = "web",
+        ClientSecrets = { new Secret("secret".Sha256()) },
+
+        AllowedGrantTypes = GrantTypes.Code,
+            
+        // where to redirect to after login
+        RedirectUris = { "https://localhost:7209/signin-oidc" },
+
+        // where to redirect to after logout
+        PostLogoutRedirectUris = { "https://localhost:7209/signout-callback-oidc" },
+
+        AllowedScopes = new List<string>
+        {
+          IdentityServerConstants.StandardScopes.OpenId,
+          IdentityServerConstants.StandardScopes.Profile
+        }
+      },
       new()
       {
         ClientName = "Marthas Library Web App",
@@ -57,9 +77,7 @@ public static class Config
         {
           "https://localhost:7155/signin-oidc",
           "https://localhost:7155/swagger/oauth2-redirect.html",
-          "https://localhost:7155/signin-oidc",
           "https://oauth.pstmn.io/v1/callback",
-          "https://localhost:7155/swagger/oauth2-redirect.html"
         },
         PostLogoutRedirectUris =
         {

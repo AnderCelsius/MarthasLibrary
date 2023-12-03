@@ -46,7 +46,6 @@ public static class OpenIdConnectAuthentication
       config.Scope.Clear();
       config.Scope.Add(OpenIdConnectScope.OpenId);
       config.Scope.Add("profile");
-      config.Scope.Add("offline_access");
       config.Scope.Add("marthaslibraryapi.read");
       config.Scope.Add("marthaslibraryapi.write");
 

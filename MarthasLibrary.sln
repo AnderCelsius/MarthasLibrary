@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.Common", "se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.IdentityServer", "server\src\MarthasLibrary.IdentityServer\MarthasLibrary.IdentityServer.csproj", "{BF470C42-62D5-4307-8EE7-B5027177DE42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.Web", "client\MarthasLibrary.Web\MarthasLibrary.Web.csproj", "{73DB01EC-63D7-4E4D-B10E-D6E35A188672}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.Web", "client\MarthasLibrary.Web\MarthasLibrary.Web.csproj", "{73DB01EC-63D7-4E4D-B10E-D6E35A188672}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
