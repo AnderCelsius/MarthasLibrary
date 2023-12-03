@@ -4,9 +4,9 @@ using MarthasLibrary.Core.Entities;
 
 namespace MarthasLibrary.API.Shared.MappingProfiles;
 
-public class BooksProfile : Profile
+public class BookProfile : Profile
 {
-  public BooksProfile()
+  public BookProfile()
   {
     // Mapping from the Book entity to the GetAll.Response.Book record.
     CreateMap<Book, BookDetails>()

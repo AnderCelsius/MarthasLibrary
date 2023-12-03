@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
@@ -11,19 +12,27 @@ public static class GetAll
 {
   public record Request() : IRequest<Response>;
 
-  public record Response(IReadOnlyCollection<BookDetails> Books);
+  public record Response(IReadOnlyCollection<CustomerDetails> Customers);
 
-  public class Handler(IMapper mapper, IGenericRepository<Book> bookRepository) : IRequestHandler<Request, Response>
+  public class Handler
+    (IMapper mapper, IGenericRepository<Customer> customerRepository) : IRequestHandler<Request, Response>
   {
-    private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
+    private readonly IGenericRepository<Customer> _customerRepository =
+      customerRepository ?? throw new ArgumentException(nameof(customerRepository));
 
     private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var books = await _bookRepository.TableNoTracking.ToListAsync(cancellationToken);
+      // Use AutoMapper's ProjectTo to project directly to the DTO
+      var customerDetailsQuery = _customerRepository.TableNoTracking
+        .Where(c => c.IsActive)
+        .ProjectTo<CustomerDetails>(_mapper.ConfigurationProvider)
+        .AsNoTracking();
 
-      return _mapper.Map<Response>(books);
+      var customerDetails = await customerDetailsQuery.ToListAsync(cancellationToken);
+
+      return new Response(customerDetails.AsReadOnly());
     }
   }
 }

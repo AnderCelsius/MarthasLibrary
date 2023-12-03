@@ -4,9 +4,9 @@ using MarthasLibrary.Core.Entities;
 
 namespace MarthasLibrary.API.Shared.MappingProfiles;
 
-public class ReservationsProfile : Profile
+public class ReservationProfile : Profile
 {
-  public ReservationsProfile()
+  public ReservationProfile()
   {
     CreateMap<Reservation, MakeReservation.Response>()
       .ForCtorParam(nameof(MakeReservation.Response.ReservationId), op => op.MapFrom(x => x.Id));
