@@ -10,6 +10,10 @@ public class ReservationsProfile : Profile
   {
     CreateMap<Reservation, MakeReservation.Response>()
       .ForCtorParam(nameof(MakeReservation.Response.ReservationId), op => op.MapFrom(x => x.Id));
-  }
 
+    CreateMap<Reservation, ReservationDetails>()
+      .ForMember(dest => dest.Title,
+        opt => opt.MapFrom((_, _, _, context) =>
+          context.Items["Title"] as string ?? string.Empty));
+  }
 }

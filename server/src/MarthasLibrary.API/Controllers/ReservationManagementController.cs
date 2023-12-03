@@ -9,14 +9,23 @@ namespace MarthasLibrary.API.Controllers
   [ApiController]
   public class ReservationManagementController(IMediator mediator) : ControllerBase
   {
+    [HttpGet("{customerId}", Name = "GetReservationsForCustomer")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetReservationByCustomerId.Response>> GetReservationsForCustomer(
+      [FromRoute] Guid customerId,
+      CancellationToken cancellationToken)
+    {
+      return Ok(await mediator.Send(new GetReservationByCustomerId.Request(customerId), cancellationToken));
+    }
+
     [HttpPost(Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MakeReservation.Response>> ReserveBook(
-        [FromBody] MakeReservation.Request request,
-        CancellationToken cancellationToken)
+      [FromBody] MakeReservation.Request request,
+      CancellationToken cancellationToken)
     {
       try
       {
@@ -29,7 +38,8 @@ namespace MarthasLibrary.API.Controllers
       }
       catch (ConcurrencyConflictException)
       {
-        return Conflict("The operation could not be completed due to a conflicting update by another user. Please reload the data and try again.");
+        return Conflict(
+          "The operation could not be completed due to a conflicting update by another user. Please reload the data and try again.");
       }
     }
 
