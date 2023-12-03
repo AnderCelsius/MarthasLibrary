@@ -19,6 +19,15 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     builder.Property(c => c.IsActive)
       .IsRequired();
 
+    builder.Property(c => c.IdentityUserId)
+      .IsRequired();
+    builder.HasIndex(c => c.IdentityUserId)
+      .IsUnique();
+
+    builder.Property(c => c.Email).IsRequired();
+    builder.HasIndex(c => c.Email)
+      .IsUnique();
+
     builder.HasMany(c => c.Addresses)
       .WithOne()
       .HasForeignKey(nameof(Address.CustomerId))
@@ -28,6 +37,10 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
       .IsRequired();
 
     builder.Property(c => c.UpdatedAt)
-      .IsRequired();
+      .IsRequired(false);
+
+    builder.Property(c => c.PhoneNumber);
+    builder.HasIndex(c => c.PhoneNumber)
+      .IsUnique();
   }
 }

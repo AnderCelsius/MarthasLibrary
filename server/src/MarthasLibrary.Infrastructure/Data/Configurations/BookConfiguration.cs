@@ -13,9 +13,15 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
       .IsRequired()
       .HasMaxLength(250);
 
+    builder
+      .HasIndex(b => b.Title);
+
     builder.Property(b => b.Author)
       .IsRequired()
       .HasMaxLength(100);
+
+    builder
+      .HasIndex(b => b.Author);
 
     builder.Property(b => b.Isbn)
       .IsRequired()
@@ -33,6 +39,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
       .IsRequired();
 
     builder.Property(b => b.UpdatedAt)
+      .IsRequired();
+
+    builder.Property(b => b.BookStatus)
       .IsRequired();
 
     builder.Property(b => b.PublishedDate).HasColumnType("datetimeoffset");

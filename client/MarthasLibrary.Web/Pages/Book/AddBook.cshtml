@@ -1,0 +1,19 @@
+﻿@page
+@model MarthasLibrary.Web.Pages.Book.AddBookModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<form method="post" class="form-horizontal" role="form">
+  Title:
+  <input asp-for="Book.Title" />
+  
+  Author:
+  <input asp-for="Book.Author" />
+  
+  Isbn:
+  <input asp-for="Book.Isbn" />
+  
+  Published Date:
+  <input asp-for="Book.PublishedDate" type="datetime-local"/>
+
+  <input type="submit" />
+</form>

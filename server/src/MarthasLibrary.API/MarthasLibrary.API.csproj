@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.1.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.0" />
@@ -22,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MarthasLibrary.Application\MarthasLibrary.Application.csproj" />
     <ProjectReference Include="..\MarthasLibrary.APIClient\MarthasLibrary.APIClient.csproj" />
+    <ProjectReference Include="..\MarthasLibrary.Common\MarthasLibrary.Common.csproj" />
     <ProjectReference Include="..\MarthasLibrary.Infrastructure\MarthasLibrary.Infrastructure.csproj" />
   </ItemGroup>
 
