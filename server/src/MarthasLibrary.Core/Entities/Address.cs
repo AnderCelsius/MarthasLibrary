@@ -12,8 +12,8 @@ public class Address : IAuditableBase
     State = state;
     Country = country;
     ZipCode = zipCode;
-    CreatedAt = DateTime.Now;
-    UpdatedAt = DateTime.Now;
+    CreatedAt = DateTimeOffset.UtcNow;
+    UpdatedAt = DateTimeOffset.UtcNow;
   }
 
   private Address(Guid customerId, string street, string city, string state, string country, string zipCode,

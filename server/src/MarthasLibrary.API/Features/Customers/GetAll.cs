@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace MarthasLibrary.API.Features.Customers;
 
