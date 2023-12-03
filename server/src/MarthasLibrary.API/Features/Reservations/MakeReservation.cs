@@ -18,33 +18,36 @@ public static class MakeReservation
       IGenericRepository<Reservation> reservationRepository, ILogger<Handler> logger)
     : IRequestHandler<Request, Response>
   {
+    private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
+    private readonly IGenericRepository<Reservation> _reservationRepository = reservationRepository ?? throw new ArgumentException(nameof(reservationRepository));
+    private readonly ILogger<Handler> _logger = logger ?? throw new ArgumentException(nameof(logger));
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
       try
       {
         await bookRepository.BeginTransactionAsync(cancellationToken);
 
-        var book = await bookRepository.Table.FirstOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
+        var book = await _bookRepository.Table.FirstOrDefaultAsync(book => book.Id == request.BookId, cancellationToken);
         if (book is null)
         {
           throw new BookNotAvailableException("Book is not available.");
         }
 
         var reservation = Reservation.CreateInstance(request.BookId, request.CustomerId);
-        await reservationRepository.InsertAsync(reservation);
-        await reservationRepository.SaveAsync(cancellationToken);
+        await _reservationRepository.InsertAsync(reservation);
+        await _reservationRepository.SaveAsync(cancellationToken);
 
         book.MarkAsReserved();
-        await bookRepository.SaveAsync(cancellationToken);
+        await _bookRepository.SaveAsync(cancellationToken);
 
-        await bookRepository.CommitTransactionAsync(cancellationToken);
+        await _bookRepository.CommitTransactionAsync(cancellationToken);
 
         return mapper.Map<Response>(book);
       }
       catch (Exception e)
       {
-        logger.LogError("Transaction failed... Could not make reservation.");
-        await bookRepository.RollbackTransactionAsync(cancellationToken);
+        _logger.LogError("Transaction failed... Could not make reservation.");
+        await _bookRepository.RollbackTransactionAsync(cancellationToken);
         throw;
       }
     }
