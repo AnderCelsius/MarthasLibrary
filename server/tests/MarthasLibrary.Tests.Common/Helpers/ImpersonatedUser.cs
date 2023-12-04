@@ -6,7 +6,8 @@ using System.Text.Encodings.Web;
 
 namespace MarthasLibrary.Tests.Common.Helpers;
 
-public class ImpersonatedUser : AuthenticationHandler<ImpersonatedAuthenticationSchemeOptions>
+
+public abstract class ImpersonatedUser : AuthenticationHandler<ImpersonatedAuthenticationSchemeOptions>
 {
     public ImpersonatedUser(IOptionsMonitor<ImpersonatedAuthenticationSchemeOptions> options,
         ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
@@ -25,4 +26,9 @@ public class ImpersonatedUser : AuthenticationHandler<ImpersonatedAuthentication
 
         return Task.FromResult(result);
     }
+}
+
+public class ImpersonatedAuthenticationSchemeOptions : AuthenticationSchemeOptions
+{
+    public string OriginalScheme { get; set; } = "";
 }

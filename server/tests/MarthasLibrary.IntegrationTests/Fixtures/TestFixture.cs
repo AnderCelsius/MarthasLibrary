@@ -1,16 +1,17 @@
 using MarthasLibrary.Infrastructure.Data;
 using MarthasLibrary.IntegrationTests.Utilities;
+using MarthasLibrary.Tests.Common.Helpers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
+using System.Text.Encodings.Web;
 using WireMock.Server;
 
 namespace MarthasLibrary.IntegrationTests.Fixtures;
@@ -39,41 +40,48 @@ public class TestFixture : IDisposable
           .ConfigureServices(services =>
           {
               // Remove the existing DbContext configuration
-                var dbContextDescriptor = services.SingleOrDefault(
-              d => d.ServiceType ==
-                   typeof(DbContextOptions<LibraryDbContext>));
+              var dbContextDescriptor = services.SingleOrDefault(
+            d => d.ServiceType ==
+                 typeof(DbContextOptions<LibraryDbContext>));
 
-                if (dbContextDescriptor != null)
-                {
-                    services.Remove(dbContextDescriptor);
-                }
+              if (dbContextDescriptor != null)
+              {
+                  services.Remove(dbContextDescriptor);
+              }
 
-                services.AddDbContextFactory<LibraryDbContext>(options => { options.UseInMemoryDatabase("TestDatabase"); });
+              services.AddDbContextFactory<LibraryDbContext>(options => { options.UseInMemoryDatabase("TestDatabase"); });
 
-                services.AddAuthentication("TestScheme")
+              // by default the OIDC auth scheme is intercepted and an auto-failing handler is returned,
+              //  this ensures we don't accidentally call the discovery URL
+              // CreateLoggedInClient will replace this provider with a different interceptor, last one in wins
+              services.AddTransient<IAuthenticationSchemeProvider, AutoFailSchemeProvider>();
+              services.AddAuthentication(AutoFailSchemeProvider.AutoFailScheme)
+                  .AddScheme<AutoFailOptions, AutoFail>(AutoFailSchemeProvider.AutoFailScheme, null);
+
+              services.AddAuthentication("TestScheme")
               .AddJwtBearer("TestScheme", opt =>
               {
                   // Configure to use the mock server and test credentials
-                    opt.RequireHttpsMetadata = false;
-                    opt.Authority = MockServer.Urls[0]; // Mock IdentityServer URL
-                    opt.Audience = "marthaslibraryapi";
+                  opt.RequireHttpsMetadata = false;
+                  opt.Authority = MockServer.Urls[0]; // Mock IdentityServer URL
+                  opt.Audience = "marthaslibraryapi";
                   // ... other options as necessary
-                });
+              });
               // Mock the HttpClient to include the bearer token from WireMock
-                services.AddHttpClient("TestClient",
-              client =>
-              {
-                    client.DefaultRequestHeaders.Authorization =
-                  new AuthenticationHeaderValue("Bearer", WireMockAuthenticationExtensions.BearerToken);
-                });
-            })
+              services.AddHttpClient("TestClient",
+            client =>
+            {
+                client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", WireMockAuthenticationExtensions.BearerToken);
+            });
+          })
           .UseConfiguration(config);
         });
 
         Server = _applicationFactory.Server;
-        Client = _applicationFactory.CreateClient();
+        Client = CreateLoggedInClient<GeneralUser>(ConfigurationAndOptions.DefaultOptions);
         Client.DefaultRequestHeaders.Authorization =
-          new AuthenticationHeaderValue("Bearer", GetMockJwtToken());
+          new AuthenticationHeaderValue("Bearer", TokenGeneratorHelper.GetMockJwtToken());
 
         InitializeDatabase();
     }
@@ -102,49 +110,51 @@ public class TestFixture : IDisposable
         dbContext.Database.EnsureDeleted();
     }
 
-
-    public LibraryDbContext GetDbContext()
+    /// <summary>
+    /// This configures the "InterceptedScheme" to return a particular type of user, which we can also enrich with extra
+    /// parameters/options for use in custom Claims
+    /// </summary>
+    /// <remarks>
+    /// Adding a new user type:
+    ///   2. Add a new helper method with appropriate args typed to the new class (example above)
+    /// </remarks>
+    public HttpClient CreateLoggedInClient<T>(WebApplicationFactoryClientOptions options)
+        where T : GeneralUser
     {
-        var dbContextFactory = Server.Services
-          .GetRequiredService<IDbContextFactory<LibraryDbContext>>();
-        return dbContextFactory.CreateDbContext();
+        var client = _applicationFactory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                    {
+                        var authServiceDescriptor = services.SingleOrDefault(
+                            d => d.ServiceType == typeof(IAuthenticationSchemeProvider)
+                                 && d.ServiceType.BaseType == typeof(AutoFailSchemeProvider));
+
+                        if (authServiceDescriptor is not null)
+                            services.Remove(authServiceDescriptor);
+
+                        // configure the intercepting provider
+                        services.AddTransient<IAuthenticationSchemeProvider, InterceptOidcAuthenticationSchemeProvider>();
+                        services.AddTransient<IAuthenticationService, MockAuthenticationService>();
+
+                        // Add a "Test" scheme in to process the auth instead, using the provided user type
+                        services.AddAuthentication(InterceptOidcAuthenticationSchemeProvider.InterceptedScheme)
+                            .AddScheme<ImpersonatedAuthenticationSchemeOptions, T>("InterceptedScheme", options =>
+                            {
+                                options.OriginalScheme = "oidc";
+                            });
+                    })
+                    .UseConfiguration(ConfigurationAndOptions.GetConfiguration());
+            })
+            .CreateClient(options);
+
+        return client;
     }
 
-    private string GetMockJwtToken()
+    public class GeneralUser : ImpersonatedUser
     {
-        // Symmetric security key
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Your-Secret-Key-Here"));
-
-        // Signing credentials
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        // Claims for the token
-        var claims = new[]
-        {
-      new Claim(JwtRegisteredClaimNames.Sub, "test-user"),
-      new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-      new Claim("role", "User"),
-      // Add other claims as needed for your testing purposes
-    };
-
-        // Token descriptor
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1), // Token expiration time
-            SigningCredentials = credentials,
-            Issuer = "https://mocked-issuer.com",
-            Audience = "marthaslibraryapi",
-        };
-
-        // Token handler
-        var tokenHandler = new JwtSecurityTokenHandler();
-
-        // Create token
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-        // Return serialized token
-        return tokenHandler.WriteToken(token);
+        public GeneralUser(IOptionsMonitor<ImpersonatedAuthenticationSchemeOptions> options,
+            ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+            : base(options, logger, encoder, clock)
+        { }
     }
-
 }
