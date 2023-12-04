@@ -41,7 +41,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
     builder.Property(b => b.UpdatedAt)
       .IsRequired();
 
-    builder.Property(b => b.BookStatus)
+    builder.Property(b => b.Status)
       .IsRequired();
 
     builder.Property(b => b.PublishedDate).HasColumnType("datetimeoffset");

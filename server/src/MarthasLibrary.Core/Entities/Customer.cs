@@ -2,7 +2,7 @@
 
 public class Customer : IAuditableBase
 {
-    public Customer(string firstName, string lastName, string email, string identityUserId)
+    private Customer(string firstName, string lastName, string email, string identityUserId)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -23,6 +23,11 @@ public class Customer : IAuditableBase
     public ICollection<Address> Addresses { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
+
+    public static Customer CreateInstance(string firstName, string lastName, string email, string identityUserId)
+    {
+        return new Customer(firstName, lastName, email, identityUserId);
+    }
 
     public void SetAsActive()
     {

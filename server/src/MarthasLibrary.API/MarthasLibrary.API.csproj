@@ -30,6 +30,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="MarthasLibrary.IntegrationTests" />
     <InternalsVisibleTo Include="MarthasLibrary.UnitTests" />
+    <InternalsVisibleTo Include="MarthasLibrary.Tests.Common" />
   </ItemGroup>
 
 </Project>

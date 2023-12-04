@@ -1,26 +1,31 @@
-﻿namespace MarthasLibrary.Core.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Reservation : IAuditableBase
+namespace MarthasLibrary.Core.Entities;
+
+public class Reservation
 {
-    public Guid Id { get; private set; }
-    public Guid BookId { get; private set; }
-    public Guid CustomerId { get; private set; }
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
+  public Guid Id { get; private set; }
+  public Guid BookId { get; private set; }
+  public Guid CustomerId { get; private set; }
+  public DateTimeOffset ReservedDate { get; set; }
+  public DateTimeOffset? ExpiryDate { get; set; }
+
+  [Timestamp]
+  public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 
 
-    public static Reservation CreateInstance(Guid bookId, Guid customerId)
+  public static Reservation CreateInstance(Guid bookId, Guid customerId)
+  {
+    if (string.IsNullOrWhiteSpace(bookId.ToString())) throw new ArgumentException(nameof(bookId));
+    if (string.IsNullOrWhiteSpace(customerId.ToString())) throw new ArgumentException(nameof(customerId));
+
+    return new Reservation
     {
-        if (string.IsNullOrWhiteSpace(bookId.ToString())) throw new ArgumentException(nameof(bookId));
-        if (string.IsNullOrWhiteSpace(customerId.ToString())) throw new ArgumentException(nameof(customerId));
-
-        return new Reservation
-        {
-            Id = Guid.NewGuid(),
-            BookId = bookId,
-            CustomerId = customerId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-        };
-    }
+      Id = Guid.NewGuid(),
+      BookId = bookId,
+      CustomerId = customerId,
+      ReservedDate = DateTime.UtcNow,
+      ExpiryDate = DateTime.UtcNow.AddDays(1),
+    };
+  }
 }

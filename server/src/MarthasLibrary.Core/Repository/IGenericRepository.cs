@@ -13,4 +13,9 @@ public interface IGenericRepository<T> where T : class
 
   IQueryable<T> Table { get; }
   IQueryable<T> TableNoTracking { get; }
+
+  // Transaction-related methods
+  Task BeginTransactionAsync(CancellationToken cancellationToken);
+  Task CommitTransactionAsync(CancellationToken cancellationToken);
+  Task RollbackTransactionAsync(CancellationToken cancellationToken);
 }
