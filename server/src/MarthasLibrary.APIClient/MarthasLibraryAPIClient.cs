@@ -24,12 +24,12 @@ namespace MarthasLibrary.APIClient
     {
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync();
+        System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync(int? pageNumber, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync(int? pageNumber, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Created</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
@@ -200,18 +200,27 @@ namespace MarthasLibrary.APIClient
 
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync()
+        public virtual System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync(int? pageNumber, int? pageSize)
         {
-            return GetAllBooksAsync(System.Threading.CancellationToken.None);
+            return GetAllBooksAsync(pageNumber, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<Books_GetAll_Response> GetAllBooksAsync(int? pageNumber, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/books");
+            urlBuilder_.Append("api/books?");
+            if (pageNumber != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("pageNumber") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (pageSize != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("pageSize") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -438,16 +447,6 @@ namespace MarthasLibrary.APIClient
                                 throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 403)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new MarthasLibraryAPIException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         {

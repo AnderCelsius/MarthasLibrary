@@ -12,6 +12,7 @@ public sealed class GetAllTests : IDisposable
 {
   private readonly TestFixture _fixture;
   private readonly LibraryDbContext _context;
+  private readonly IServiceScope _serviceScope;
 
   public GetAllTests()
   {
@@ -19,14 +20,15 @@ public sealed class GetAllTests : IDisposable
     _fixture.MockServer.Reset();
     _fixture.MockServer.MockAuthentication(true);
 
-    var serviceScope = _fixture.Server.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-    _context = serviceScope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    _serviceScope = _fixture.Server.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+    _context = _serviceScope.ServiceProvider.GetRequiredService<LibraryDbContext>();
   }
 
   public void Dispose()
   {
     _fixture.Dispose();
     _context.Dispose();
+    _serviceScope.Dispose();
   }
 
   [Fact]
@@ -53,6 +55,9 @@ public sealed class GetAllTests : IDisposable
   [Fact]
   public async Task GetAll_ReturnsArray_WhenMultipleBooksExist()
   {
+    await _context.Database.EnsureDeletedAsync();
+    await _context.Database.EnsureCreatedAsync();
+
     // arrange: Set up 2 otpConfigurations
     var books = new List<Book>
     {
@@ -71,6 +76,32 @@ public sealed class GetAllTests : IDisposable
       response!.Books,
       bk1 => Assert.Equal(books[0].Title, bk1.Title),
       bk2 => Assert.Equal(books[1].Title, bk2.Title));
+  }
+
+  [Fact]
+  public async Task GetAll_ReturnsCorrectPage_WhenPaginatedQuerySent()
+  {
+    // arrange: Set up 2 otpConfigurations
+    const int pageNumber = 1;
+    const int pageSize = 1;
+    var books = new List<Book>
+    {
+      Book.CreateInstance("1984", "George Orwell", "9780451524935", new DateTime(1949, 6, 8)),
+      Book.CreateInstance("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565", new DateTime(1925, 4, 10))
+    };
+
+
+    await Seeder.SeedData(books, _context);
+
+    var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
+      $"api/Books?pageNumber={pageNumber}&pageSize={pageSize}");
+
+    Assert.NotNull(response);
+    Assert.NotNull(response.Books);
+
+    Assert.Single(response.Books);
+
+    Assert.Equal(books[0].Title, response.Books.ToList()[0].Title);
   }
 
   [Fact]
