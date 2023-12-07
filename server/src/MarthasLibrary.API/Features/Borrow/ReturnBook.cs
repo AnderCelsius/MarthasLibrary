@@ -1,5 +1,6 @@
 ﻿using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.Core.Entities;
+using MarthasLibrary.Core.Events;
 using MarthasLibrary.Core.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +32,13 @@ public static class ReturnBook
   /// <param name="logger">Logger for logging information and errors.</param>
   /// <exception cref="ArgumentException">Thrown when a null argument is passed for any of the repositories or the logger.</exception>
   public class Handler(IGenericRepository<Book> bookRepository,
-      IGenericRepository<Core.Entities.Borrow> borrowRepository, ILogger<Handler> logger)
+      IGenericRepository<Core.Entities.Borrow> borrowRepository,
+      ILogger<Handler> logger,
+      IMediator mediator)
     : IRequestHandler<Request>
   {
+    public IMediator _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
+
     private readonly IGenericRepository<Book> _bookRepository =
       bookRepository ?? throw new ArgumentException(nameof(bookRepository));
 
@@ -81,6 +86,7 @@ public static class ReturnBook
         }
 
         await _bookRepository.CommitTransactionAsync(cancellationToken);
+        await _mediator.Publish(new BookReturnedEvent(borrowedBook.BookId, borrowedBook.CustomerId), cancellationToken);
       }
       catch
       {

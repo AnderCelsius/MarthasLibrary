@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MarthasLibrary.Core.Entities;
+﻿namespace MarthasLibrary.Core.Entities;
 
 public class Reservation
 {
@@ -9,9 +7,6 @@ public class Reservation
   public Guid CustomerId { get; private set; }
   public DateTimeOffset ReservedDate { get; set; }
   public DateTimeOffset? ExpiryDate { get; set; }
-
-  [Timestamp]
-  public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 
 
   public static Reservation CreateInstance(Guid bookId, Guid customerId)

@@ -3,6 +3,7 @@ using FluentValidation;
 using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.API.Shared;
 using MarthasLibrary.Core.Entities;
+using MarthasLibrary.Core.Events;
 using MarthasLibrary.Core.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -45,13 +46,15 @@ public static class MakeReservation
   /// <exception cref="BookNotAvailableException">Thrown when the book is already reserved.</exception>
   /// <exception cref="ConcurrencyConflictException">Thrown when a concurrency conflict occurs while updating the book's status.</exception>
   public class Handler(IGenericRepository<Book> bookRepository, IMapper mapper,
-      IGenericRepository<Reservation> reservationRepository, ILogger<Handler> logger)
+      IGenericRepository<Reservation> reservationRepository, ILogger<Handler> logger,
+      IMediator mediator)
     : IRequestHandler<Request, Response>
   {
     private readonly IGenericRepository<Book> _bookRepository = bookRepository ?? throw new ArgumentException(nameof(bookRepository));
     private readonly IGenericRepository<Reservation> _reservationRepository = reservationRepository ?? throw new ArgumentException(nameof(reservationRepository));
     private readonly ILogger<Handler> _logger = logger ?? throw new ArgumentException(nameof(logger));
     private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
+    private readonly IMediator _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
 
 
     /// <summary>
@@ -97,6 +100,7 @@ public static class MakeReservation
 
         await _bookRepository.CommitTransactionAsync(cancellationToken);
 
+        await _mediator.Publish(new BookReservedEvent(reservation.BookId, reservation.CustomerId), cancellationToken);
         return _mapper.Map<Response>(book);
       }
       catch (DbUpdateConcurrencyException)
