@@ -24,7 +24,7 @@ public class ReservationProfile : Profile
           reservation.CustomerId,
           title,
           reservation.ReservedDate,
-          reservation.ExpiryDate ?? default(DateTimeOffset));
+          reservation.ExpiryDate);
       });
   }
 }

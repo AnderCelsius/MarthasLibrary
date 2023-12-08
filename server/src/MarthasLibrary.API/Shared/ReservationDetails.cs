@@ -6,4 +6,4 @@ public record ReservationDetails(
   Guid CustomerId,
   string Title,
   DateTimeOffset ReservedDate,
-  DateTimeOffset ExpiryDate);
+  DateTimeOffset? ExpiryDate);

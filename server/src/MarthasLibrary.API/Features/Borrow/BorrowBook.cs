@@ -64,7 +64,7 @@ public static class BorrowBook
 
         private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
-        private readonly IMediator _meditor = mediator ?? throw new ArgumentException(nameof(mediator));
+        private readonly IMediator _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
 
 
         /// <summary>
@@ -119,7 +119,7 @@ public static class BorrowBook
 
                 await _bookRepository.CommitTransactionAsync(cancellationToken);
 
-                await _meditor.Publish(new BookBorrowedEvent(borrow.BookId, borrow.CustomerId), cancellationToken);
+                await _mediator.Publish(new BookBorrowedEvent(borrow.BookId, borrow.CustomerId), cancellationToken);
 
                 return _mapper.Map<Response>(borrow);
             }

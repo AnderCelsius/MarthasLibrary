@@ -45,18 +45,18 @@ namespace MarthasLibrary.API.Controllers
       }
     }
 
-    [HttpPost("/reserve", Name = "ReserveBook")]
+    [HttpPost("/reserve/{bookId}", Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MakeReservation.Response>> ReserveBook(
-      [FromBody] MakeReservation.Request request,
+      [FromRoute] Guid bookId,
       CancellationToken cancellationToken)
     {
       try
       {
-        var response = await mediator.Send(request, cancellationToken);
+        var response = await mediator.Send(new MakeReservation.Request(bookId), cancellationToken);
         return Created(new Uri($"/books/reserve/{response.ReservationDetails.ReservationId}", UriKind.Relative),
           response);
       }
