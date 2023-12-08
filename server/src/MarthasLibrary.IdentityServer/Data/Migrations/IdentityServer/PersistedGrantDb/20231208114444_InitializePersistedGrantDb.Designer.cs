@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarthasLibrary.IdentityServer.Data.Migrations.IdentityServer.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20231208012323_InitializePersistedGrantDb")]
+    [Migration("20231208114444_InitializePersistedGrantDb")]
     partial class InitializePersistedGrantDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

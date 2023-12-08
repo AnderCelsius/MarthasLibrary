@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
 
 namespace MarthasLibrary.Application.UserData;
 
@@ -52,7 +53,7 @@ public static class UserDataExtensions
 
   public static string? GetIdentityUserIdFromHttpContext(this HttpContext? httpContext)
   {
-    return httpContext?.Items["UserName"] as string ?? string.Empty;
+    return httpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
   }
 
   public static void SetEmailInHttpContext(this HttpContext httpContext, string email) =>

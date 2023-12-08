@@ -1,13 +1,16 @@
 ﻿using MarthasLibrary.API.Features.Borrow;
 using MarthasLibrary.API.Features.Exceptions;
+using MarthasLibrary.API.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarthasLibrary.API.Controllers
 {
+  [Authorize]
   [Route("api/books")]
   [ApiController]
+  [ServiceFilter(typeof(CustomerAuthorizationFilter))]
   public class BorrowManagementController(IMediator mediator) : ControllerBase
   {
     [AllowAnonymous]

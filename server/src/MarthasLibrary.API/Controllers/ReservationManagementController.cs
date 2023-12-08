@@ -1,5 +1,6 @@
 ﻿using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.API.Features.Reservations;
+using MarthasLibrary.API.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace MarthasLibrary.API.Controllers
 {
   [Route("api/books/reserve")]
   [ApiController]
+  [ServiceFilter(typeof(CustomerAuthorizationFilter))]
   public class ReservationManagementController(IMediator mediator) : ControllerBase
   {
     [HttpGet("/reservations", Name = "GetAllReservations")]

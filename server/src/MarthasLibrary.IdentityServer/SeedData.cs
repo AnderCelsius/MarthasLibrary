@@ -37,6 +37,7 @@ namespace MarthasLibrary.IdentityServer
                     UserName = "alice",
                     Email = "AliceSmith@email.com",
                     EmailConfirmed = true,
+                    IsActive = true,
                 };
                 var result = userMgr.CreateAsync(alice, "Pass123$").Result;
                 if (!result.Succeeded)
@@ -72,7 +73,8 @@ namespace MarthasLibrary.IdentityServer
                     Id = "83ec2132-9104-4615-814b-11cba2374e41",
                     UserName = "obai",
                     Email = "oasiegbulam@gmail.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    IsActive = true
                 };
                 var result = userMgr.CreateAsync(obai, "Pass123$").Result;
                 if (!result.Succeeded)
@@ -108,7 +110,8 @@ namespace MarthasLibrary.IdentityServer
                     Id = "13229d33-99e0-41b3-b18d-4f72127e3971",
                     UserName = "josh",
                     Email = "chris.josh@gmail.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    IsActive = true
                 };
                 var result = userMgr.CreateAsync(josh, "Pass123$").Result;
                 if (!result.Succeeded)

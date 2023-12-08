@@ -3,11 +3,12 @@ using MarthasLibrary.Core.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace MarthasLibrary.API.Filters;
 
 public class CustomerAuthorizationFilter(IGenericRepository<Customer> customerRepository,
-        IHttpContextAccessor httpContextAccessor, CancellationToken cancellationToken)
+        IHttpContextAccessor httpContextAccessor)
     : IAuthorizationFilter
 {
     public async void OnAuthorization(AuthorizationFilterContext context)
@@ -20,7 +21,7 @@ public class CustomerAuthorizationFilter(IGenericRepository<Customer> customerRe
         }
 
         var user = httpContext.User;
-        var identityUserId = user.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+        var identityUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(identityUserId))
         {
@@ -30,32 +31,32 @@ public class CustomerAuthorizationFilter(IGenericRepository<Customer> customerRe
 
         var existingCustomer = await customerRepository.Table
             .SingleOrDefaultAsync(c => c.IdentityUserId == identityUserId);
+        
+        
 
         if (existingCustomer == null)
         {
             // Create a new customer record
-            var firstName =
-                user.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
-            var lastName =
-                user.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value;
-            var email = user.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+            var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
 
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName) ||
                 string.IsNullOrEmpty(email)) return;
             var newCustomer = Customer.CreateInstance(firstName, lastName, email, identityUserId);
             await customerRepository.InsertAsync(newCustomer);
-            await customerRepository.SaveAsync(cancellationToken);
+            await customerRepository.SaveAsync();
         }
         else
         {
             // Update existing customer record if needed
-            var firstName = user.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
-            var lastName = user.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value;
-
+            var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+            var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
+            
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName)) return;
             if (existingCustomer.FirstName == firstName && existingCustomer.LastName == lastName) return;
             existingCustomer.UpdateDetails(new Customer.UserUpdate(firstName, lastName));
-            await customerRepository.SaveAsync(cancellationToken);
+            await customerRepository.SaveAsync();
         }
     }
 }

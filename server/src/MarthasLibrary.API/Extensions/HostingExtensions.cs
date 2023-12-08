@@ -1,5 +1,6 @@
 ﻿using MarthasLibrary.API.Configuration;
 using MarthasLibrary.API.ErrorHandling;
+using MarthasLibrary.API.Filters;
 using MarthasLibrary.API.Middleware;
 using MarthasLibrary.APIClient;
 using MarthasLibrary.Application.InfrastructureImplementations;
@@ -48,6 +49,9 @@ public static class HostingExtensions
         builder.Services.AddScoped<IMarthasLibraryAPIClient, MarthasLibraryAPIClient>();
 
         builder.AddExternalServiceAuthentication();
+
+        builder.Services.AddScoped<CustomerAuthorizationFilter>();
+
     }
 
     /// <summary>
@@ -72,8 +76,6 @@ public static class HostingExtensions
 
         app.UseAuthentication();
         app.UseAuthorization();
-
-        app.UseMiddleware<AddUserNameToHttpContextMiddleware>();
 
         app.UseErrorHandling(
           !builder.Environment.IsProduction(),

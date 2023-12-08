@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarthasLibrary.IdentityServer.Data.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231208012527_InitializeAppDb")]
-    partial class InitializeAppDb
+    [Migration("20231208114339_InitializeIdentityDb")]
+    partial class InitializeIdentityDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,6 +45,9 @@ namespace MarthasLibrary.IdentityServer.Data.Migrations.Identity
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
