@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarthasLibrary.IdentityServer.Data.Migrations.Identity
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231201232130_InitializeIdentityDb")]
-    partial class InitializeIdentityDb
+    [Migration("20231208012527_InitializeAppDb")]
+    partial class InitializeAppDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -61,7 +61,10 @@ public static class Config
         AllowedScopes = new List<string>
         {
           IdentityServerConstants.StandardScopes.OpenId,
-          IdentityServerConstants.StandardScopes.Profile
+          IdentityServerConstants.StandardScopes.Profile,
+          "roles",
+          "marthaslibraryapi.read",
+          "marthaslibraryapi.write"
         }
       },
       new()

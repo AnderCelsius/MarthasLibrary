@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MarthasLibrary.IdentityServer.Data.Migrations.Identity
 {
-    public partial class InitializeIdentityDb : Migration
+    public partial class InitializeAppDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

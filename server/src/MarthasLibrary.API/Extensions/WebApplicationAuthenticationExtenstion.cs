@@ -6,92 +6,92 @@ namespace MarthasLibrary.API.Extensions;
 
 public static class WebApplicationAuthenticationExtenstion
 {
-  public static void AddExternalServiceAuthentication(
-    this WebApplicationBuilder builder)
-  {
-    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-    builder.Services.AddAuthentication("token")
-      .AddJwtBearer("token", opt =>
-      {
-        opt.RequireHttpsMetadata = false;
-        opt.Authority = builder.Configuration["DuendeISP:Authority"];
-        opt.Audience = builder.Configuration["DuendeISP:Audience"];
-        opt.TokenValidationParameters = new TokenValidationParameters
-        {
-          NameClaimType = "given_name",
-          RoleClaimType = "role",
-          ValidTypes = new[] { "at+jwt" },
-        };
-        opt.ForwardDefaultSelector = ForwardReferenceToken();
-      })
-      .AddOAuth2Introspection(options =>
-      {
-        options.Authority = builder.Configuration["DuendeISP:Authority"];
-        options.ClientId = builder.Configuration["DuendeISP:ClientId"];
-        options.ClientSecret = builder.Configuration["DuendeISP:ClientSecret"];
-        options.NameClaimType = "given_name";
-        options.RoleClaimType = "role";
-      });
-
-    builder.Services.AddAuthorization(authorizationOptions =>
+    public static void AddExternalServiceAuthentication(
+      this WebApplicationBuilder builder)
     {
-      authorizationOptions.AddPolicy(
-        Policies.UserCanAddBook, AuthorizationPolicies.CanAddBook());
-      authorizationOptions.AddPolicy(
-        Policies.ClientApplicationCanWrite,
-        policyBuilder => { policyBuilder.RequireClaim("scope", "marthaslibraryapi.write"); });
-      authorizationOptions.AddPolicy(
-        Policies.CanApproveBorrowRequest, policyBuilder =>
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+        builder.Services.AddAuthentication("token")
+          .AddJwtBearer("token", opt =>
+          {
+              opt.RequireHttpsMetadata = false;
+              opt.Authority = builder.Configuration["DuendeISP:Authority"];
+              opt.Audience = builder.Configuration["DuendeISP:Audience"];
+              opt.TokenValidationParameters = new TokenValidationParameters
+              {
+                  NameClaimType = "name",
+                  RoleClaimType = "role",
+                  ValidTypes = new[] { "at+jwt" },
+              };
+              opt.ForwardDefaultSelector = ForwardReferenceToken();
+          })
+          .AddOAuth2Introspection(options =>
+          {
+              options.Authority = builder.Configuration["DuendeISP:Authority"];
+              options.ClientId = builder.Configuration["DuendeISP:ClientId"];
+              options.ClientSecret = builder.Configuration["DuendeISP:ClientSecret"];
+              options.NameClaimType = "name";
+              options.RoleClaimType = "role";
+          });
+
+        builder.Services.AddAuthorization(authorizationOptions =>
         {
-          policyBuilder.RequireAuthenticatedUser()
-            .RequireRole(Policies.IsAdmin);
+            authorizationOptions.AddPolicy(
+          Policies.UserCanAddBook, AuthorizationPolicies.CanAddBook());
+            authorizationOptions.AddPolicy(
+          Policies.ClientApplicationCanWrite,
+          policyBuilder => { policyBuilder.RequireClaim("scope", "marthaslibraryapi.write"); });
+            authorizationOptions.AddPolicy(
+          Policies.CanApproveBorrowRequest, policyBuilder =>
+          {
+                policyBuilder.RequireAuthenticatedUser()
+              .RequireRole(Policies.IsAdmin);
+            });
         });
-    });
-  }
-
-  /// <summary>
-  /// Provides a forwarding func for JWT vs reference tokens (based on existence of dot in token)
-  /// </summary>
-  /// <param name="introspectionScheme">Scheme name of the introspection handler</param>
-  /// <returns></returns>
-  public static Func<HttpContext, string?> ForwardReferenceToken(string? introspectionScheme = "introspection")
-  {
-    string? Select(HttpContext context)
-    {
-      var (scheme, credential) = GetSchemeAndCredential(context);
-      if (scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase) &&
-          !credential.Contains("."))
-      {
-        return introspectionScheme;
-      }
-
-      return null;
     }
 
-    return Select;
-  }
-
-  /// <summary>
-  /// Extracts scheme and credential from Authorization header (if present)
-  /// </summary>
-  /// <param name="context"></param>
-  /// <returns></returns>
-  public static (string, string) GetSchemeAndCredential(HttpContext context)
-  {
-    var header = context.Request.Headers["Authorization"].FirstOrDefault();
-
-    if (string.IsNullOrEmpty(header))
+    /// <summary>
+    /// Provides a forwarding func for JWT vs reference tokens (based on existence of dot in token)
+    /// </summary>
+    /// <param name="introspectionScheme">Scheme name of the introspection handler</param>
+    /// <returns></returns>
+    public static Func<HttpContext, string?> ForwardReferenceToken(string? introspectionScheme = "introspection")
     {
-      return ("", "");
+        string? Select(HttpContext context)
+        {
+            var (scheme, credential) = GetSchemeAndCredential(context);
+            if (scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase) &&
+                !credential.Contains("."))
+            {
+                return introspectionScheme;
+            }
+
+            return null;
+        }
+
+        return Select;
     }
 
-    var parts = header.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-    if (parts.Length != 2)
+    /// <summary>
+    /// Extracts scheme and credential from Authorization header (if present)
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static (string, string) GetSchemeAndCredential(HttpContext context)
     {
-      return ("", "");
-    }
+        var header = context.Request.Headers["Authorization"].FirstOrDefault();
 
-    return (parts[0], parts[1]);
-  }
+        if (string.IsNullOrEmpty(header))
+        {
+            return ("", "");
+        }
+
+        var parts = header.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length != 2)
+        {
+            return ("", "");
+        }
+
+        return (parts[0], parts[1]);
+    }
 }

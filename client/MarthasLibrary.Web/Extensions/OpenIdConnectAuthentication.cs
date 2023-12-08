@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using MarthasLibrary.Common.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -10,21 +11,26 @@ namespace MarthasLibrary.Web.Extensions;
 public static class OpenIdConnectAuthentication
 {
   public static void AddOpenIdConnectAuthentication(
-    this WebApplicationBuilder builder)
+      this WebApplicationBuilder builder)
   {
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
     builder.Services.AddAuthentication(opt =>
-      {
-        opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-      })
-      .AddOpenIdConnect(configureOptions: ConfigureOpenIdConnect)
-      .AddCookie(o =>
-      {
-        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        //o.Cookie.SameSite = SameSiteMode.Strict;
-        o.Cookie.HttpOnly = true;
-      });
+        {
+          opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+          opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        })
+        .AddOpenIdConnect(configureOptions: ConfigureOpenIdConnect)
+        .AddCookie(o =>
+        {
+          o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+          //o.Cookie.SameSite = SameSiteMode.Strict;
+          o.Cookie.HttpOnly = true;
+        });
+    builder.Services.AddAuthorization(authorizationOptions =>
+    {
+      authorizationOptions.AddPolicy("UserCanAddBook",
+              AuthorizationPolicies.CanAddBook());
+    });
     return;
 
     void ConfigureOpenIdConnect(OpenIdConnectOptions config)
@@ -49,10 +55,13 @@ public static class OpenIdConnectAuthentication
       config.Scope.Add("marthaslibraryapi.read");
       config.Scope.Add("marthaslibraryapi.write");
 
+      config.ClaimActions.MapJsonKey("role", "role");
+
       // Validate Token
       config.TokenValidationParameters = new TokenValidationParameters
       {
         NameClaimType = "name",
+        RoleClaimType = "role",
         RequireExpirationTime = true,
         RequireSignedTokens = true,
         ValidateAudience = true,

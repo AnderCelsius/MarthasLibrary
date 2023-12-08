@@ -2,15 +2,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace MarthasLibrary.Application.UserData;
 
-public class UserBasicDataProvider : IUserDataProvider<UserBasicData>
+public class UserBasicDataProvider(IHttpContextAccessor httpContextAccessor) : IUserDataProvider<UserBasicData>
 {
-  private readonly IHttpContextAccessor httpContextAccessor;
-
-  public UserBasicDataProvider(IHttpContextAccessor httpContextAccessor)
-  {
-    this.httpContextAccessor = httpContextAccessor;
-  }
-
   public Task<UserBasicData?> GetCurrentUserData(CancellationToken cancellationToken = default)
   {
     var userEmail = httpContextAccessor.HttpContext?.GetEmailFromHttpContext();

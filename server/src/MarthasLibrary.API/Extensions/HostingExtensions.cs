@@ -14,69 +14,71 @@ namespace MarthasLibrary.API.Extensions;
 
 public static class HostingExtensions
 {
-  public static void AddServices(this WebApplicationBuilder builder)
-  {
-    builder.Services.AddControllers().AddJsonOptions(opts =>
+    public static void AddServices(this WebApplicationBuilder builder)
     {
-      opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-      opts.JsonSerializerOptions.DefaultIgnoreCondition =
-        JsonIgnoreCondition.WhenWritingNull;
-    });
+        builder.Services.AddControllers().AddJsonOptions(opts =>
+        {
+            opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            opts.JsonSerializerOptions.DefaultIgnoreCondition =
+          JsonIgnoreCondition.WhenWritingNull;
+        });
 
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGenWithExtraSetup(builder.Configuration, nameof(Features));
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGenWithExtraSetup(builder.Configuration, nameof(Features));
 
-    builder.Services.AddHealthChecks()
-      .AddDbContextCheck<LibraryDbContext>();
+        builder.Services.AddHealthChecks()
+          .AddDbContextCheck<LibraryDbContext>();
 
-    builder.Services.AddMediatR(config =>
-    {
-      config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        builder.Services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
 
-      config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-    });
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
 
-    builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-    builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-    builder.Services.AddHttpClient();
+        builder.Services.AddHttpClient();
 
-    builder.Services.AddDatabase<LibraryDbContext>(builder.Configuration
-      .GetRequiredSection("Database").Get<DatabaseConfiguration>());
+        builder.Services.AddDatabase<LibraryDbContext>(builder.Configuration
+          .GetRequiredSection("Database").Get<DatabaseConfiguration>());
 
-    builder.Services.AddScoped<IMarthasLibraryAPIClient, MarthasLibraryAPIClient>();
+        builder.Services.AddScoped<IMarthasLibraryAPIClient, MarthasLibraryAPIClient>();
 
-    builder.AddExternalServiceAuthentication();
-  }
-
-  /// <summary>
-  /// Configures the HTTP request pipeline.
-  /// </summary>
-  /// <param name="app">Web Application</param>
-  public static void ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
-  {
-    if (!app.Environment.IsProduction() && !app.Environment.IsTesting())
-    {
-      Log.Information("Seeding database...");
-      SeedData.EnsureSeedUserData(app);
-      Log.Information("Done seeding database. Exiting.");
-
-      app.UseDeveloperExceptionPage();
-      app.UseSwagger().UseSwaggerUI();
+        builder.AddExternalServiceAuthentication();
     }
 
-    app.UseHealthChecks("/health");
+    /// <summary>
+    /// Configures the HTTP request pipeline.
+    /// </summary>
+    /// <param name="app">Web Application</param>
+    public static void ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
+    {
+        if (!app.Environment.IsProduction() && !app.Environment.IsTesting())
+        {
+            Log.Information("Seeding database...");
+            SeedData.EnsureSeedUserData(app);
+            Log.Information("Done seeding database. Exiting.");
 
-    app.UseHttpsRedirection();
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger().UseSwaggerUI();
+        }
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+        app.UseHealthChecks("/health");
 
-    app.UseErrorHandling(
-      !builder.Environment.IsProduction(),
-      new Dictionary<Type, HttpStatusCode>());
+        app.UseHttpsRedirection();
 
-    app.MapControllers();
-  }
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseMiddleware<AddUserNameToHttpContextMiddleware>();
+
+        app.UseErrorHandling(
+          !builder.Environment.IsProduction(),
+          new Dictionary<Type, HttpStatusCode>());
+
+        app.MapControllers();
+    }
 }

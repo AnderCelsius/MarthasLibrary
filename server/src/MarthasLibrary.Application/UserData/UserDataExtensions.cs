@@ -23,12 +23,12 @@ public static class UserDataExtensions
     services.AddHttpContextAccessor();
 
     services.AddScoped<IUserDataProvider<UserBasicData>, UserBasicDataProvider>();
+    services.AddScoped<IUserDataProvider<UserData>, UserDataProvider>();
 
     return services;
   }
 
-
-  public static UserBasicData EnsureAuthenticated(this UserBasicData? userData)
+  public static UserData EnsureAuthenticated(this UserData? userData)
   {
     if (userData is null)
     {
@@ -48,6 +48,11 @@ public static class UserDataExtensions
     }
 
     return userEmailHeader;
+  }
+
+  public static string? GetIdentityUserIdFromHttpContext(this HttpContext? httpContext)
+  {
+    return httpContext?.Items["UserName"] as string ?? string.Empty;
   }
 
   public static void SetEmailInHttpContext(this HttpContext httpContext, string email) =>
