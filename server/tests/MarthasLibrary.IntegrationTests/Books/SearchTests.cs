@@ -40,7 +40,7 @@ public sealed class SearchTests : IDisposable
       Book.CreateInstance("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565", new DateTime(1925, 4, 10))
     };
 
-    await Seeder.SeedData(books, _context);
+    await Seeder.SeedBook(books, _context);
 
     // Act
     var searchTerm = "Orwell";
@@ -66,7 +66,7 @@ public sealed class SearchTests : IDisposable
       Book.CreateInstance("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565", new DateTime(1925, 4, 10))
     };
 
-    await Seeder.SeedData(books, _context);
+    await Seeder.SeedBook(books, _context);
 
     // Act
     var searchTerm = "Hemingway";

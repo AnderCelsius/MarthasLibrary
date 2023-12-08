@@ -1,6 +1,7 @@
 ﻿using IdentityModel.Client;
 using MarthasLibrary.IdentityServer.Entities;
 using System.Text.Json;
+using MarthasLibrary.Application.UserData;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -26,21 +27,21 @@ public static class WireMockAuthenticationExtensions
 
   private static string AccessToken { get; set; }
 
-  private static readonly ApplicationUser MockAdminUser = new()
-  {
-    FirstName = MockFirstName,
-    LastName = MockLastName,
-    Email = MockAdminEmail,
-    PhoneNumber = "+2348023415243"
-  };
+  private static readonly UserData MockAdminUser = new(
+    Id: Guid.NewGuid(),
+    Type: "",
+    FirstName: MockFirstName,
+    LastName: MockLastName,
+    Email: MockRegularEmail
+  );
 
-  private static readonly ApplicationUser MockRegularUser = new()
-  {
-    FirstName = "Regular",
-    LastName = "Person",
-    Email = MockRegularEmail,
-    PhoneNumber = "+2348023546789"
-  };
+  private static readonly UserData MockRegularUser = new(
+    Id: Guid.NewGuid(), 
+    Type: "",
+    FirstName: "Regular",
+    LastName: "Person",
+    Email: MockRegularEmail
+  );
 
   public static async Task InitializeAuthentication()
   {

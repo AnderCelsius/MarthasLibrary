@@ -61,6 +61,10 @@ export interface Customers_GetAll_Response {
     customers: CustomerDetails[];
 }
 
+export interface Notifications_GetNotificationsForCurrentUser_Response {
+    notifications: NotificationDetails[];
+}
+
 export interface Reservations_GetAll_Response {
     books: ReservationDetails[];
 }
@@ -74,7 +78,6 @@ export interface Reservations_GetReservationsByCustomerId_Response {
 }
 
 export interface Reservations_MakeReservation_Request {
-    customerId: string;
     bookId: string;
 }
 
@@ -118,13 +121,21 @@ export interface AddressDetails {
     zipCode: string;
 }
 
+export interface NotificationDetails {
+    id: string;
+    customerId: string;
+    bookId: string;
+    type: string;
+    isRead: boolean;
+}
+
 export interface ReservationDetails {
     reservationId: string;
     bookId: string;
     customerId: string;
     title: string;
     reservedDate: string;
-    expiryDate: string;
+    expiryDate?: string | undefined;
 }
 
 export interface ProblemDetails {

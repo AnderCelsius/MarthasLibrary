@@ -42,7 +42,7 @@ public sealed class GetAllTests : IDisposable
     };
 
 
-    await Seeder.SeedData(books, _context);
+    await Seeder.SeedBook(books, _context);
 
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
       "api/Books");
@@ -66,7 +66,7 @@ public sealed class GetAllTests : IDisposable
     };
 
 
-    await Seeder.SeedData(books, _context);
+    await Seeder.SeedBook(books, _context);
 
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
       "api/Books");
@@ -91,7 +91,7 @@ public sealed class GetAllTests : IDisposable
     };
 
 
-    await Seeder.SeedData(books, _context);
+    await Seeder.SeedBook(books, _context);
 
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
       $"api/Books?pageNumber={pageNumber}&pageSize={pageSize}");

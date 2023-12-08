@@ -43,7 +43,7 @@ public sealed class GetByIdTests : IDisposable
     };
 
 
-    await Seeder.SeedData(books, _context);
+    await Seeder.SeedBook(books, _context);
 
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetById_Response>(
       $"/api/Books/{books[0].Id}");

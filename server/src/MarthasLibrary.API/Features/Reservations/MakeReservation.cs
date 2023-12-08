@@ -77,7 +77,7 @@ public static class MakeReservation
                     throw new BookNotFoundException($"Could not find book with Id: {request.BookId}");
                 }
 
-                var currentUserData = (await userDataProvider
+                var currentUserData = (await _userDataProvider
                     .GetCurrentUserData(cancellationToken))
                   .EnsureAuthenticated();
 
