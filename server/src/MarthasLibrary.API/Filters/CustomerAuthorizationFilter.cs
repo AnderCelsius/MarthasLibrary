@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using IdentityModel;
 
 namespace MarthasLibrary.API.Filters;
 
@@ -22,6 +23,7 @@ public class CustomerAuthorizationFilter(IGenericRepository<Customer> customerRe
 
         var user = httpContext.User;
         var identityUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        identityUserId ??= user.FindFirst(JwtClaimTypes.Subject)?.Value;
 
         if (string.IsNullOrEmpty(identityUserId))
         {

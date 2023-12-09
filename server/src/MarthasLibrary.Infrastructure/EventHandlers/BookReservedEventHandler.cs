@@ -1,14 +1,16 @@
 ﻿using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Events;
 using MarthasLibrary.Core.Repository;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace MarthasLibrary.Infrastructure.EventHandlers;
 
 public class BookReservedEventHandler : BaseNotificationEventHandler<BookReservedEvent>
 {
-    public BookReservedEventHandler(IGenericRepository<Notification> notificationRepository)
-      : base(notificationRepository)
+    public BookReservedEventHandler(IGenericRepository<Notification> notificationRepository,
+        ILogger<BookReservedEventHandler> logger)
+        : base(notificationRepository, logger)
     {
     }
 

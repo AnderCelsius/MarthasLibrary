@@ -1,3 +1,4 @@
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
@@ -53,7 +54,9 @@ public static class UserDataExtensions
 
   public static string? GetIdentityUserIdFromHttpContext(this HttpContext? httpContext)
   {
-    return httpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+    var identityUserId = httpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    identityUserId ??= httpContext?.User.FindFirst(JwtClaimTypes.Subject)?.Value;
+    return identityUserId;
   }
 
   public static void SetEmailInHttpContext(this HttpContext httpContext, string email) =>

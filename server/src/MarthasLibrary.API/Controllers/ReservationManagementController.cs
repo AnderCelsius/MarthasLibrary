@@ -48,6 +48,7 @@ namespace MarthasLibrary.API.Controllers
     [HttpPost("reserve", Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MakeReservation.Response>> ReserveBook(
@@ -59,6 +60,10 @@ namespace MarthasLibrary.API.Controllers
         var response = await mediator.Send(request, cancellationToken);
         return Created(new Uri($"/books/reserve/{response.ReservationDetails.ReservationId}", UriKind.Relative),
           response);
+      }
+      catch (BookNotFoundException e)
+      {
+        return NotFound(e.Message);
       }
       catch (BookNotAvailableException e)
       {

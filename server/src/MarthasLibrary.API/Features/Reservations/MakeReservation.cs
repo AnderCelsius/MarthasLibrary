@@ -96,6 +96,7 @@ public static class MakeReservation
                 }
                 try
                 {
+                    _bookRepository.Update(book);
                     await _bookRepository.SaveAsync(cancellationToken);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -103,11 +104,16 @@ public static class MakeReservation
                     _logger.LogWarning("Concurrency conflict occurred when trying to reserve the book.");
                     throw new ConcurrencyConflictException("The book has been modified by another transaction.");
                 }
-
+                
                 await _bookRepository.CommitTransactionAsync(cancellationToken);
 
                 await _mediator.Publish(new BookReservedEvent(reservation.BookId, reservation.CustomerId), cancellationToken);
-                return _mapper.Map<Response>(reservation);
+                
+                var reservationDetails = _mapper.Map<ReservationDetails>(reservation, opts =>
+                {
+                    opts.Items["Title"] = book.Title; // Assuming the book entity has a Title property.
+                });
+                return new Response(reservationDetails);
             }
             catch (DbUpdateConcurrencyException)
             {

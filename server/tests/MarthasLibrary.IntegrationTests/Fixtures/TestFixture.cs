@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using WireMock.Server;
 
@@ -26,62 +27,51 @@ public class TestFixture : IDisposable
         MockServer.MockAuthentication(true);
 
         var config = new ConfigurationBuilder()
-          .AddInMemoryCollection(new Dictionary<string, string>
-          {
-              ["DuendeISP:Authority"] = MockServer.Urls[0],
-              ["DuendeISP:Audience"] = "marthaslibraryapi",
-              // Add other necessary configurations
-          }!)
-          .Build();
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["DuendeISP:Authority"] = MockServer.Urls[0],
+                ["DuendeISP:Audience"] = "marthaslibraryapi",
+                ["ConnectionString"] = "Data Source=.;Initial Catalog=MarthasLibrary.Tests;Integrated Security=True; TrustServerCertificate=True;"
+                // Add other necessary configurations
+            }!)
+            .Build();
 
         _applicationFactory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.UseEnvironment("Testing")
-          .ConfigureServices(services =>
-          {
-              // Remove the existing DbContext configuration
-              var dbContextDescriptor = services.SingleOrDefault(
-            d => d.ServiceType ==
-                 typeof(DbContextOptions<LibraryDbContext>));
+            _ = builder.UseEnvironment("Testing")
+                .ConfigureServices(services =>
+                {
+                    // by default the OIDC auth scheme is intercepted and an auto-failing handler is returned,
+                    //  this ensures we don't accidentally call the discovery URL
+                    // CreateLoggedInClient will replace this provider with a different interceptor, last one in wins
+                    services.AddTransient<IAuthenticationSchemeProvider, AutoFailSchemeProvider>();
+                    services.AddAuthentication(AutoFailSchemeProvider.AutoFailScheme)
+                        .AddScheme<AutoFailOptions, AutoFail>(AutoFailSchemeProvider.AutoFailScheme, null);
 
-              if (dbContextDescriptor != null)
-              {
-                  services.Remove(dbContextDescriptor);
-              }
-
-              services.AddDbContextFactory<LibraryDbContext>(options => { options.UseInMemoryDatabase("TestDatabase"); });
-
-              // by default the OIDC auth scheme is intercepted and an auto-failing handler is returned,
-              //  this ensures we don't accidentally call the discovery URL
-              // CreateLoggedInClient will replace this provider with a different interceptor, last one in wins
-              services.AddTransient<IAuthenticationSchemeProvider, AutoFailSchemeProvider>();
-              services.AddAuthentication(AutoFailSchemeProvider.AutoFailScheme)
-                  .AddScheme<AutoFailOptions, AutoFail>(AutoFailSchemeProvider.AutoFailScheme, null);
-
-              services.AddAuthentication("TestScheme")
-              .AddJwtBearer("TestScheme", opt =>
-              {
-                  // Configure to use the mock server and test credentials
-                  opt.RequireHttpsMetadata = false;
-                  opt.Authority = MockServer.Urls[0]; // Mock IdentityServer URL
-                  opt.Audience = "marthaslibraryapi";
-                  // ... other options as necessary
-              });
-              // Mock the HttpClient to include the bearer token from WireMock
-              services.AddHttpClient("TestClient",
-            client =>
-            {
-                client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", WireMockAuthenticationExtensions.BearerToken);
-            });
-          })
-          .UseConfiguration(config);
+                    services.AddAuthentication("TestScheme")
+                        .AddJwtBearer("TestScheme", opt =>
+                        {
+                            // Configure to use the mock server and test credentials
+                            opt.RequireHttpsMetadata = false;
+                            opt.Authority = MockServer.Urls[0]; // Mock IdentityServer URL
+                            opt.Audience = "marthaslibraryapi";
+                            // ... other options as necessary
+                        });
+                    // Mock the HttpClient to include the bearer token from WireMock
+                    services.AddHttpClient("TestClient",
+                        client =>
+                        {
+                            client.DefaultRequestHeaders.Authorization =
+                                new AuthenticationHeaderValue("Bearer", WireMockAuthenticationExtensions.BearerToken);
+                        });
+                })
+                .UseConfiguration(config);
         });
 
         Server = _applicationFactory.Server;
         Client = CreateLoggedInClient<GeneralUser>(ConfigurationAndOptions.DefaultOptions);
         Client.DefaultRequestHeaders.Authorization =
-          new AuthenticationHeaderValue("Bearer", TokenGeneratorHelper.GetMockJwtToken());
+            new AuthenticationHeaderValue("Bearer", TokenGeneratorHelper.GetMockJwtToken());
 
         InitializeDatabase();
     }
@@ -96,7 +86,7 @@ public class TestFixture : IDisposable
     {
         MockServer.Dispose();
         var dbContextFactory = Server.Services
-          .GetRequiredService<IDbContextFactory<LibraryDbContext>>();
+            .GetRequiredService<IDbContextFactory<LibraryDbContext>>();
         using var dbContext = dbContextFactory.CreateDbContext();
         dbContext.Database.EnsureDeleted();
 
@@ -108,6 +98,14 @@ public class TestFixture : IDisposable
         var dbContextFactory = Server.Services.GetRequiredService<IDbContextFactory<LibraryDbContext>>();
         using var dbContext = dbContextFactory.CreateDbContext();
         dbContext.Database.EnsureDeleted();
+        dbContext.Database.Migrate();
+    }
+
+    public HttpClient CreateClientWithRole(Claim[] claims)
+    {
+        var token = TokenGeneratorHelper.GetMockJwtToken(claims);
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return Client;
     }
 
     /// <summary>
@@ -133,15 +131,14 @@ public class TestFixture : IDisposable
                             services.Remove(authServiceDescriptor);
 
                         // configure the intercepting provider
-                        services.AddTransient<IAuthenticationSchemeProvider, InterceptOidcAuthenticationSchemeProvider>();
+                        services
+                            .AddTransient<IAuthenticationSchemeProvider, InterceptOidcAuthenticationSchemeProvider>();
                         services.AddTransient<IAuthenticationService, MockAuthenticationService>();
 
                         // Add a "Test" scheme in to process the auth instead, using the provided user type
                         services.AddAuthentication(InterceptOidcAuthenticationSchemeProvider.InterceptedScheme)
-                            .AddScheme<ImpersonatedAuthenticationSchemeOptions, T>("InterceptedScheme", options =>
-                            {
-                                options.OriginalScheme = "oidc";
-                            });
+                            .AddScheme<ImpersonatedAuthenticationSchemeOptions, T>("InterceptedScheme",
+                                options => { options.OriginalScheme = "oidc"; });
                     })
                     .UseConfiguration(ConfigurationAndOptions.GetConfiguration());
             })
@@ -155,6 +152,7 @@ public class TestFixture : IDisposable
         public GeneralUser(IOptionsMonitor<ImpersonatedAuthenticationSchemeOptions> options,
             ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
             : base(options, logger, encoder, clock)
-        { }
+        {
+        }
     }
 }

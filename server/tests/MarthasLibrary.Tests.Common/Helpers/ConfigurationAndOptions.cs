@@ -15,8 +15,7 @@ public class ConfigurationAndOptions
         var defaultConfiguration = new Dictionary<string, string>
         {
             ["AppSettings:WebUrl"] = "https://localhost:7241/",
-            ["AppSettings:EmailConfirmationLink"] = "confirmemail/?token={0}",
-            ["AppSettings:AppName"] = "Rapha-Test",
+            ["AppSettings:AppName"] = "Marthas-Library-Test",
             ["AppSettings:AllowedHeaders"] = "Content-Type, Accept, Authorization",
             ["AppSettings:AllowedMethods"] = "GET, POST, PUT, PATCH, DELETE",
             ["AppSettings:AllowedOrigins"] = "http://localhost:3008, https://rapha-identity-server-web.azurewebsites.net",

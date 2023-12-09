@@ -12,11 +12,15 @@ public static class WireMockAuthenticationExtensions
 {
   public const string MockAdminEmail = "admin@marthaslib.com";
 
-  public const string MockFirstName = "John";
+  public const string MockAdminFirstName = "John";
 
-  public const string MockLastName = "Doe";
+  public const string MockAdminLastName = "Doe";
+  
+  public const string MockCustomerFirstName = "Alice";
 
-  public const string MockRegularEmail = "regular.user@example.com";
+  public const string MockCustomerLastName = "Smith";
+
+  public const string MockCustomerEmail = "alice.smith@email.com";
 
   public const string BearerToken = "some-random-string";
 
@@ -30,17 +34,17 @@ public static class WireMockAuthenticationExtensions
   private static readonly UserData MockAdminUser = new(
     Id: Guid.NewGuid(),
     Type: "",
-    FirstName: MockFirstName,
-    LastName: MockLastName,
-    Email: MockRegularEmail
+    FirstName: MockAdminFirstName,
+    LastName: MockAdminLastName,
+    Email: MockCustomerEmail
   );
 
-  private static readonly UserData MockRegularUser = new(
+  public static readonly UserData MockCustomerUser = new(
     Id: Guid.NewGuid(), 
     Type: "",
-    FirstName: "Regular",
-    LastName: "Person",
-    Email: MockRegularEmail
+    FirstName: MockCustomerFirstName,
+    LastName: MockCustomerLastName,
+    Email: MockCustomerEmail
   );
 
   public static async Task InitializeAuthentication()
@@ -74,7 +78,7 @@ public static class WireMockAuthenticationExtensions
 
   public static void MockAuthentication(this WireMockServer wireMockServer, bool allowAdmin = false)
   {
-    var userData = allowAdmin ? MockAdminUser : MockRegularUser;
+    var userData = allowAdmin ? MockAdminUser : MockCustomerUser;
     wireMockServer
         .Given(Request.Create().WithPath("https://localhost:5001").UsingPost()
             .WithHeader("Authorization", $"Bearer {BearerToken}"))
