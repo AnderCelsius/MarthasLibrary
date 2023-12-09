@@ -6,6 +6,7 @@ using MarthasLibrary.APIClient;
 using MarthasLibrary.Application.InfrastructureImplementations;
 using MarthasLibrary.Core.Repository;
 using MarthasLibrary.Infrastructure.Data;
+using MarthasLibrary.Infrastructure.EventHandlers;
 using Serilog;
 using System.Net;
 using System.Reflection;
@@ -33,6 +34,7 @@ public static class HostingExtensions
         builder.Services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            config.RegisterServicesFromAssembly(typeof(BookReservedEventHandler).Assembly);
 
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });

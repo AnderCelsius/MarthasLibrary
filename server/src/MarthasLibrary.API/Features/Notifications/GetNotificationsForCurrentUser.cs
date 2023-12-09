@@ -60,7 +60,7 @@ public class GetNotificationsForCurrentUser
                 .EnsureAuthenticated();
 
             var notifications = await _notificationRepository.TableNoTracking
-                .Where(r => r.Id == currentUserData.Id)
+                .Where(notification => notification.CustomerId == currentUserData.Id && !notification.IsRead)
                 .ToListAsync(cancellationToken);
 
             var bookIds = notifications.Select(r => r.BookId).Distinct().ToList();

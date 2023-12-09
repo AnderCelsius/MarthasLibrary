@@ -24,8 +24,8 @@ public sealed class MakeReservationTests : IDisposable
     private readonly LibraryDbContext _context;
     private readonly Mock<IGenericRepository<Customer>> _mockCustomerRepository;
     private const string TestUserIdentityId = "f0611528-36f2-4a0e-80ce-96dea6ebd13f";
-    private Mock<IHttpContextAccessor> MockHttpContextAccessor { get; set; }
-    public Mock<IUserDataProvider<UserData>> MockUserDataProvider { get; private set; }
+    private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
+    public Mock<IUserDataProvider<UserData>> MockUserDataProvider;
 
     public MakeReservationTests()
     {
@@ -37,7 +37,7 @@ public sealed class MakeReservationTests : IDisposable
         _context = serviceScope.ServiceProvider.GetRequiredService<LibraryDbContext>();
 
 
-        MockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+        _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
         MockUserDataProvider = new Mock<IUserDataProvider<UserData>>();
         _mockCustomerRepository = new Mock<IGenericRepository<Customer>>();
     }
@@ -207,7 +207,7 @@ public sealed class MakeReservationTests : IDisposable
         var identity = new ClaimsIdentity(claims, "TestAuthentication");
         var claimsPrincipal = new ClaimsPrincipal(identity);
         mockHttpContext.Setup(ctx => ctx.User).Returns(claimsPrincipal);
-        MockHttpContextAccessor.Setup(accessor => accessor.HttpContext).Returns(mockHttpContext.Object);
+        _mockHttpContextAccessor.Setup(accessor => accessor.HttpContext).Returns(mockHttpContext.Object);
     }
 
     private Claim[] CustomerClaims()

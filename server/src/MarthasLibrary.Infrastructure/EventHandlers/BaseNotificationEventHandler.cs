@@ -13,7 +13,6 @@ public abstract class BaseNotificationEventHandler<TEvent>
     public async Task Handle(TEvent notificationEvent, CancellationToken cancellationToken)
     {
         logger.LogInformation($"Publishing {notificationEvent} to DB");
-        Console.WriteLine($"Publishing {notificationEvent} to DB");
         var notification = CreateNotification(notificationEvent);
         await notificationRepository.InsertAsync(notification);
         await notificationRepository.SaveAsync(cancellationToken);
