@@ -11,8 +11,8 @@ public class Reservation
 
   public static Reservation CreateInstance(Guid bookId, Guid customerId)
   {
-    if (string.IsNullOrWhiteSpace(bookId.ToString())) throw new ArgumentException(nameof(bookId));
-    if (string.IsNullOrWhiteSpace(customerId.ToString())) throw new ArgumentException(nameof(customerId));
+    if (bookId == Guid.Empty) throw new ArgumentException("Value cannot be null.", nameof(bookId));
+    if (customerId == Guid.Empty) throw new ArgumentException("Value cannot be null.", nameof(customerId));
 
     return new Reservation
     {
