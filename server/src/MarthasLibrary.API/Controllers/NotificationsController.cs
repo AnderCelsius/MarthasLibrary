@@ -18,4 +18,17 @@ public class NotificationsController(IMediator mediator) : ControllerBase
   {
     return await mediator.Send(new GetNotificationsForCurrentUser.Request(), cancellationToken);
   }
+
+  [HttpPost("subscribe/{bookId}", Name = "SubscribeToBookAvailabilityAlert")]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+  public async Task<ActionResult<Unit>> SubscribeToBookAvailabilityAlert(
+    [FromRoute] Guid bookId,
+    CancellationToken cancellationToken)
+  {
+    await mediator.Send(new SubscribeToBookAvailabilityAlert.Request(bookId), cancellationToken);
+    return Ok();
+  }
 }

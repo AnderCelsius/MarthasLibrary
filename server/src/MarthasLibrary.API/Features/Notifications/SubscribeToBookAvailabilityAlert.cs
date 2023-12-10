@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MarthasLibrary.API.Features.Notifications;
 
-public static class RequestToBeNotifiedOnBookAvailability
+public static class SubscribeToBookAvailabilityAlert
 {
   public record Request(Guid BookId) : IRequest;
 
