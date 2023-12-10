@@ -1095,6 +1095,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
           "409": {
             "description": "Conflict",
             "content": {
@@ -1586,6 +1606,7 @@
       "MarthasLibrary.API.Shared.NotificationDetails": {
         "required": [
           "bookId",
+          "bookTitle",
           "customerId",
           "id",
           "isRead",
@@ -1604,6 +1625,9 @@
           "bookId": {
             "type": "string",
             "format": "uuid"
+          },
+          "bookTitle": {
+            "type": "string"
           },
           "type": {
             "type": "string"

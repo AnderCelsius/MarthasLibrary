@@ -86,7 +86,7 @@ namespace MarthasLibrary.API.Controllers
       try
       {
         await mediator.Send(new CancelReservation.Request(reservationId), cancellationToken);
-        return NoContent();
+        return Ok();
       }
       catch (ReservationNotFoundException ex)
       {
