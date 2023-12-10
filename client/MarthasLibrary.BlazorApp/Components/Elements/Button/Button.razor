@@ -1,22 +1,23 @@
 ﻿@inherits Microsoft.AspNetCore.Components.ComponentBase
 
-<button @attributes="AdditionalAttributes" class="@ButtonClass">
-    @Text
+<button type="@ButtonType" class="@ButtonClass" @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrWhiteSpace(Text))
+    {
+        @Text
+    }
+    else
+    {
+        @ChildContent
+    }
 </button>
 
 @code {
-    [Parameter] public string Text { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public bool Rounded { get; set; }
-    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Text { get; set; }
+    [Parameter] public string ButtonType { get; set; } = "button";
+    [Parameter] public bool IsRounded { get; set; }
+    [Parameter] public string? AdditionalClass { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string ButtonClass => string.Join(" ", "button", Rounded ? "rounded" : "", Class);
-
-    private string[] ButtonClasses => new[] { "button", Rounded ? "rounded" : "", Class };
-
-    protected override void OnParametersSet()
-    {
-        AdditionalAttributes ??= new Dictionary<string, object>();
-        AdditionalAttributes["class"] = string.Join(" ", ButtonClasses);
-    }
+    private string ButtonClass => string.Join(" ", "button", IsRounded ? "rounded" : string.Empty, AdditionalClass);
 }

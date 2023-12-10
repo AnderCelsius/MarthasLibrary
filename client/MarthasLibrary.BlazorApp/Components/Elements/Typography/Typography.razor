@@ -1,44 +1,60 @@
-﻿@inherits Microsoft.AspNetCore.Components.ComponentBase
+﻿@inherits ComponentBase
 
-<div @attributes="AdditionalAttributes" class="@TypographyClass">
-    @ChildContent
-</div>
+@{
+    var tagName = Level is >= 1 and <= 6 ? $"h{Level.Value}" : "p";
+}
+
+@((MarkupString)$"<{tagName} class='{GetTypographyClass()}' {GetAdditionalAttributes()}>")
+@ContentSection
+@((MarkupString)$"</{tagName}>")
+
 
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public int? Level { get; set; }
-    [Parameter] public string Content { get; set; }
+    [Parameter] public string? Content { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Font { get; set; } = "Inter";
     [Parameter] public string Color { get; set; } = "Default";
     [Parameter] public string Size { get; set; } = "Default";
+    [Parameter] public string? Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string TypographyClass => string.Join(" ", "text", GetColorClass(), GetFontClass(), GetSizeClass(), AdditionalClass);
-
-    private string GetColorClass()
+    private string GetTypographyClass()
     {
-        if (Color == "none")
+        var classes = new List<string?> { "text", Class };
+
+        if (Color != "none")
         {
-            return string.Empty;
+            classes.Add($"text-color-{Color.ToLower()}");
         }
-        return $"textColorDefault textColor{Color}";
-    }
 
-    private string GetFontClass()
-    {
-        return $"textFont{Font}";
-    }
-
-    private string GetSizeClass()
-    {
-        if (Size == "Default")
+        if (!string.IsNullOrWhiteSpace(Font))
         {
-            return string.Empty;
+            classes.Add($"text-font-{Font}");
         }
-        return $"textSize{Size}";
+
+        if (!string.IsNullOrWhiteSpace(Size))
+        {
+            classes.Add($"text-size-{Size}");
+        }
+
+        return string.Join(" ", classes.Where(c => !string.IsNullOrWhiteSpace(c)));
     }
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> AdditionalAttributes { get; set; }
+    private RenderFragment ContentSection => builder =>
+    {
+        if (ChildContent != null)
+        {
+            builder.AddContent(0, ChildContent);
+        }
+        else if (!string.IsNullOrWhiteSpace(Content))
+        {
+            builder.AddContent(1, Content);
+        }
+    };
 
-    [Parameter] public string AdditionalClass { get; set; }
+    private string GetAdditionalAttributes()
+    {
+        return AdditionalAttributes != null ? string.Join(" ", AdditionalAttributes.Select(kvp => $"{kvp.Key}='{kvp.Value}'")) : string.Empty;
+    }
 }

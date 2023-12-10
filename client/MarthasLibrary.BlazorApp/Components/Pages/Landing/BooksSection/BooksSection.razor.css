@@ -1,0 +1,14 @@
+.books {
+    padding: calc(24 / 16 * 1rem);
+}
+
+.books > p {
+    text-align: center;
+    padding-bottom: calc(24 / 16 * 1rem);
+}
+
+.booksCollections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(calc(100% / 16 * 1rem), 16rem), 1fr));
+    gap: calc(1.5 / 16 * 1rem);
+}

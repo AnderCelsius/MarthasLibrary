@@ -25,9 +25,9 @@
 @inherits LayoutComponentBase
 
 <div style="border-bottom: 1px solid gray">
-    <div class="container @headerClass">
+    <div class="container @HeaderClass">
         <NavLink to="@Utils.Routes.Landing.Root">
-            <Typography class="app-logo" color="none" font="Bodoni" content="Martha's Library" />
+            <Typography class="app-logo" Color="none" Font="Bodoni" content="Martha's Library" />
         </NavLink>
         <div style="display: flex; align-items: center; gap: 20px;">
             <NavLink to="/dashboard">
@@ -35,6 +35,15 @@
             </NavLink>
         </div>
     </div>
+    <article class="content px-4">
+        @Body
+    </article>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
 </div>
 
 <RouterView />
@@ -42,7 +51,7 @@
 @code {
     private bool isAuth = true;
 
-    private string headerClass => "header";
+    private static string HeaderClass => "header";
 
     private string GetButtonText()
     {

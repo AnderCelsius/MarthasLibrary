@@ -1,0 +1,51 @@
+.hero {
+    position: relative;
+    background: url("./bg-small.jpg") 0 no-repeat;
+    background-size: cover;
+    height: 31.25rem;
+}
+
+.hero > img {
+    position: absolute;
+    object-fit: cover;
+    max-height: 31.25rem;
+    height: 100%;
+    width: 100%;
+}
+
+.heroContent {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.searchButton {
+    display: flex;
+    background-color: white;
+    padding: 0.3rem;
+    position: relative;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 0 20px 14px #3f3f3f3b;
+}
+
+.searchButton > input {
+    width: 100%;
+    padding: 0.5rem 7rem 0.5rem 0.5rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+.searchButton > button {
+    position: absolute;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}

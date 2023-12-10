@@ -1,0 +1,53 @@
+﻿@page "/books"
+@using MarthasLibrary.APIClient
+
+@inject IMarthasLibraryAPIClient MarthasLibraryApiClient
+@inject ILogger<BooksSection> Logger
+
+<div class="container books">
+    <Typography Color="Primary" Content="Collections" Size="Heading" />
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @_errorMessage
+        </div>
+    }
+
+    <div class="booksCollections">
+        @if (_books != null && _books.Any())
+        {
+            foreach (var book in _books)
+            {
+                <BookCard Book="@book" />
+            }
+        }
+        else if (string.IsNullOrEmpty(_errorMessage))
+        {
+            <p>No books available.</p>
+        }
+    </div>
+</div>
+
+@code {
+    private List<BookDetails>? _books;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await MarthasLibraryApiClient.GetAllBooksAsync(1, 10);
+            _books = response?.Books?.ToList() ?? new List<BookDetails>();
+            if (_books.Count == 0)
+            {
+                _errorMessage = "No books found at the moment.";
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Failed to load books: {Exception}", e);
+            _errorMessage = "An error occurred while loading books. Please try again later.";
+        }
+    }
+}

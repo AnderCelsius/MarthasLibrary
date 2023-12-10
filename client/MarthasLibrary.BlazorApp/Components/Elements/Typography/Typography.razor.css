@@ -16,51 +16,51 @@
 }
 
 /* Font sizes */
-.textSizeHeading {
+.text-size-heading {
     font-size: calc(48 / 16 * 1rem);
     font-weight: 800;
 }
 
-.textSizeSubheading {
+.text-size-subheading {
     font-size: calc(40 / 16 * 1rem);
     font-weight: 700;
 }
 
-.textSizeSubtext {
+.text-size-subtext {
     font-size: calc(24 / 16 * 1rem);
     font-weight: 700;
 }
 
-.textSizeLabel {
+.text-size-label {
     font-size: calc(20 / 16 * 1rem);
     font-weight: 600;
 }
 
-.textSizeDefault {
+.text-size-default {
     font-size: calc(16 / 16 * 1rem);
 }
 
-.textSizeSmall {
+.text-size-small {
     font-size: calc(14 / 16 * 1rem);
 }
 
 /* Text colors */
-.textColorDefault {
+.text-color-default {
     color: var(--text-black, #101828);
 }
 
-.textColorGray {
+.text-color-gray {
     color: var(--text-gray);
 }
 
-.textColorWhite {
+.text-color-white {
     color: var(--white);
 }
 
-.textColorPrimary {
+.text-color-primary {
     color: var(--primary-600);
 }
 
-.textColorInherit {
+.text-color-inherit {
     color: inherit;
 }
