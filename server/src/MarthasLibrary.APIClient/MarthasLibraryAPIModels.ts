@@ -15,6 +15,7 @@ export interface Books_Create_Request {
     author: string;
     isbn: string;
     publishedDate: string;
+    description?: string | undefined;
 }
 
 export interface Books_Create_Response {
@@ -24,6 +25,7 @@ export interface Books_Create_Response {
 
 export interface Books_GetAll_Response {
     books: BookDetails[];
+    total: number;
 }
 
 export interface Books_GetById_Response {
@@ -91,6 +93,7 @@ export interface BookDetails {
     author: string;
     isbn: string;
     status: string;
+    description: string;
     publishedDate: string;
 }
 
@@ -137,6 +140,9 @@ export interface ReservationDetails {
     title: string;
     reservedDate: string;
     expiryDate?: string | undefined;
+}
+
+export interface Unit {
 }
 
 export interface ProblemDetails {

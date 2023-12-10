@@ -25,9 +25,13 @@ public static class SeedData
     if (!context.Books.Any())
     {
       context.Books.AddRange(
-          Book.CreateInstance("To Kill a Mockingbird", "Harper Lee", "9780446310789", new DateTime(1960, 7, 11)),
-          Book.CreateInstance("1984", "George Orwell", "9780451524935", new DateTime(1949, 6, 8)),
-          Book.CreateInstance("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565", new DateTime(1925, 4, 10))
+        Book.CreateInstance("To Kill a Mockingbird", "Harper Lee", "9780446310789", new DateTime(1960, 7, 11), "A novel that explores the issues of race and class in the Deep South of the 1930s."),
+        Book.CreateInstance("1984", "George Orwell", "9780451524935", new DateTime(1949, 6, 8), "A dystopian novel that delves into the dangers of totalitarianism."),
+        Book.CreateInstance("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565", new DateTime(1925, 4, 10), "A tale of love, wealth, and ambition, set in the roaring 1920s."),
+        Book.CreateInstance("Pride and Prejudice", "Jane Austen", "9781936594291", new DateTime(1813, 1, 28), "A classic novel of manners, love, and marriage in early 19th-century England."),
+        Book.CreateInstance("The Catcher in the Rye", "J.D. Salinger", "9780316769488", new DateTime(1951, 7, 16), "A story about teenage alienation and the loss of innocence."),
+        Book.CreateInstance("The Hobbit", "J.R.R. Tolkien", "9780547928227", new DateTime(1937, 9, 21), "A fantasy novel about the journey of Bilbo Baggins, a hobbit who sets out on a grand adventure."),
+        Book.CreateInstance("Harry Potter and the Sorcerer's Stone", "J.K. Rowling", "9780590353427", new DateTime(1997, 6, 26), "The first book in the Harry Potter series, introducing the young wizard and his adventures at Hogwarts.")
       );
       context.SaveChanges();
     }

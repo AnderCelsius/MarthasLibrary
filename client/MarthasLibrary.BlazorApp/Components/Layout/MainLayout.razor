@@ -1,36 +1,12 @@
-﻿@* @inherits LayoutComponentBase
-
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div> *@
-
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <div style="border-bottom: 1px solid gray">
     <div class="container @HeaderClass">
-        <NavLink to="@Utils.Routes.Landing.Root">
+        <NavLink href="@Utils.Routes.Landing.Root">
             <Typography class="app-logo" Color="none" Font="Bodoni" content="Martha's Library" />
         </NavLink>
         <div style="display: flex; align-items: center; gap: 20px;">
-            <NavLink to="/dashboard">
+            <NavLink href="/dashboard">
                 <Button text="@GetButtonText()"></Button>
             </NavLink>
         </div>

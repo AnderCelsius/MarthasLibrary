@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarthasLibrary.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20231207123328_InitializeDb")]
+    [Migration("20231210181115_InitializeDb")]
     partial class InitializeDb
     {
         /// <inheritdoc />
@@ -95,6 +95,9 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Isbn")
                         .IsRequired()

@@ -1,0 +1,74 @@
+﻿@page "/book/{bookId}"
+@using MarthasLibrary.APIClient
+@using MarthasLibrary.BlazorApp.Utils
+
+@inject IMarthasLibraryAPIClient MarthasLibraryApiClient
+@inject ILogger<Preview> Logger
+
+@if (Book == null)
+{
+    <p>Loading book details...</p>
+}
+else
+{
+    <div class="container preview">
+        <div class="preview-book-container">
+            <div>
+                <img src="img/default.jpg" alt="@Book.Title" class="preview-img" />
+                <div class="preview-content">
+                    <Typography Size="Label" class="book-title">@Book.Title</Typography>
+                    <div class="status-watch-container">
+                        <BookStatus Status="@Book.Status" />
+                        @if (Book.Status.ToLowerInvariant() == Constants.BookStatus.Available.ToLowerInvariant())
+                        {
+                            <Button Text="Reserve"></Button>
+                        }
+                        else
+                        {
+                            <Button Text="Notify Me"></Button>
+                            <Typography Class="watch-text" Title="Click to be notified when the book becomes available" Size="Small">
+                                Notify when available
+                            </Typography>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div>
+                <Typography Size="Subtext">Description</Typography>
+                <Typography>
+                   @*  @Book.Description *@
+                </Typography>
+            </div>
+            <div>
+                <Typography Size="Subtext">Comments</Typography>
+                <div class="comments-container">
+                    <Typography Size="Small">No comments</Typography>
+                </div>
+            </div>
+        </div>
+        <div class="preview-cart">
+            <RelatedBooks />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string bookId { get; set; }
+
+    public BookDetails? Book { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await MarthasLibraryApiClient.GetBookByIdAsync(Guid.Parse(bookId));
+            Book = response.Book;
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Failed to load book details: {Exception}", e);
+            // Consider showing an error message to the user
+        }
+    }
+}

@@ -1,29 +1,21 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">MarthasLibrary.BlazorApp</a>
+﻿<RenderFragment>
+    <NavLink href="@Utils.Routes.Landing.Root">
+        <Typography class="app-logo" Color="none" Font="Bodoni" content="Martha's Library" />
+    </NavLink>
+    <div style="display: flex; align-items: center; gap: 20px;">
+        <NavLink href="/dashboard">
+            <Button text="@GetButtonText()"></Button>
+        </NavLink>
     </div>
-</div>
+</RenderFragment>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    private bool isAuth = true;
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    private static string HeaderClass => "header";
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    private string GetButtonText()
+    {
+        return isAuth ? "Dashboard" : "Get Started";
+    }
+}

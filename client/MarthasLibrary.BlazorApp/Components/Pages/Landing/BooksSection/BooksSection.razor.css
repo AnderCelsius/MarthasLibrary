@@ -12,3 +12,14 @@
     grid-template-columns: repeat(auto-fit, minmax(min(calc(100% / 16 * 1rem), 16rem), 1fr));
     gap: calc(1.5 / 16 * 1rem);
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.pagination button {
+    margin: 0 0.5rem;
+}

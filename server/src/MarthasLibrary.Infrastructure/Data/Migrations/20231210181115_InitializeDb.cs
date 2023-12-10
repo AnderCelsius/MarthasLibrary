@@ -19,6 +19,7 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                     Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Author = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Isbn = table.Column<string>(type: "varchar(13)", unicode: false, maxLength: 13, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PublishedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),

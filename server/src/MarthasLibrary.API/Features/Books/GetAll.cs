@@ -30,7 +30,7 @@ public static class GetAll
   /// <remarks>
   /// This record encapsulates the response data for a request to fetch all books, providing the book details as a read-only collection.
   /// </remarks>
-  public record Response(IReadOnlyCollection<BookDetails> Books);
+  public record Response(IReadOnlyCollection<BookDetails> Books, int Total);
 
   /// <summary>
   /// Handles the retrieval of all books.
@@ -56,12 +56,18 @@ public static class GetAll
     /// <returns>A task representing the asynchronous operation, with a result of the response containing all book details.</returns>
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
-      var books = await _bookRepository.TableNoTracking
+      // This is not optimal but for the use case, I will go ahead an make 2 round trip requests.
+      var booksQuery = _bookRepository.TableNoTracking;
+
+      var count = await booksQuery.CountAsync(cancellationToken);
+      var books = await booksQuery
         .Skip((request.PageNumber - 1) * request.PageSize)
         .Take(request.PageSize)
         .ToListAsync(cancellationToken);
 
-      return _mapper.Map<Response>(books);
+      var bookDetails = _mapper.Map<IReadOnlyCollection<BookDetails>>(books);
+
+      return new Response(bookDetails, count);
     }
   }
 }

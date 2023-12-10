@@ -53,6 +53,7 @@ namespace MarthasLibrary.API.Controllers
     /// <param name="cancellationToken">A token for cancelling the operation if necessary.</param>
     /// <returns>A list of books that match the search query.</returns>
     /// <response code="200">Returns the list of books matching the search query.</response>
+    [AllowAnonymous]
     [HttpGet("search", Name = "Search")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<Search.Response>> Search([FromQuery] string query,
@@ -105,6 +106,7 @@ namespace MarthasLibrary.API.Controllers
     /// <response code="200">Returns the detailed information of the requested book.</response>
     /// <response code="403">Returned if the user is not authorized to access this book's details.</response>
     /// <response code="404">Returned if the book with the specified ID is not found.</response>
+    [AllowAnonymous]
     [HttpGet("{bookId}", Name = "GetBookById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

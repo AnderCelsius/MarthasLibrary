@@ -23,7 +23,7 @@ public static class Create
   /// <param name="Author">The author of the book.</param>
   /// <param name="Isbn">The ISBN of the book.</param>
   /// <param name="PublishedDate">The publication date of the book.</param>
-  public record Request(string Title, string Author, string Isbn, DateTimeOffset PublishedDate) : IRequest<Response>;
+  public record Request(string Title, string Author, string Isbn, DateTimeOffset PublishedDate, string? Description = null) : IRequest<Response>;
 
   /// <summary>
   /// Represents the response after creating a new book.

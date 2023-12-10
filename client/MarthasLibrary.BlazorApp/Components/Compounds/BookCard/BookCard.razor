@@ -1,27 +1,28 @@
 ﻿@using MarthasLibrary.APIClient
+
 <div class="bookCard">
     <div class="bookCardImg">
-        <img src="img/default.jpg" alt="@book?.Title"/>
+        <img src="img/default.jpg" alt="@Book?.Title"/>
     </div>
     <div>
-        <a href="@($"/book/{book?.Id}-8y28y342{new Random().Next(1, 3)}")">
+        <a href="@($"/book/{Book?.Id}")">
             <Typography Size="Label" class="bookCardTitle">
-                @book?.Title
+                @Book?.Title
             </Typography>
         </a>
         <Typography Size="Small" class="bookCardDescription">
-            @(book?.Author ?? "No description for this book")
+            @(Book?.Author ?? "No description for this book")
         </Typography>
     </div>
     <hr/>
     <div>
-        <BookStatus Status="@book?.Status"/>
+        <BookStatus Status="@Book?.Status"/>
     </div>
 </div>
 
 @code {
 
     [Parameter]
-    public BookDetails? book { get; set; }
+    public BookDetails? Book { get; set; }
 
 }

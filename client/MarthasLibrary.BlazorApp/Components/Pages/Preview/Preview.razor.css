@@ -1,0 +1,78 @@
+.container.preview {
+    padding-top: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.preview-book-container {
+    display: grid;
+    gap: 20px;
+}
+
+    .preview-book-container > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+.preview-img {
+    width: 100%;
+    max-width: 300px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+}
+
+.status-watch-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.watch-text {
+    cursor: default;
+    text-decoration: underline;
+}
+
+.comments-container {
+    padding: 2rem;
+}
+
+.preview-cart {
+    position: relative;
+    min-width: 350px;
+    display: none;
+}
+
+    .preview-cart > div {
+        top: 2rem;
+        position: sticky;
+        height: 200px;
+    }
+
+@media screen and (min-width: 50rem) {
+    .container.preview {
+        grid-template-columns: 1fr auto;
+    }
+
+    .preview-book-container > div:first-child {
+        flex-direction: row;
+    }
+
+    .preview-cart {
+        display: block;
+    }
+
+    .preview-content {
+        padding: 1rem 0;
+    }
+}
