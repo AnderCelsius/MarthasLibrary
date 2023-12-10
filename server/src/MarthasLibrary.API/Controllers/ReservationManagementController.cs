@@ -13,6 +13,7 @@ namespace MarthasLibrary.API.Controllers
   {
     [HttpGet("reservations", Name = "GetAllReservations")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<GetAll.Response>> GetAllReservations(
       CancellationToken cancellationToken)
@@ -48,8 +49,9 @@ namespace MarthasLibrary.API.Controllers
     [HttpPost("reserve", Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MakeReservation.Response>> ReserveBook(
       [FromBody] MakeReservation.Request request,
@@ -78,7 +80,10 @@ namespace MarthasLibrary.API.Controllers
 
     [HttpDelete("reserve/{reservationId}", Name = "CancelReservation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+
     public async Task<ActionResult<Unit>> CancelReservation(
       [FromRoute] Guid reservationId,
       CancellationToken cancellationToken)

@@ -125,6 +125,7 @@ export interface NotificationDetails {
     id: string;
     customerId: string;
     bookId: string;
+    bookTitle: string;
     type: string;
     isRead: boolean;
 }

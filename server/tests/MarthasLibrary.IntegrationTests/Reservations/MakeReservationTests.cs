@@ -55,7 +55,7 @@ public sealed class MakeReservationTests : IDisposable
         var book = Book.CreateInstance("To Kill a Mockingbird", "Harper Lee", "9780446310789",
             new DateTime(1960, 7, 11));
 
-        await Seeder.SeedBook(new List<Book> { book }, _context);
+        _context.Books.Add(book);
 
         var customer = Customer.CreateInstance("Alice", "Smith", "alice.smith@email.com", TestUserIdentityId);
         customer.SetAsActive();
@@ -75,12 +75,12 @@ public sealed class MakeReservationTests : IDisposable
             }, JsonSerializerOptions);
 
         var responseBody =
-            await response.Content.ReadFromJsonFixedAsync<Reservations_MakeReservation_Request>();
+            await response.Content.ReadFromJsonFixedAsync<Reservations_MakeReservation_Response>();
 
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.Equal(book.Id, responseBody?.BookId);
+        Assert.Equal(book.Id, responseBody?.ReservationDetails.BookId);
     }
 
 
@@ -118,6 +118,8 @@ public sealed class MakeReservationTests : IDisposable
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Contains("Book is already reserved.",
             await response.Content.ReadAsStringAsync());
+
+        client.Dispose();
     }
 
     [Fact]
@@ -148,6 +150,8 @@ public sealed class MakeReservationTests : IDisposable
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         Assert.Contains($"Could not find book with Id: {bookId}",
             await response.Content.ReadAsStringAsync());
+
+        client.Dispose();
     }
 
     [Fact]
@@ -183,6 +187,8 @@ public sealed class MakeReservationTests : IDisposable
         // Assert
         Assert.NotNull(response);
         Assert.Single(response.Notifications);
+
+        client.Dispose();
     }
 
 

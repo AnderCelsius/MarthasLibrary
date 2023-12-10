@@ -105,7 +105,7 @@ public sealed class GetAllTests : IDisposable
   }
 
   [Fact]
-  public async Task GetAll_ReturnsEmptyArray_WhenNoOtpConfigurationExist()
+  public async Task GetAll_ReturnsEmptyArray_WhenNoBookExist()
   {
     var response = await _fixture.Client.GetFromJsonFixedAsync<Books_GetAll_Response>(
       "api/Books");
