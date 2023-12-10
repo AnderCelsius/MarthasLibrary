@@ -77,6 +77,29 @@ public static class Config
             },
             new()
             {
+                ClientId = "blazor-client",
+                ClientSecrets = { new Secret("secret".Sha256()) },
+
+                AllowedGrantTypes = GrantTypes.Code,
+
+                // where to redirect to after login
+                RedirectUris = { "https://localhost:7209/signin-oidc" },
+
+                // where to redirect to after logout
+                PostLogoutRedirectUris = { "https://localhost:7209/signout-callback-oidc" },
+
+                AllowedScopes = new List<string>
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "roles",
+                    "marthaslibraryapi.read",
+                    "marthaslibraryapi.write"
+                },
+                AlwaysIncludeUserClaimsInIdToken = true,
+            },
+            new()
+            {
                 ClientName = "Marthas Library Web App",
                 ClientId = "marthaslibraryclient",
                 AllowedGrantTypes = GrantTypes.Code,

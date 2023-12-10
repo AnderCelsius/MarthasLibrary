@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace MarthasLibrary.Web.Extensions;
+namespace MarthasLibrary.BlazorApp.Extensions;
 
 public static class OpenIdConnectAuthentication
 {

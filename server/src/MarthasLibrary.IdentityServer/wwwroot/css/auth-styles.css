@@ -1,0 +1,13 @@
+﻿.authShared {
+    padding: 2rem;
+}
+
+    .authShared > div {
+        margin-bottom: 1rem;
+    }
+
+.authSharedForm {
+    padding-top: 2rem;
+    display: grid;
+    gap: 1.5rem;
+}

@@ -35,7 +35,7 @@ public static class WebApplicationAuthenticationBuilder
     builder.Services.AddAuthorization(authorizationOptions =>
     {
       authorizationOptions.AddPolicy(
-        Policies.UserCanAddBook, AuthorizationPolicies.CanAddBook());
+        Policies.LibraryStaff, AuthorizationPolicies.CanAddBook());
       authorizationOptions.AddPolicy(
         Policies.ClientApplicationCanWrite,
         policyBuilder => { policyBuilder.RequireClaim("scope", "marthaslibraryapi.write"); });
