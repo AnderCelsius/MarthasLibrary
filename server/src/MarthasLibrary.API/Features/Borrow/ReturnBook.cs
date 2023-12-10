@@ -85,8 +85,10 @@ public static class ReturnBook
           await _bookRepository.SaveAsync(cancellationToken);
         }
 
-        await _bookRepository.CommitTransactionAsync(cancellationToken);
         await _mediator.Publish(new BookReturnedEvent(borrowedBook.BookId, borrowedBook.CustomerId), cancellationToken);
+        await _mediator.Publish(new BookAvailableEvent(borrowedBook.BookId, borrowedBook.CustomerId), cancellationToken);
+
+        await _bookRepository.CommitTransactionAsync(cancellationToken);
       }
       catch
       {
