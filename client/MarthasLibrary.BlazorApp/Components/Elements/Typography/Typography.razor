@@ -1,0 +1,44 @@
+﻿@inherits Microsoft.AspNetCore.Components.ComponentBase
+
+<div @attributes="AdditionalAttributes" class="@TypographyClass">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public int? Level { get; set; }
+    [Parameter] public string Content { get; set; }
+    [Parameter] public string Font { get; set; } = "Inter";
+    [Parameter] public string Color { get; set; } = "Default";
+    [Parameter] public string Size { get; set; } = "Default";
+
+    private string TypographyClass => string.Join(" ", "text", GetColorClass(), GetFontClass(), GetSizeClass(), AdditionalClass);
+
+    private string GetColorClass()
+    {
+        if (Color == "none")
+        {
+            return string.Empty;
+        }
+        return $"textColorDefault textColor{Color}";
+    }
+
+    private string GetFontClass()
+    {
+        return $"textFont{Font}";
+    }
+
+    private string GetSizeClass()
+    {
+        if (Size == "Default")
+        {
+            return string.Empty;
+        }
+        return $"textSize{Size}";
+    }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+    [Parameter] public string AdditionalClass { get; set; }
+}

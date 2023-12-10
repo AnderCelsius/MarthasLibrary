@@ -94,3 +94,11 @@ main {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: calc(24 / 16 * 1rem);
+    padding-bottom: calc(24 / 16 * 1rem);
+}

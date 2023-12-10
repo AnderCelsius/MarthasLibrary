@@ -1,0 +1,19 @@
+.button {
+    border-radius: 5px;
+    border: none;
+    padding: 12px 18px;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: Inter, sans-serif;
+    background-color: var(--primary-600);
+    cursor: pointer;
+    transition: border-color 0.25s;
+    color: white;
+    text-transform: capitalize;
+}
+
+.button.rounded {
+    border-radius: 30px;
+}
+
+/* Add any additional styles, such as hover and focus styles, if needed */

@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+﻿@* @inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
@@ -20,4 +20,34 @@
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
+</div> *@
+
+@inherits LayoutComponentBase
+
+<div style="border-bottom: 1px solid gray">
+    <div class="container @headerClass">
+        <NavLink to="@Utils.Routes.Landing.Root">
+            <Typography class="app-logo" color="none" font="Bodoni" content="Martha's Library" />
+        </NavLink>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <NavLink to="/dashboard">
+                <Button text="@GetButtonText()"></Button>
+            </NavLink>
+        </div>
+    </div>
 </div>
+
+<RouterView />
+
+@code {
+    private bool isAuth = true;
+
+    private string headerClass => "header";
+
+    private string GetButtonText()
+    {
+        return isAuth ? "Dashboard" : "Get Started";
+    }
+}
+
+

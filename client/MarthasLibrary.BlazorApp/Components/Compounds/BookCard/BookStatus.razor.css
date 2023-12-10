@@ -1,0 +1,23 @@
+.bookCardStatus {
+    width: fit-content;
+    text-transform: capitalize;
+    background-color: green;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: default;
+}
+
+.bookCardStatus.reserved {
+    background-color: orange;
+}
+
+.bookCardStatus.borrowed {
+    background-color: gray;
+}
+
+.bookCardStatus.available {
+    background-color: green;
+    opacity: 0.5;
+}

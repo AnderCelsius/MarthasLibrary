@@ -1,0 +1,43 @@
+.bookCard {
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 0 9px 4px #0000002e;
+}
+
+.bookCard > div {
+    padding: 1rem 0.8rem;
+}
+
+.bookCard > div:nth-child(2) {
+    min-height: 119px;
+}
+
+.bookCard > div:last-child {
+    text-align: end;
+}
+
+.bookCardImg {
+    height: 200px;
+    overflow: hidden;
+}
+
+.bookCardImg img {
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.bookCardTitle {
+    margin-bottom: 1rem;
+    text-transform: capitalize;
+}
+
+.bookCardDescription {
+    width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}

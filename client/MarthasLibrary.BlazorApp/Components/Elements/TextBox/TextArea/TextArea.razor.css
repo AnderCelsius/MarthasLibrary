@@ -1,0 +1,25 @@
+﻿
+/* Style the custom textarea container */
+.textarea-container {
+    position: relative;
+}
+
+/* Style the textarea element */
+.textarea {
+    min-height: 50px;
+    resize: vertical;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--gray-300);
+    color: #999;
+}
+
+/* Style the textarea label */
+.textarea-label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-black);
+    text-transform: capitalize;
+}
