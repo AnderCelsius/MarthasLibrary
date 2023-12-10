@@ -1,16 +1,19 @@
 ﻿using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.API.Features.Reservations;
+using MarthasLibrary.API.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarthasLibrary.API.Controllers
 {
-  [Route("api/books/reserve")]
+  [Route("api/books")]
   [ApiController]
+  [ServiceFilter(typeof(CustomerAuthorizationFilter))]
   public class ReservationManagementController(IMediator mediator) : ControllerBase
   {
-    [HttpGet("/reservations", Name = "GetAllReservations")]
+    [HttpGet("reservations", Name = "GetAllReservations")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<GetAll.Response>> GetAllReservations(
       CancellationToken cancellationToken)
@@ -18,7 +21,7 @@ namespace MarthasLibrary.API.Controllers
       return await mediator.Send(new GetAll.Request(), cancellationToken);
     }
 
-    [HttpGet("/reserve/{customerId}", Name = "GetReservationsForCustomer")]
+    [HttpGet("reserve/{customerId}", Name = "GetReservationsForCustomer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsForCustomer(
       [FromRoute] Guid customerId,
@@ -27,7 +30,7 @@ namespace MarthasLibrary.API.Controllers
       return Ok(await mediator.Send(new GetReservationsByCustomerId.Request(customerId), cancellationToken));
     }
 
-    [HttpGet("/reservation/{reservationId}", Name = "GetReservationById")]
+    [HttpGet("reservation/{reservationId}", Name = "GetReservationById")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<GetById.Response>> GetReservationById(
       [FromRoute] Guid reservationId,
@@ -43,10 +46,12 @@ namespace MarthasLibrary.API.Controllers
       }
     }
 
-    [HttpPost("/reserve", Name = "ReserveBook")]
+    [HttpPost("reserve", Name = "ReserveBook")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<MakeReservation.Response>> ReserveBook(
       [FromBody] MakeReservation.Request request,
@@ -57,6 +62,10 @@ namespace MarthasLibrary.API.Controllers
         var response = await mediator.Send(request, cancellationToken);
         return Created(new Uri($"/books/reserve/{response.ReservationDetails.ReservationId}", UriKind.Relative),
           response);
+      }
+      catch (BookNotFoundException e)
+      {
+        return NotFound(e.Message);
       }
       catch (BookNotAvailableException e)
       {
@@ -69,9 +78,12 @@ namespace MarthasLibrary.API.Controllers
       }
     }
 
-    [HttpDelete("/reserve/{reservationId}", Name = "CancelReservation")]
+    [HttpDelete("reserve/{reservationId}", Name = "CancelReservation")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+
     public async Task<ActionResult<Unit>> CancelReservation(
       [FromRoute] Guid reservationId,
       CancellationToken cancellationToken)
@@ -79,7 +91,7 @@ namespace MarthasLibrary.API.Controllers
       try
       {
         await mediator.Send(new CancelReservation.Request(reservationId), cancellationToken);
-        return NoContent();
+        return Ok();
       }
       catch (ReservationNotFoundException ex)
       {

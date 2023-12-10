@@ -1,6 +1,8 @@
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
 
 namespace MarthasLibrary.Application.UserData;
 
@@ -23,12 +25,12 @@ public static class UserDataExtensions
     services.AddHttpContextAccessor();
 
     services.AddScoped<IUserDataProvider<UserBasicData>, UserBasicDataProvider>();
+    services.AddScoped<IUserDataProvider<UserData>, UserDataProvider>();
 
     return services;
   }
 
-
-  public static UserBasicData EnsureAuthenticated(this UserBasicData? userData)
+  public static UserData EnsureAuthenticated(this UserData? userData)
   {
     if (userData is null)
     {
@@ -48,6 +50,13 @@ public static class UserDataExtensions
     }
 
     return userEmailHeader;
+  }
+
+  public static string? GetIdentityUserIdFromHttpContext(this HttpContext? httpContext)
+  {
+    var identityUserId = httpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    identityUserId ??= httpContext?.User.FindFirst(JwtClaimTypes.Subject)?.Value;
+    return identityUserId;
   }
 
   public static void SetEmailInHttpContext(this HttpContext httpContext, string email) =>

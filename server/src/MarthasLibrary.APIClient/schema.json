@@ -815,7 +815,57 @@
         }
       }
     },
-    "/reservations": {
+    "/api/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "operationId": "GetNotificationsForCurrentUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Notifications_GetNotificationsForCurrentUser_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Notifications_GetNotificationsForCurrentUser_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Notifications_GetNotificationsForCurrentUser_Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books/reservations": {
       "get": {
         "tags": [
           "ReservationManagement"
@@ -865,7 +915,7 @@
         }
       }
     },
-    "/reserve/{customerId}": {
+    "/api/books/reserve/{customerId}": {
       "get": {
         "tags": [
           "ReservationManagement"
@@ -906,7 +956,7 @@
         }
       }
     },
-    "/reservation/{reservationId}": {
+    "/api/books/reservation/{reservationId}": {
       "get": {
         "tags": [
           "ReservationManagement"
@@ -947,7 +997,7 @@
         }
       }
     },
-    "/reserve": {
+    "/api/books/reserve": {
       "post": {
         "tags": [
           "ReservationManagement"
@@ -1045,6 +1095,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
           "409": {
             "description": "Conflict",
             "content": {
@@ -1068,7 +1138,7 @@
         }
       }
     },
-    "/reserve/{reservationId}": {
+    "/api/books/reserve/{reservationId}": {
       "delete": {
         "tags": [
           "ReservationManagement"
@@ -1302,6 +1372,21 @@
         },
         "additionalProperties": false
       },
+      "MarthasLibrary.API.Features.Notifications_GetNotificationsForCurrentUser_Response": {
+        "required": [
+          "notifications"
+        ],
+        "type": "object",
+        "properties": {
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.NotificationDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "MarthasLibrary.API.Features.Reservations_GetAll_Response": {
         "required": [
           "books"
@@ -1350,15 +1435,10 @@
       },
       "MarthasLibrary.API.Features.Reservations_MakeReservation_Request": {
         "required": [
-          "bookId",
-          "customerId"
+          "bookId"
         ],
         "type": "object",
         "properties": {
-          "customerId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "bookId": {
             "type": "string",
             "format": "uuid"
@@ -1523,11 +1603,45 @@
         },
         "additionalProperties": false
       },
+      "MarthasLibrary.API.Shared.NotificationDetails": {
+        "required": [
+          "bookId",
+          "bookTitle",
+          "customerId",
+          "id",
+          "isRead",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bookId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bookTitle": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "isRead": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "MarthasLibrary.API.Shared.ReservationDetails": {
         "required": [
           "bookId",
           "customerId",
-          "expiryDate",
           "reservationId",
           "reservedDate",
           "title"
@@ -1555,7 +1669,8 @@
           },
           "expiryDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false

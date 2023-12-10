@@ -37,6 +37,7 @@ namespace MarthasLibrary.IdentityServer
                     UserName = "alice",
                     Email = "AliceSmith@email.com",
                     EmailConfirmed = true,
+                    IsActive = true,
                 };
                 var result = userMgr.CreateAsync(alice, "Pass123$").Result;
                 if (!result.Succeeded)
@@ -46,10 +47,11 @@ namespace MarthasLibrary.IdentityServer
 
                 result = userMgr.AddClaimsAsync(alice, new Claim[]
                 {
-                    new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                    new Claim(JwtClaimTypes.GivenName, "Alice"),
-                    new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                    new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
+                    new(JwtClaimTypes.Name, "Alice Smith"),
+                    new(JwtClaimTypes.GivenName, "Alice"),
+                    new(JwtClaimTypes.FamilyName, "Smith"),
+                    new(JwtClaimTypes.Role, "Customer"),
+                    new(JwtClaimTypes.WebSite, "http://alice.com"),
                 }).Result;
                 if (!result.Succeeded)
                 {
@@ -71,7 +73,8 @@ namespace MarthasLibrary.IdentityServer
                     Id = "83ec2132-9104-4615-814b-11cba2374e41",
                     UserName = "obai",
                     Email = "oasiegbulam@gmail.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    IsActive = true
                 };
                 var result = userMgr.CreateAsync(obai, "Pass123$").Result;
                 if (!result.Succeeded)
@@ -81,10 +84,11 @@ namespace MarthasLibrary.IdentityServer
 
                 result = userMgr.AddClaimsAsync(obai, new Claim[]
                 {
-                    new Claim(JwtClaimTypes.Name, "Obinna Asiegbulam"),
-                    new Claim(JwtClaimTypes.GivenName, "Obinna"),
-                    new Claim(JwtClaimTypes.FamilyName, "Asiegbulam"),
-                    new Claim(JwtClaimTypes.WebSite, "http://obai.com"),
+                    new(JwtClaimTypes.Name, "Obinna Asiegbulam"),
+                    new(JwtClaimTypes.GivenName, "Obinna"),
+                    new(JwtClaimTypes.FamilyName, "Asiegbulam"),
+                    new(JwtClaimTypes.Role, "Admin"),
+                    new(JwtClaimTypes.WebSite, "http://obai.com"),
                 }).Result;
                 if (!result.Succeeded)
                 {
@@ -96,6 +100,42 @@ namespace MarthasLibrary.IdentityServer
             else
             {
                 Log.Debug("obai already exists");
+            }
+
+            var josh = userMgr.FindByNameAsync("josh").Result;
+            if (josh == null)
+            {
+                josh = new ApplicationUser
+                {
+                    Id = "13229d33-99e0-41b3-b18d-4f72127e3971",
+                    UserName = "josh",
+                    Email = "chris.josh@gmail.com",
+                    EmailConfirmed = true,
+                    IsActive = true
+                };
+                var result = userMgr.CreateAsync(josh, "Pass123$").Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                result = userMgr.AddClaimsAsync(josh, new Claim[]
+                {
+                    new(JwtClaimTypes.Name, "Chris Josh"),
+                    new(JwtClaimTypes.GivenName, "Chris"),
+                    new(JwtClaimTypes.FamilyName, "Josh"),
+                    new(JwtClaimTypes.Role, "LibraryStaff"),
+                }).Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+
+                Log.Debug("josh created");
+            }
+            else
+            {
+                Log.Debug("josh already exists");
             }
         }
 

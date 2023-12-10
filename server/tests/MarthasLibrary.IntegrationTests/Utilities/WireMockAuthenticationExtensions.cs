@@ -1,5 +1,10 @@
-﻿using IdentityModel.Client;
-using MarthasLibrary.IdentityServer.Entities;
+﻿using IdentityModel;
+using MarthasLibrary.Application.UserData;
+using MarthasLibrary.Core.Entities;
+using MarthasLibrary.Core.Repository;
+using Microsoft.AspNetCore.Http;
+using Moq;
+using System.Security.Claims;
 using System.Text.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -11,90 +16,104 @@ public static class WireMockAuthenticationExtensions
 {
   public const string MockAdminEmail = "admin@marthaslib.com";
 
-  public const string MockFirstName = "John";
+  public const string MockAdminFirstName = "John";
 
-  public const string MockLastName = "Doe";
+  public const string MockAdminLastName = "Doe";
 
-  public const string MockRegularEmail = "regular.user@example.com";
+  public const string MockCustomerFirstName = "Alice";
+
+  public const string MockCustomerLastName = "Smith";
+
+  public const string MockCustomerEmail = "alice.smith@email.com";
 
   public const string BearerToken = "some-random-string";
 
-  public const string IdentityServerAuthority = "https://your-identityserver-url.com";
-  public const string ClientId = "your-client-id";
-  public const string ClientSecret = "your-client-secret";
-  public const string Scope = "your-api-scope";
+  private static readonly UserData MockAdminUser = new(
+    Id: Guid.NewGuid(),
+    Type: "",
+    FirstName: MockAdminFirstName,
+    LastName: MockAdminLastName,
+    Email: MockCustomerEmail
+  );
 
-  private static string AccessToken { get; set; }
+  public static readonly UserData MockCustomerUser = new(
+    Id: Guid.NewGuid(),
+    Type: "",
+    FirstName: MockCustomerFirstName,
+    LastName: MockCustomerLastName,
+    Email: MockCustomerEmail
+  );
 
-  private static readonly ApplicationUser MockAdminUser = new()
-  {
-    FirstName = MockFirstName,
-    LastName = MockLastName,
-    Email = MockAdminEmail,
-    PhoneNumber = "+2348023415243"
-  };
-
-  private static readonly ApplicationUser MockRegularUser = new()
-  {
-    FirstName = "Regular",
-    LastName = "Person",
-    Email = MockRegularEmail,
-    PhoneNumber = "+2348023546789"
-  };
-
-  public static async Task InitializeAuthentication()
-  {
-    var client = new HttpClient();
-
-    // Discover the IdentityServer configuration
-    var discoveryDocument = await client.GetDiscoveryDocumentAsync(IdentityServerAuthority);
-
-    if (discoveryDocument.IsError)
-    {
-      throw new Exception($"Error discovering IdentityServer: {discoveryDocument.Error}");
-    }
-
-    // Request a token
-    var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-    {
-      Address = discoveryDocument.TokenEndpoint,
-      ClientId = ClientId,
-      ClientSecret = ClientSecret,
-      Scope = Scope
-    });
-
-    if (tokenResponse.IsError)
-    {
-      throw new Exception($"Error requesting token: {tokenResponse.Error}");
-    }
-
-    AccessToken = tokenResponse.AccessToken;
-  }
 
   public static void MockAuthentication(this WireMockServer wireMockServer, bool allowAdmin = false)
   {
-    var userData = allowAdmin ? MockAdminUser : MockRegularUser;
+    var userData = allowAdmin ? MockAdminUser : MockCustomerUser;
     wireMockServer
-        .Given(Request.Create().WithPath("https://localhost:5001").UsingPost()
-            .WithHeader("Authorization", $"Bearer {BearerToken}"))
-        .RespondWith(Response.Create()
-            .WithStatusCode(200)
-            .WithBodyAsJson(JsonSerializer.Serialize(userData)));
-  }
-
-  public static void MockAuthentication(this WireMockServer wireMockServer)
-  {
-    var mockResponse = new
-    {
-      access_token = "mocked_access_token", // This should be a valid token
-      expires_in = 3600,
-      token_type = "Bearer"
-    };
-
-    wireMockServer
-      .Given(Request.Create().WithPath("/connect/token").UsingPost())
+      .Given(Request.Create().WithPath("https://localhost:5001").UsingPost()
+        .WithHeader("Authorization", $"Bearer {BearerToken}"))
       .RespondWith(Response.Create()
         .WithStatusCode(200)
-        .WithBodyAsJson(JsonSerializer.Serialize(mockResponse)));
+        .WithBodyAsJson(JsonSerializer.Serialize(userData)));
+  }
+
+  public static Claim[] SetupAuthenticatedUserClaims(string testUserIdentityId,
+    Mock<IGenericRepository<Customer>> mockCustomerRepository, Mock<IUserDataProvider<UserData>> mockUserDataProvider,
+    Mock<IHttpContextAccessor> mockHttpContextAccessor)
+  {
+    var userData = SetupCustomerRepository(testUserIdentityId, mockCustomerRepository);
+
+    SetupUserDataProvider(userData, mockUserDataProvider);
+
+    var claims = CustomerClaims(testUserIdentityId);
+
+    SetupHttpContextAccessor(claims, mockHttpContextAccessor);
+    return claims;
+  }
+
+  private static void SetupHttpContextAccessor(Claim[] claims, Mock<IHttpContextAccessor> mockHttpContextAccessor)
+  {
+    var mockHttpContext = new Mock<HttpContext>();
+    var identity = new ClaimsIdentity(claims, "TestAuthentication");
+    var claimsPrincipal = new ClaimsPrincipal(identity);
+    mockHttpContext.Setup(ctx => ctx.User).Returns(claimsPrincipal);
+    mockHttpContextAccessor.Setup(accessor => accessor.HttpContext).Returns(mockHttpContext.Object);
+  }
+
+  public static Claim[] CustomerClaims(string testUserIdentityId)
+  {
+    return new[]
+    {
+      new Claim(ClaimTypes.NameIdentifier, testUserIdentityId),
+      new(JwtClaimTypes.Name, "Alice Smith"),
+      new(JwtClaimTypes.GivenName, "Alice"),
+      new(JwtClaimTypes.FamilyName, "Smith"),
+      new(JwtClaimTypes.Role, "Customer"),
+      new(JwtClaimTypes.WebSite, "http://alice.com")
+    };
+  }
+
+  public static UserData SetupCustomerRepository(string testUserIdentityId,
+    Mock<IGenericRepository<Customer>> mockCustomerRepository)
+  {
+    UserData mockUserData = WireMockAuthenticationExtensions.MockCustomerUser;
+    var customers = new List<Customer>
+    {
+      Customer.CreateInstance(mockUserData.FirstName,
+        mockUserData.LastName,
+        mockUserData.Email, testUserIdentityId),
+    };
+
+    var customersQueryable = customers.AsQueryable();
+
+    mockCustomerRepository.Setup(repo => repo.Table)
+      .Returns(customersQueryable);
+
+    return mockUserData;
+  }
+
+  private static void SetupUserDataProvider(UserData mockUserData, Mock<IUserDataProvider<UserData>> mockUserDataProvider)
+  {
+    mockUserDataProvider.Setup(provider => provider.GetCurrentUserData(It.IsAny<CancellationToken>()))
+      .ReturnsAsync(() => mockUserData);
   }
 }

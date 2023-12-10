@@ -1,5 +1,6 @@
 ﻿using MarthasLibrary.API.Features.Exceptions;
 using MarthasLibrary.Core.Entities;
+using MarthasLibrary.Core.Events;
 using MarthasLibrary.Core.Repository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,9 @@ public static class CancelReservation
   /// <exception cref="ArgumentException">Thrown when a null argument is passed for any of the repositories or the logger.</exception>
   /// <exception cref="ReservationNotFoundException">Thrown when the specified reservation is not found.</exception>
   public class Handler(IGenericRepository<Book> bookRepository,
-      IGenericRepository<Reservation> reservationRepository, ILogger<Handler> logger)
+      IGenericRepository<Reservation> reservationRepository,
+      IMediator mediator,
+      ILogger<Handler> logger)
     : IRequestHandler<Request>
   {
     private readonly IGenericRepository<Book> _bookRepository =
@@ -41,6 +44,8 @@ public static class CancelReservation
 
     private readonly IGenericRepository<Reservation> _reservationRepository =
       reservationRepository ?? throw new ArgumentException(nameof(reservationRepository));
+
+    private readonly IMediator _mediator = mediator ?? throw new ArgumentException(nameof(mediator));
 
     private readonly ILogger<Handler> _logger = logger ?? throw new ArgumentException(nameof(logger));
 
@@ -71,6 +76,10 @@ public static class CancelReservation
 
         _reservationRepository.Delete(reservation);
         await _reservationRepository.SaveAsync(cancellationToken);
+
+        await _mediator.Publish(new ReservationCancelledEvent(reservation.BookId, reservation.CustomerId), cancellationToken);
+
+        await _mediator.Publish(new BookAvailableEvent(reservation.BookId, reservation.CustomerId), cancellationToken);
 
         await _bookRepository.CommitTransactionAsync(cancellationToken);
       }

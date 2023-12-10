@@ -10,4 +10,8 @@
     <ProjectReference Include="..\MarthasLibrary.Infrastructure\MarthasLibrary.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

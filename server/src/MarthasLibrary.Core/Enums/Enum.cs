@@ -7,12 +7,6 @@ public enum BookStatus
   Borrowed
 }
 
-public enum NotificationStatus
-{
-  Sent = 1,
-  Unsent
-}
-
 public enum AddressType
 {
   Primary = 0

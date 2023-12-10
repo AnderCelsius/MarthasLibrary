@@ -14,6 +14,6 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
     builder.HasOne<Book>().WithMany().HasForeignKey(n => n.BookId);
     builder.HasIndex(n => n.BookId); // Index for faster lookups by book
     builder.Property(n => n.NotificationDate).IsRequired();
-    builder.Property(n => n.Status).IsRequired();
+    builder.Property(n => n.IsRead).IsRequired();
   }
 }

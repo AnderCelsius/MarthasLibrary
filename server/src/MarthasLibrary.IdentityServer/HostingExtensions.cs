@@ -1,6 +1,10 @@
 using Duende.IdentityServer;
+using Duende.IdentityServer.Services;
 using MarthasLibrary.IdentityServer.Data;
 using MarthasLibrary.IdentityServer.Entities;
+using MarthasLibrary.IdentityServer.Factories;
+using MarthasLibrary.IdentityServer.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -18,8 +22,14 @@ namespace MarthasLibrary.IdentityServer
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Identity")));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            // builder.Services.AddScoped<ApplicationUserClaimsPrincipalFactory>();
+            builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
+
+            builder.Services.AddScoped<IProfileService, CustomProfileService>();
 
             var migrationsAssembly = typeof(Program).GetTypeInfo()
                 .Assembly.GetName().Name;
@@ -31,13 +41,8 @@ namespace MarthasLibrary.IdentityServer
                     options.Events.RaiseInformationEvents = true;
                     options.Events.RaiseFailureEvents = true;
                     options.Events.RaiseSuccessEvents = true;
-
-                    // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                     options.EmitStaticAudienceClaim = true;
                 })
-                //.AddInMemoryIdentityResources(Config.IdentityResources)
-                //.AddInMemoryApiScopes(Config.ApiScopes)
-                //.AddInMemoryClients(Config.Clients)
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = optionsBuilder =>
@@ -57,25 +62,29 @@ namespace MarthasLibrary.IdentityServer
                                 .MigrationsAssembly(migrationsAssembly));
                     options.EnableTokenCleanup = true;
                 })
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<CustomProfileService>();
 
             builder.Services.AddAuthentication()
                 .AddGoogle(options =>
                 {
                     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-                    // register your IdentityServer with Google at https://console.developers.google.com
-                    // enable the Google+ API
-                    // set the redirect URI to https://localhost:5001/signin-google
-                    options.ClientId = "copy client ID from Google here";
-                    options.ClientSecret = "copy client secret from Google here";
+                    options.ClientId = "";
+                    options.ClientSecret = "";
                 });
+
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor
+                                           | ForwardedHeaders.XForwardedProto;
+            });
 
             return builder.Build();
         }
 
         public static WebApplication ConfigurePipeline(this WebApplication app)
         {
+            app.UseForwardedHeaders();
             app.UseSerilogRequestLogging();
 
             if (app.Environment.IsDevelopment())

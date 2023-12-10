@@ -58,7 +58,7 @@ public class Book : IAuditableBase
 
     public void MarkAsAvailable()
     {
-        if (Status != BookStatus.Reserved || Status != BookStatus.Borrowed)
+        if (Status != BookStatus.Reserved && Status != BookStatus.Borrowed)
             throw new InvalidOperationException("Only reserved books or borrowed can be marked as available.");
 
         Status = BookStatus.Available;

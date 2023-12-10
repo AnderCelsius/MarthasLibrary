@@ -74,7 +74,7 @@ public sealed class CreateTests : IDisposable
         };
 
 
-        await Seeder.SeedData(books, _context);
+        await Seeder.SeedBook(books, _context);
 
         var response = await _fixture.Client.PostAsJsonAsync<Books_Create_Request>(
             "api/Books",

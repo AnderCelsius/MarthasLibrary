@@ -123,6 +123,15 @@ namespace MarthasLibrary.APIClient
 
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Notifications_GetNotificationsForCurrentUser_Response> GetNotificationsForCurrentUserAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Notifications_GetNotificationsForCurrentUser_Response> GetNotificationsForCurrentUserAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Reservations_GetAll_Response> GetAllReservationsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1223,6 +1232,90 @@ namespace MarthasLibrary.APIClient
 
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<Notifications_GetNotificationsForCurrentUser_Response> GetNotificationsForCurrentUserAsync()
+        {
+            return GetNotificationsForCurrentUserAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<Notifications_GetNotificationsForCurrentUser_Response> GetNotificationsForCurrentUserAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/notifications");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<Notifications_GetNotificationsForCurrentUser_Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new MarthasLibraryAPIException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new MarthasLibraryAPIException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<Reservations_GetAll_Response> GetAllReservationsAsync()
         {
             return GetAllReservationsAsync(System.Threading.CancellationToken.None);
@@ -1234,7 +1327,7 @@ namespace MarthasLibrary.APIClient
         public virtual async System.Threading.Tasks.Task<Reservations_GetAll_Response> GetAllReservationsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("reservations");
+            urlBuilder_.Append("api/books/reservations");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1321,7 +1414,7 @@ namespace MarthasLibrary.APIClient
                 throw new System.ArgumentNullException("customerId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("reserve/{customerId}");
+            urlBuilder_.Append("api/books/reserve/{customerId}");
             urlBuilder_.Replace("{customerId}", System.Uri.EscapeDataString(ConvertToString(customerId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
@@ -1399,7 +1492,7 @@ namespace MarthasLibrary.APIClient
                 throw new System.ArgumentNullException("reservationId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("reservation/{reservationId}");
+            urlBuilder_.Append("api/books/reservation/{reservationId}");
             urlBuilder_.Replace("{reservationId}", System.Uri.EscapeDataString(ConvertToString(reservationId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
@@ -1474,7 +1567,7 @@ namespace MarthasLibrary.APIClient
         public virtual async System.Threading.Tasks.Task<Reservations_MakeReservation_Response> ReserveBookAsync(Reservations_MakeReservation_Request body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("reserve");
+            urlBuilder_.Append("api/books/reserve");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1540,6 +1633,16 @@ namespace MarthasLibrary.APIClient
                             throw new MarthasLibraryAPIException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new MarthasLibraryAPIException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
                         if (status_ == 409)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
@@ -1585,7 +1688,7 @@ namespace MarthasLibrary.APIClient
                 throw new System.ArgumentNullException("reservationId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("reserve/{reservationId}");
+            urlBuilder_.Append("api/books/reserve/{reservationId}");
             urlBuilder_.Replace("{reservationId}", System.Uri.EscapeDataString(ConvertToString(reservationId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
@@ -1923,6 +2026,18 @@ namespace MarthasLibrary.APIClient
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Notifications_GetNotificationsForCurrentUser_Response
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("notifications")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<NotificationDetails> Notifications { get; set; } = new System.Collections.ObjectModel.Collection<NotificationDetails>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Reservations_GetAll_Response
     {
 
@@ -1961,12 +2076,6 @@ namespace MarthasLibrary.APIClient
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Reservations_MakeReservation_Request
     {
-
-        [System.Text.Json.Serialization.JsonPropertyName("customerId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.Guid CustomerId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("bookId")]
 
@@ -2155,6 +2264,47 @@ namespace MarthasLibrary.APIClient
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NotificationDetails
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("customerId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid CustomerId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bookId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public System.Guid BookId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bookTitle")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string BookTitle { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Type { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isRead")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public bool IsRead { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ReservationDetails
     {
 
@@ -2190,9 +2340,8 @@ namespace MarthasLibrary.APIClient
 
         [System.Text.Json.Serialization.JsonPropertyName("expiryDate")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset ExpiryDate { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? ExpiryDate { get; set; }
 
     }
 
