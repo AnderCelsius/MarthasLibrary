@@ -1,0 +1,28 @@
+﻿@using MarthasLibrary.APIClient
+
+<div class="bookCard">
+    <div class="bookCardImg">
+        <img src="img/default.jpg" alt="@Book?.Title"/>
+    </div>
+    <div>
+        <a href="@($"/book/{Book?.Id}")">
+            <Typography Size="Label" class="bookCardTitle">
+                @Book?.Title
+            </Typography>
+        </a>
+        <Typography Size="Small" class="bookCardDescription">
+            @(Book?.Author ?? "No description for this book")
+        </Typography>
+    </div>
+    <hr/>
+    <div>
+        <BookStatus Status="@Book?.Status"/>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public BookDetails? Book { get; set; }
+
+}

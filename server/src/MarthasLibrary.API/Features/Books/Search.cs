@@ -19,13 +19,13 @@ public static class Search
   /// Represents a request for searching books.
   /// </summary>
   /// <param name="Query">The query string used for searching books.</param>
-  public record Request(string Query) : IRequest<Response>;
+  public record Request(string Query, int PageNumber, int PageSize) : IRequest<Response>;
 
   /// <summary>
   /// Represents the response containing the search results.
   /// </summary>
   /// <param name="Books">A read-only collection of book details that match the search query.</param>
-  public record Response(IReadOnlyCollection<BookDetails> Books);
+  public record Response(IReadOnlyCollection<BookDetails> Books, int Total);
 
   /// <summary>
   /// Handles the process of searching for books.
@@ -52,12 +52,18 @@ public static class Search
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
       // TODO: Implementing a debounce mechanism in the frontend to limit the frequency of requests
+      var booksQuery = _bookRepository.TableNoTracking;
+      var count = await booksQuery.CountAsync(cancellationToken);
+
       var books = await _bookRepository.TableNoTracking
         .Where(b => b.Title.Contains(request.Query) || b.Author.Contains(request.Query))
-        .Take(10) // Limiting the number of results for autocomplete purposes
+        .Skip((request.PageNumber - 1) * request.PageSize)
+        .Take(request.PageSize)
         .ToListAsync(cancellationToken);
 
-      return _mapper.Map<Response>(books);
+      var searchResult = _mapper.Map<IReadOnlyCollection<BookDetails>>(books);
+
+      return new Response(searchResult, count);
     }
   }
 }

@@ -1,0 +1,88 @@
+﻿@page "/borrowings"
+@layout DashboardLayout
+@attribute [StreamRendering]
+
+@rendermode InteractiveServer
+
+@using MarthasLibrary.BlazorApp.Components.Layout
+@using MarthasLibrary.APIClient
+
+@inject IMarthasLibraryAPIClient MarthasLibraryApiClient
+@inject NavigationManager NavigationManager
+@inject ILogger<Borrowings> Logger
+
+
+
+<PageTitle>Borrowings</PageTitle>
+
+<h1>Borrowings</h1>
+
+@if (BorrowDetailsList == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Book Title</th>
+            <th>Reservation Date</th>
+            <th>Expiry Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (!BorrowDetailsList.Any())
+        {
+            <p>You do not have any reservations. Click <NavLink href="/">here</NavLink> to find books</p>
+        }
+        else
+        {
+            foreach (var reservation in BorrowDetailsList)
+            {
+                <tr>
+                    <td @onclick="@(() => NavigateToBookDetails(reservation.BookId))">
+                        @reservation.Title
+                    </td>
+                    <td>@reservation.BorrowDate.ToLocalTime().LocalDateTime</td>
+                    <td>
+                        @reservation.DueDate.ToLocalTime().LocalDateTime
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    public List<BorrowDetails>? BorrowDetailsList;
+
+    public string ReservationMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await MarthasLibraryApiClient.GetBorrowingsForCurrentCustomerAsync();
+            if (response?.Borrowings != null)
+            {
+                BorrowDetailsList = response.Borrowings.ToList();
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Unexpected error: {Error}", e.Message);
+            ReservationMessage = "An unexpected error occurred. Please contact support.";
+            Console.WriteLine(ReservationMessage);
+        }
+    }
+
+    private void NavigateToBookDetails(Guid bookId)
+    {
+        NavigationManager.NavigateTo($"/book/{bookId}");
+    }
+
+}

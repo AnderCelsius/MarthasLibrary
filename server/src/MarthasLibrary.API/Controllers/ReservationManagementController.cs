@@ -21,13 +21,21 @@ namespace MarthasLibrary.API.Controllers
       return await mediator.Send(new GetAll.Request(), cancellationToken);
     }
 
-    [HttpGet("reserve/{customerId}", Name = "GetReservationsForCustomer")]
+    [HttpGet("reserve/{customerId}", Name = "GetReservationsByCustomerId")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsForCustomer(
+    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsByCustomerId(
       [FromRoute] Guid customerId,
       CancellationToken cancellationToken)
     {
       return Ok(await mediator.Send(new GetReservationsByCustomerId.Request(customerId), cancellationToken));
+    }
+
+    [HttpGet("reservations/_me", Name = "GetReservationsForCurrentUser")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetReservationsForCurrentUser.Response>> GetReservationsForCurrentUser(
+      CancellationToken cancellationToken)
+    {
+      return Ok(await mediator.Send(new GetReservationsForCurrentUser.Request(), cancellationToken));
     }
 
     [HttpGet("reservation/{reservationId}", Name = "GetReservationById")]

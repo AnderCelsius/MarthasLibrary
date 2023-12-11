@@ -187,6 +187,24 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
           }
         ],
         "responses": {
@@ -721,6 +739,96 @@
         }
       }
     },
+    "/borrow/history/_me": {
+      "get": {
+        "tags": [
+          "BorrowManagement"
+        ],
+        "operationId": "GetBorrowingsForCurrentCustomer",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/return/{borrowId}": {
       "post": {
         "tags": [
@@ -865,6 +973,107 @@
         }
       }
     },
+    "/api/notifications/subscribe/{bookId}": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "operationId": "SubscribeToBookAvailabilityAlert",
+        "parameters": [
+          {
+            "name": "bookId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediatR.Unit"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediatR.Unit"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediatR.Unit"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/books/reservations": {
       "get": {
         "tags": [
@@ -888,6 +1097,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetAll_Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
                 }
               }
             }
@@ -920,7 +1149,7 @@
         "tags": [
           "ReservationManagement"
         ],
-        "operationId": "GetReservationsForCustomer",
+        "operationId": "GetReservationsByCustomerId",
         "parameters": [
           {
             "name": "customerId",
@@ -949,6 +1178,36 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books/reservations/_me": {
+      "get": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "GetReservationsForCurrentUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response"
                 }
               }
             }
@@ -1075,6 +1334,26 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Forbidden",
             "content": {
@@ -1159,6 +1438,46 @@
           "204": {
             "description": "No Content"
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -1206,6 +1525,10 @@
           "publishedDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1229,7 +1552,8 @@
       },
       "MarthasLibrary.API.Features.Books_GetAll_Response": {
         "required": [
-          "books"
+          "books",
+          "total"
         ],
         "type": "object",
         "properties": {
@@ -1238,6 +1562,10 @@
             "items": {
               "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BookDetails"
             }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1260,7 +1588,8 @@
       },
       "MarthasLibrary.API.Features.Books_Search_Response": {
         "required": [
-          "books"
+          "books",
+          "total"
         ],
         "type": "object",
         "properties": {
@@ -1269,6 +1598,10 @@
             "items": {
               "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BookDetails"
             }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1342,13 +1675,28 @@
         },
         "additionalProperties": false
       },
-      "MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response": {
+      "MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response": {
         "required": [
-          "reservations"
+          "borrowings"
         ],
         "type": "object",
         "properties": {
-          "reservations": {
+          "borrowings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response": {
+        "required": [
+          "borrowings"
+        ],
+        "type": "object",
+        "properties": {
+          "borrowings": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
@@ -1433,6 +1781,21 @@
         },
         "additionalProperties": false
       },
+      "MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response": {
+        "required": [
+          "reservations"
+        ],
+        "type": "object",
+        "properties": {
+          "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.ReservationDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "MarthasLibrary.API.Features.Reservations_MakeReservation_Request": {
         "required": [
           "bookId"
@@ -1465,6 +1828,7 @@
       "MarthasLibrary.API.Shared.BookDetails": {
         "required": [
           "author",
+          "description",
           "id",
           "isbn",
           "publishedDate",
@@ -1487,6 +1851,9 @@
             "type": "string"
           },
           "status": {
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           },
           "publishedDate": {
@@ -1673,6 +2040,10 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "MediatR.Unit": {
+        "type": "object",
         "additionalProperties": false
       },
       "Microsoft.AspNetCore.Mvc.ProblemDetails": {

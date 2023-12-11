@@ -1,0 +1,43 @@
+﻿<div class="@InputContainerClass">
+    <label class="@InputLabelClass" for="@InputId">@Label</label>
+    <input id="@InputId" name="@Name" class="@InputClass" type="@InputType" @bind="@InputValue" />
+    @if (InputType == "password")
+    {
+        <button class="@PasswordToggleClass" @onclick="TogglePasswordVisibility">
+            @if (ShowPassword)
+            {
+                <img src="img/eye.svg" alt="Open Eye" />
+            }
+            else
+            {
+                <img src="img/eye-crossed.svg" alt="Crossed Eye" />
+            }
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Label { get; set; }
+    [Parameter] public string InputType { get; set; }
+    [Parameter] public string InputValue { get; set; }
+    [Parameter] public EventCallback<string> InputValueChanged { get; set; }
+
+    private bool ShowPassword { get; set; } = false;
+
+    private string InputId => !string.IsNullOrEmpty(Name) ? Name : Guid.NewGuid().ToString();
+
+    private string InputContainerClass => "inputContainer";
+    private string InputLabelClass => "inputContainerLabel";
+    private string InputClass => "inputContainerInput";
+    private string PasswordToggleClass => "inputContainerPasswordToggle";
+
+    private void TogglePasswordVisibility()
+    {
+        ShowPassword = !ShowPassword;
+        if (InputValueChanged.HasDelegate)
+        {
+            InputValueChanged.InvokeAsync(InputValue);
+        }
+    }
+}

@@ -55,7 +55,7 @@ public static class Config
             new()
             {
                 ClientId = "web",
-                ClientSecrets = { new Secret("secret".Sha256()) },
+                ClientSecrets = { new Secret(Guid.NewGuid().ToString()) },
 
                 AllowedGrantTypes = GrantTypes.Code,
 
@@ -77,16 +77,17 @@ public static class Config
             },
             new()
             {
+                ClientName = "Marthas Library Blazor App",
                 ClientId = "blazor-client",
-                ClientSecrets = { new Secret("secret".Sha256()) },
+                ClientSecrets = { new Secret("1d951dc8-afa2-4fba-82b6-a350600c075b".Sha256()) },
 
                 AllowedGrantTypes = GrantTypes.Code,
 
                 // where to redirect to after login
-                RedirectUris = { "https://localhost:7209/signin-oidc" },
+                RedirectUris = { "https://localhost:7119/signin-oidc" },
 
                 // where to redirect to after logout
-                PostLogoutRedirectUris = { "https://localhost:7209/signout-callback-oidc" },
+                PostLogoutRedirectUris = { "https://localhost:7119/signout-callback-oidc" },
 
                 AllowedScopes = new List<string>
                 {

@@ -6,4 +6,5 @@ public record BookDetails(
   string Author,
   string Isbn,
   string Status,
+  string Description,
   DateTimeOffset PublishedDate);

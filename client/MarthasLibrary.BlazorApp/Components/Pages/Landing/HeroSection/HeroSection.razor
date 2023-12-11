@@ -1,0 +1,27 @@
+﻿@rendermode InteractiveServer
+
+@using MarthasLibrary.BlazorApp.Services
+
+@inject BookService BookService
+
+<div class="hero">
+    <img src="img/bg-med.jpg" alt="library shelf with books" />
+    <div class="container heroContent">
+        <div class="searchButton">
+            <input type="search" @bind="_searchTerm" />
+            <Button @onclick="UpdateSearchTerm">Search Books</Button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? _searchTerm;
+
+    private void UpdateSearchTerm()
+    {
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            BookService.NotifySearchTermChanged(_searchTerm);
+        }
+    }
+}

@@ -1,0 +1,73 @@
+﻿@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="@($"sidebar {ClassName}")">
+    <NavLink href="/">
+        <span class="app-logo sidebarLogo">Martha's Library</span>
+    </NavLink>
+    <div class="scrollable">
+        @foreach (var sectionItem in _listItems)
+        {
+            <span class="sidebarListHeading">@sectionItem.Heading</span>
+            <ul aria-label="@($"{sectionItem.Heading} list")">
+                @foreach (var item in sectionItem.Items)
+                {
+                    if (!item.Hide)
+                    {
+                        <li class="sidebarList">
+                            @if (item.Name == "logout")
+                            {
+                                <button @onclick="HandleClearSession" class="sidebarListContent">
+                                    <img src="@item.Icon" alt="@item.Name" />
+                                    <span>@item.Name</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <NavLink class="sidebarListContent" href="@item.Link">
+                                    <img src="@item.Icon" alt="@item.Name" />
+                                    <span>@item.Name</span>
+                                </NavLink>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? ClassName { get; set; }
+
+    private List<Section> _listItems = new()
+    {
+        new Section
+        {
+            Heading = "overview",
+            Items = new List<Item>
+            {
+                new() { Icon = "dashboard.svg", Name = "dashboard", Link = "/dashboard" },
+            }
+        },
+    };
+
+    private void HandleClearSession()
+    {
+    // Implement session clearing logic
+    }
+
+    public class Section
+    {
+        public string? Heading { get; set; }
+        public List<Item> Items { get; set; } = new();
+    }
+
+    public class Item
+    {
+        public string? Icon { get; set; }
+        public string? Name { get; set; }
+        public string? Link { get; set; }
+        public bool Hide { get; set; }
+    }
+}

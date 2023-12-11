@@ -1,0 +1,60 @@
+﻿@inherits ComponentBase
+
+@{
+    var tagName = Level is >= 1 and <= 6 ? $"h{Level.Value}" : "p";
+}
+
+@((MarkupString)$"<{tagName} class='{GetTypographyClass()}' {GetAdditionalAttributes()}>")
+@ContentSection
+@((MarkupString)$"</{tagName}>")
+
+
+@code {
+    [Parameter] public int? Level { get; set; }
+    [Parameter] public string? Content { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Font { get; set; } = "Inter";
+    [Parameter] public string Color { get; set; } = "Default";
+    [Parameter] public string Size { get; set; } = "Default";
+    [Parameter] public string? Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string GetTypographyClass()
+    {
+        var classes = new List<string?> { "text", Class };
+
+        if (Color != "none")
+        {
+            classes.Add($"text-color-{Color.ToLower()}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(Font))
+        {
+            classes.Add($"text-font-{Font}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(Size))
+        {
+            classes.Add($"text-size-{Size}");
+        }
+
+        return string.Join(" ", classes.Where(c => !string.IsNullOrWhiteSpace(c)));
+    }
+
+    private RenderFragment ContentSection => builder =>
+    {
+        if (ChildContent != null)
+        {
+            builder.AddContent(0, ChildContent);
+        }
+        else if (!string.IsNullOrWhiteSpace(Content))
+        {
+            builder.AddContent(1, Content);
+        }
+    };
+
+    private string GetAdditionalAttributes()
+    {
+        return AdditionalAttributes != null ? string.Join(" ", AdditionalAttributes.Select(kvp => $"{kvp.Key}='{kvp.Value}'")) : string.Empty;
+    }
+}

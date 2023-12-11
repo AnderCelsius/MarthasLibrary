@@ -32,6 +32,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
       .HasIndex(b => b.Isbn)
       .IsUnique();
 
+    builder.Property(b => b.Description)
+      .IsRequired(false);
+
     builder.Property(b => b.PublishedDate)
       .IsRequired();
 

@@ -54,6 +54,17 @@ namespace MarthasLibrary.API.Controllers
       return Ok(await mediator.Send(new GetByCustomerId.Request(customerId), cancellationToken));
     }
 
+    [HttpGet("/borrow/history/_me", Name = "GetBorrowingsForCurrentCustomer")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<GetBorrowingForCurrentUser.Response>> GetBorrowingsForCurrentCustomer(
+      CancellationToken cancellationToken)
+    {
+      return Ok(await mediator.Send(new GetBorrowingForCurrentUser.Request(), cancellationToken));
+    }
+
     [HttpPost("/return/{borrowId}", Name = "ReturnBook")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

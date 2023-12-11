@@ -1,0 +1,145 @@
+﻿@page "/books"
+@rendermode InteractiveServer
+
+@using MarthasLibrary.APIClient
+@using MarthasLibrary.BlazorApp.Services
+
+@inject BookService BookService
+@inject IMarthasLibraryAPIClient MarthasLibraryApiClient
+@inject ILogger<BooksSection> Logger
+
+<div class="container books">
+    <Typography Color="Primary" Content="Collections" Size="Heading"/>
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @_errorMessage
+        </div>
+    }
+
+    <div class="booksCollections">
+        @if (_books != null && _books.Any())
+        {
+            foreach (var book in _books)
+            {
+                <BookCard Book="@book"/>
+            }
+        }
+        else if (string.IsNullOrEmpty(_errorMessage))
+        {
+            <p>No books available.</p>
+        }
+    </div>
+
+    <div class="pagination">
+        <button @onclick="PreviousPage" disabled="@(_currentPage <= 1)">Previous</button>
+        <span>Page @_currentPage</span>
+        <button @onclick="NextPage" disabled="@(_currentPage * PageSize >= _totalBooks)">Next</button>
+    </div>
+</div>
+
+@code {
+    private List<BookDetails>? _books;
+    private string? _errorMessage;
+    private int _currentPage = 1;
+        private const int PageSize = 5;
+    private int _totalBooks;
+    private bool _isSearchActive = false;
+    private string? _currentSearchTerm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BookService.OnSearchTermChanged += HandleSearch;
+        await LoadBooks();
+    }
+
+    private async Task LoadBooks()
+    {
+        try
+        {
+            _isSearchActive = false;
+
+            var response = await MarthasLibraryApiClient.GetAllBooksAsync(_currentPage, PageSize);
+            _books = response?.Books?.ToList() ?? new List<BookDetails>();
+            _totalBooks = response?.Total ?? 0;
+            if (_books.Count == 0)
+            {
+                _errorMessage = "No books found at the moment.";
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Failed to load books: {Exception}", e);
+            _errorMessage = "An error occurred while loading books. Please try again later.";
+        }
+    }
+
+    public async void HandleSearch(string? searchTerm)
+    {
+        _currentPage = 1;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            await LoadBooks();
+        }
+        else
+        {
+            await LoadBooksBasedOnSearchTerm(searchTerm);
+        }
+    }
+
+    public void Dispose()
+    {
+        BookService.OnSearchTermChanged -= HandleSearch;
+    }
+
+    private async Task LoadBooksBasedOnSearchTerm(string searchTerm)
+    {
+        try
+        {
+            _isSearchActive = true;
+            _currentSearchTerm = searchTerm;
+
+            var response = await MarthasLibraryApiClient.SearchAsync(searchTerm, _currentPage, PageSize);
+            _books = response?.Books?.ToList() ?? new List<BookDetails>();
+            _totalBooks = response?.Total ?? 0;
+            _errorMessage = _books.Count == 0 ? "No books found matching the search term." : null;
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Failed to load books: {Exception}", e);
+            _errorMessage = "An error occurred while searching for books. Please try again later.";
+        }
+    }
+
+    private async Task NextPage()
+    {
+        _currentPage++;
+        if (_isSearchActive && _currentSearchTerm != null)
+        {
+            await LoadBooksBasedOnSearchTerm(_currentSearchTerm);
+        }
+        else
+        {
+            await LoadBooks();
+        }
+    }
+
+    private async Task PreviousPage()
+    {
+        if (_currentPage > 1)
+        {
+            _currentPage--;
+            if (_isSearchActive && _currentSearchTerm != null)
+            {
+                await LoadBooksBasedOnSearchTerm(_currentSearchTerm);
+            }
+            else
+            {
+                await LoadBooks();
+            }
+        }
+    }
+
+}

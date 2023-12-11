@@ -4,7 +4,7 @@ namespace MarthasLibrary.Core.Entities;
 
 public class Book : IAuditableBase
 {
-    private Book(string title, string author, string isbn, DateTimeOffset publishedDate)
+    private Book(string title, string author, string isbn, DateTimeOffset publishedDate, string? description = null)
     {
         Title = title;
         Author = author;
@@ -13,21 +13,23 @@ public class Book : IAuditableBase
         CreatedAt = DateTimeOffset.UtcNow;
         UpdatedAt = DateTimeOffset.UtcNow;
         Status = BookStatus.Available;
+        Description = description;
     }
 
     public Guid Id { get; private set; }
     public string Title { get; private set; }
     public string Author { get; private set; }
     public string Isbn { get; private set; }
+    public string? Description { get; private set; }
     public DateTimeOffset PublishedDate { get; private set; }
     public BookStatus Status { get; private set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
 
 
-    public static Book CreateInstance(string title, string author, string isbn, DateTimeOffset publishedDate)
+    public static Book CreateInstance(string title, string author, string isbn, DateTimeOffset publishedDate, string? description = null)
     {
-        return new Book(title, author, isbn, publishedDate);
+        return new Book(title, author, isbn, publishedDate, description);
     }
 
     public void UpdateDetails(BookUpdate update)

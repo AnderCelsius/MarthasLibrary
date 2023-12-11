@@ -1,0 +1,87 @@
+﻿@page "/reservations"
+@layout DashboardLayout
+@attribute [StreamRendering]
+
+@rendermode InteractiveServer
+
+
+@using MarthasLibrary.BlazorApp.Components.Layout
+@using MarthasLibrary.APIClient
+
+@inject IMarthasLibraryAPIClient MarthasLibraryApiClient
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Reservations</PageTitle>
+
+<h1>Reservations</h1>
+
+@if (ReservationDetails == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Book Title</th>
+            <th>Reservation Date</th>
+            <th>Expiry Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (!ReservationDetails.Any())
+        {
+                <p>You do not have any reservations. Click <NavLink href="/">here</NavLink> to find books</p>
+        }
+        else
+        {
+                foreach (var reservation in ReservationDetails)
+                {
+                    <tr>
+                        <td @onclick="@(() => NavigateToBookDetails(reservation.BookId))">
+                            @reservation.Title
+                        </td>
+                        <td>@reservation.ReservedDate.ToLocalTime().LocalDateTime</td>
+                        <td>
+                            @if (reservation.ExpiryDate != null)
+                            {
+                                @reservation.ExpiryDate.Value.ToLocalTime().LocalDateTime
+                            }
+                        </td>
+                    </tr>
+                }
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    public List<ReservationDetails>? ReservationDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await MarthasLibraryApiClient.GetReservationsForCurrentUserAsync();
+            if (response?.Reservations != null)
+            {
+                ReservationDetails = response.Reservations.ToList();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void NavigateToBookDetails(Guid bookId)
+    {
+        NavigationManager.NavigateTo($"/book/{bookId}");
+    }
+
+}

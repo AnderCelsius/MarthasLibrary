@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.IdentityServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.Web", "client\MarthasLibrary.Web\MarthasLibrary.Web.csproj", "{73DB01EC-63D7-4E4D-B10E-D6E35A188672}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarthasLibrary.BlazorApp", "client\MarthasLibrary.BlazorApp\MarthasLibrary.BlazorApp.csproj", "{10F96AEF-7407-42A3-98EB-61B943D597AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarthasLibrary.BlazorApp", "client\MarthasLibrary.BlazorApp\MarthasLibrary.BlazorApp.csproj", "{10F96AEF-7407-42A3-98EB-61B943D597AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -93,6 +93,9 @@ namespace MarthasLibrary.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Isbn")
                         .IsRequired()
                         .HasMaxLength(13)

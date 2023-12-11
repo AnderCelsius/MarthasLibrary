@@ -1,0 +1,23 @@
+.bookCardStatus {
+    width: fit-content;
+    text-transform: capitalize;
+    background-color: green;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: default;
+}
+
+.bookCardStatus.Reserved {
+    background-color: orange;
+}
+
+.bookCardStatus.Borrowed {
+    background-color: gray;
+}
+
+.bookCardStatus.Available {
+    background-color: green;
+    opacity: 0.5;
+}

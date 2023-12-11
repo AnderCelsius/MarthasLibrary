@@ -1,0 +1,27 @@
+﻿<div class="inputContainer">
+    <label class="inputContainerLabel" for="@InputId">@Label</label>
+    <select id="@InputId" name="@Name" class="select inputContainerInput" @bind="@SelectedValue" @disabled="Disabled">
+        @foreach (var option in Options)
+        {
+            <option value="@option.Value" disabled="@option.Disabled">@option.Label</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Label { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public List<SelectOption> Options { get; set; }
+    [Parameter] public string SelectedValue { get; set; }
+    [Parameter] public EventCallback<string> SelectedValueChanged { get; set; }
+
+    private string InputId => !string.IsNullOrEmpty(Name) ? Name : Guid.NewGuid().ToString();
+
+    public class SelectOption
+    {
+        public string Label { get; set; }
+        public string Value { get; set; }
+        public bool Disabled { get; set; }
+    }
+}

@@ -1,0 +1,50 @@
+/* input.razor.styles.css */
+
+.inputContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    color: #999;
+}
+
+.inputContainerInput {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--gray-300);
+    color: #999;
+}
+
+    .inputContainerInput:focus,
+    .inputContainerInput:active {
+        outline: 1px solid var(--gray-400);
+    }
+
+.inputContainerLabel {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-black);
+    text-transform: capitalize;
+}
+
+.inputContainerPassword {
+    padding-right: 3.5rem;
+}
+
+.inputContainerPasswordToggle {
+    position: absolute;
+    top: calc(0.5rem + 1.125rem);
+    bottom: 0;
+    right: 0;
+    width: 3.5rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.inputContainerPasswordToggle > svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--gray-400);
+}

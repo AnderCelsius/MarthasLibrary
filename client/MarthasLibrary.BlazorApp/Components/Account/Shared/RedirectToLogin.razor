@@ -1,0 +1,14 @@
+﻿@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+
+@code {
+    protected override void OnInitialized()
+    {
+        var authority = Configuration["DuendeISP:Authority"];
+        var clientId = Configuration["DuendeISP:ClientId"];
+        var returnUrl = Uri.EscapeDataString(NavigationManager.Uri);
+        var redirectUrl = $"{authority}/connect/authorize?client_id={clientId}&redirect_uri={returnUrl}&response_type=code&scope=openid profile";
+
+        NavigationManager.NavigateTo(redirectUrl, forceLoad: true);
+    }
+}

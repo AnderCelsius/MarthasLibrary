@@ -14,15 +14,9 @@ public class BookProfile : Profile
       .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
       .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
       .ForMember(dest => dest.Isbn, opt => opt.MapFrom(src => src.Isbn))
+      .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
       .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
       .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate));
-
-    // Mapping from a collection of Book entities to the GetAll.Response record.
-    CreateMap<List<Book>, GetAll.Response>()
-      .ConstructUsing((src, context) => new GetAll.Response(context.Mapper.Map<IReadOnlyCollection<BookDetails>>(src)));
-
-    CreateMap<List<Book>, Search.Response>()
-      .ConstructUsing((src, context) => new Search.Response(context.Mapper.Map<IReadOnlyCollection<BookDetails>>(src)));
 
     CreateMap<Book, Create.Response>()
       .ForCtorParam(nameof(Create.Response.Id), op => op.MapFrom(x => x.Id));

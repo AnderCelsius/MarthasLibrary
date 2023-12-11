@@ -15,6 +15,7 @@ export interface Books_Create_Request {
     author: string;
     isbn: string;
     publishedDate: string;
+    description?: string | undefined;
 }
 
 export interface Books_Create_Response {
@@ -24,6 +25,7 @@ export interface Books_Create_Response {
 
 export interface Books_GetAll_Response {
     books: BookDetails[];
+    total: number;
 }
 
 export interface Books_GetById_Response {
@@ -32,6 +34,7 @@ export interface Books_GetById_Response {
 
 export interface Books_Search_Response {
     books: BookDetails[];
+    total: number;
 }
 
 export interface Books_UpdateById_Request_UpdatedDetails {
@@ -53,8 +56,12 @@ export interface Borrow_GetAll_Response {
     books: BorrowDetails[];
 }
 
+export interface Borrow_GetBorrowingForCurrentUser_Response {
+    borrowings: BorrowDetails[];
+}
+
 export interface Borrow_GetByCustomerId_Response {
-    reservations: BorrowDetails[];
+    borrowings: BorrowDetails[];
 }
 
 export interface Customers_GetAll_Response {
@@ -77,6 +84,10 @@ export interface Reservations_GetReservationsByCustomerId_Response {
     reservations: ReservationDetails[];
 }
 
+export interface Reservations_GetReservationsForCurrentUser_Response {
+    reservations: ReservationDetails[];
+}
+
 export interface Reservations_MakeReservation_Request {
     bookId: string;
 }
@@ -91,6 +102,7 @@ export interface BookDetails {
     author: string;
     isbn: string;
     status: string;
+    description: string;
     publishedDate: string;
 }
 
@@ -137,6 +149,9 @@ export interface ReservationDetails {
     title: string;
     reservedDate: string;
     expiryDate?: string | undefined;
+}
+
+export interface Unit {
 }
 
 export interface ProblemDetails {

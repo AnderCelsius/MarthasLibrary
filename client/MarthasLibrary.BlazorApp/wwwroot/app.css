@@ -49,3 +49,87 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* outline: 1px dotted brown; */
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+:root {
+    font-family: Inter, sans-serif;
+    /*color-scheme: light dark;*/
+    /* colors */
+    --white: #fff;
+    --black: #000;
+    --primary-100: #cff9fe;
+    --primary-200: #a5f0fc;
+    --primary-500: #06aed4;
+    --primary-600: #088ab2;
+    --gray-300: #d0d5dd;
+    --gray-400: #98a2b3;
+    --gray-500: #667085;
+    --text-black: #101828;
+    --text-gray: var(--gray-500);
+    --Side-bar: #292d32;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+body {
+    /* Hide scrollbar for IE, Edge add Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none; /* Firefox */
+}
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+.app-logo {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--primary-600);
+    font-family: 'Bodoni Moda', serif;
+}
+
+.container {
+    width: 100%;
+    max-width: 1278px;
+    padding: 0 10px;
+    margin: 0 auto;
+}
+
+.container-dashboard {
+    margin: 0 0;
+}
+
+@media screen and (min-width: 900px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .app-logo {
+        font-size: 2rem;
+    }
+}

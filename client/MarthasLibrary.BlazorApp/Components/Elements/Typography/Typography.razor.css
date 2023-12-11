@@ -1,0 +1,66 @@
+/* Typography styles */
+.text {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font families */
+.textFontInter {
+    font-family: 'Inter', sans-serif;
+}
+
+.textFontBodoni {
+    font-family: 'Bodoni Moda', serif;
+}
+
+/* Font sizes */
+.text-size-heading {
+    font-size: calc(48 / 16 * 1rem);
+    font-weight: 800;
+}
+
+.text-size-subheading {
+    font-size: calc(40 / 16 * 1rem);
+    font-weight: 700;
+}
+
+.text-size-subtext {
+    font-size: calc(24 / 16 * 1rem);
+    font-weight: 700;
+}
+
+.text-size-label {
+    font-size: calc(20 / 16 * 1rem);
+    font-weight: 600;
+}
+
+.text-size-default {
+    font-size: calc(16 / 16 * 1rem);
+}
+
+.text-size-small {
+    font-size: calc(14 / 16 * 1rem);
+}
+
+/* Text colors */
+.text-color-default {
+    color: var(--text-black, #101828);
+}
+
+.text-color-gray {
+    color: var(--text-gray);
+}
+
+.text-color-white {
+    color: var(--white);
+}
+
+.text-color-primary {
+    color: var(--primary-600);
+}
+
+.text-color-inherit {
+    color: inherit;
+}

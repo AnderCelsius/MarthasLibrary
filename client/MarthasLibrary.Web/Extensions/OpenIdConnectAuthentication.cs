@@ -25,7 +25,6 @@ public static class OpenIdConnectAuthentication
                 o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 //o.Cookie.SameSite = SameSiteMode.Strict;
                 o.Cookie.HttpOnly = true;
-                o.AccessDeniedPath = "/Auth/AccessDenied";
             });
         builder.Services.AddAuthorization(authorizationOptions =>
         {
