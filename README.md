@@ -5,14 +5,20 @@ Martha's Library System is an innovative .NET Core application that modernizes l
 
 ## Features
 - Book search and reservation system
-- Customer account management (In Progress)
-- Real-time notifications for book availability (In Progress)
+- Customer account management
+- Notifications for book availability
 - Secure authentication and authorization
 
 ## Technologies
 - .NET Core
 - Entity Framework Core
 - Duende Identity Server
+- Blazor Server
+- Poly
+- Nswag (For API documentation)
+
+## Architecture
+This Application uses Vertical Slice Architecture.
 
 ## Getting Started
 I have left a copy of the `appsettings.json` in this repository, so you don't need any environment variables since there are no real secrets.
@@ -82,7 +88,16 @@ Setup multiple projects in Visual Studio or create a Rider Configuration if you 
 The startup projects should include
 - MarthasLibrary.API
 - MarthasLibrary.IdentityServer
-- MarthasLibrary.Web
+- MarthasLibrary.BlazorApp
+
+**Test Users Credentials**
+Customer: 
+- Username: alice
+- Password: Pass123$
+
+Admin:
+- Username: obai
+- Password: Pass123$
 
 
 
