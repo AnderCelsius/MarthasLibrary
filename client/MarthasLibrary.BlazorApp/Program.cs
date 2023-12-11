@@ -1,6 +1,7 @@
 using MarthasLibrary.APIClient;
 using MarthasLibrary.BlazorApp.Components;
 using MarthasLibrary.BlazorApp.Extensions;
+using MarthasLibrary.BlazorApp.Services;
 using MarthasLibrary.Common.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<AuthorizationHeaderHandler>();
+
+builder.Services.AddSingleton<BookService>();
 
 builder.Services.AddHttpClient<IMarthasLibraryAPIClient, MarthasLibraryAPIClient>(client =>
 {

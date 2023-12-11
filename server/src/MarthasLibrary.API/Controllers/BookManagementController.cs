@@ -50,16 +50,21 @@ namespace MarthasLibrary.API.Controllers
     /// This endpoint allows users to search for books by providing a query string that can match various attributes of the books, such as title or author.
     /// </remarks>
     /// <param name="query">The search query string used to find matching books.</param>
+    /// <param name="pageNumber">The page number of the result set, with a default value of 1.</param>
+    /// <param name="pageSize">The size of each result page, with a default value of 20.</param>
     /// <param name="cancellationToken">A token for cancelling the operation if necessary.</param>
     /// <returns>A list of books that match the search query.</returns>
     /// <response code="200">Returns the list of books matching the search query.</response>
     [AllowAnonymous]
     [HttpGet("search", Name = "Search")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<Search.Response>> Search([FromQuery] string query,
-      CancellationToken cancellationToken)
+    public async Task<ActionResult<Search.Response>> Search(
+      [FromQuery] string query,
+      [FromQuery] int pageNumber = 1,
+      [FromQuery] int pageSize = 20,
+      CancellationToken cancellationToken = default)
     {
-      return await mediator.Send(new Search.Request(query), cancellationToken);
+      return await mediator.Send(new Search.Request(query, pageNumber, pageSize), cancellationToken);
     }
 
     /// <summary>

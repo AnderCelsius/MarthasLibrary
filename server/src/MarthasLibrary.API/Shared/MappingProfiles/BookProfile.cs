@@ -18,9 +18,6 @@ public class BookProfile : Profile
       .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
       .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => src.PublishedDate));
 
-    CreateMap<List<Book>, Search.Response>()
-      .ConstructUsing((src, context) => new Search.Response(context.Mapper.Map<IReadOnlyCollection<BookDetails>>(src)));
-
     CreateMap<Book, Create.Response>()
       .ForCtorParam(nameof(Create.Response.Id), op => op.MapFrom(x => x.Id));
 

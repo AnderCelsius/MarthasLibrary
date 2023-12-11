@@ -34,6 +34,7 @@ export interface Books_GetById_Response {
 
 export interface Books_Search_Response {
     books: BookDetails[];
+    total: number;
 }
 
 export interface Books_UpdateById_Request_UpdatedDetails {

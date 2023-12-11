@@ -9,15 +9,15 @@
     cursor: default;
 }
 
-.bookCardStatus.reserved {
+.bookCardStatus.Reserved {
     background-color: orange;
 }
 
-.bookCardStatus.borrowed {
+.bookCardStatus.Borrowed {
     background-color: gray;
 }
 
-.bookCardStatus.available {
+.bookCardStatus.Available {
     background-color: green;
     opacity: 0.5;
 }

@@ -1,5 +1,14 @@
 ﻿@page "/"
 
-<HeroSection />
-<BooksSection />
+<HeroSection OnSearch="HandleSearch" />
+<BooksSection @* @ref="booksSectionRef" *@ />
 <footer style="padding: 2rem; background-color: gray; color: white;">Obinna Asiegbulam</footer>
+
+@* @code {
+    private BooksSection.BooksSection booksSectionRef;
+
+    private async Task HandleSearch(string searchTerm)
+    {
+        await booksSectionRef.UpdateBooks(searchTerm);
+    }
+} *@

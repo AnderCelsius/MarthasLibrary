@@ -68,6 +68,23 @@
         }
     }
 
+    // public async Task UpdateBooks(string searchTerm)
+    // {
+    //     _currentPage = 1; // Reset to the first page
+    //     try
+    //     {
+    //         var response = await MarthasLibraryApiClient.SearchAsync(searchTerm, _currentPage, PageSize);
+    //         _books = response?.Books?.ToList() ?? new List<BookDetails>();
+    //         _totalBooks = response?.Total ?? 0;
+    //         _errorMessage = _books.Count == 0 ? "No books found matching the search term." : null;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Logger.LogError("Failed to load books: {Exception}", e);
+    //         _errorMessage = "An error occurred while searching for books. Please try again later.";
+    //     }
+    // }
+
     private async Task NextPage()
     {
         _currentPage++;

@@ -187,6 +187,24 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
           }
         ],
         "responses": {
@@ -1450,7 +1468,8 @@
       },
       "MarthasLibrary.API.Features.Books_Search_Response": {
         "required": [
-          "books"
+          "books",
+          "total"
         ],
         "type": "object",
         "properties": {
@@ -1459,6 +1478,10 @@
             "items": {
               "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BookDetails"
             }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
