@@ -1,4 +1,3 @@
-using Duende.IdentityServer;
 using Duende.IdentityServer.Services;
 using MarthasLibrary.IdentityServer.Data;
 using MarthasLibrary.IdentityServer.Entities;
@@ -65,13 +64,13 @@ namespace MarthasLibrary.IdentityServer
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<CustomProfileService>();
 
-            builder.Services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                    options.ClientId = "";
-                    options.ClientSecret = "";
-                });
+            //builder.Services.AddAuthentication()
+            //    .AddGoogle(options =>
+            //    {
+            //        options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+            //        options.ClientId = "";
+            //        options.ClientSecret = "";
+            //    });
 
             builder.Services.Configure<ForwardedHeadersOptions>(options =>
             {

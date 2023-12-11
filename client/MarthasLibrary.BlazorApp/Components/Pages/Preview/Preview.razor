@@ -1,9 +1,16 @@
 ﻿@page "/book/{bookId}"
+@rendermode InteractiveServer
+
 @using MarthasLibrary.APIClient
 @using MarthasLibrary.BlazorApp.Utils
 
 @inject IMarthasLibraryAPIClient MarthasLibraryApiClient
 @inject ILogger<Preview> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+
+
 
 @if (Book == null)
 {
@@ -11,21 +18,28 @@
 }
 else
 {
+    @if (IsReservationSuccessful)
+    {
+        <div class="alert alert-success">
+            @ReservationMessage
+        </div>
+    }
+
     <div class="container preview">
         <div class="preview-book-container">
             <div>
-                <img src="img/default.jpg" alt="@Book.Title" class="preview-img" />
+                <img src="img/default.jpg" alt="@Book.Title" class="preview-img"/>
                 <div class="preview-content">
                     <Typography Size="Label" class="book-title">@Book.Title</Typography>
                     <div class="status-watch-container">
-                        <BookStatus Status="@Book.Status" />
+                        <BookStatus Status="@Book.Status"/>
                         @if (Book.Status.ToLowerInvariant() == Constants.BookStatus.Available.ToLowerInvariant())
                         {
-                            <Button Text="Reserve"></Button>
+                            <Button Text="Reserve" @onclick="ReserveBookAsync"></Button>
                         }
                         else
                         {
-                            <Button Text="Notify Me"></Button>
+                            <Button Text="Notify Me" @onclick="NotifyForBookAsync"></Button>
                             <Typography Class="watch-text" Title="Click to be notified when the book becomes available" Size="Small">
                                 Notify when available
                             </Typography>
@@ -36,7 +50,7 @@ else
             <div>
                 <Typography Size="Subtext">Description</Typography>
                 <Typography>
-                   @*  @Book.Description *@
+                    @Book.Description
                 </Typography>
             </div>
             <div>
@@ -47,28 +61,94 @@ else
             </div>
         </div>
         <div class="preview-cart">
-            <RelatedBooks />
+            <RelatedBooks/>
         </div>
     </div>
 }
 
 @code {
+
     [Parameter]
-    public string bookId { get; set; }
+    public string? BookId { get; set; }
 
     public BookDetails? Book { get; set; }
+    public bool IsReservationSuccessful;
+    public string ReservationMessage = "";
+
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadBook();
+    }
+
+    private async Task LoadBook()
+    {
         try
         {
-            var response = await MarthasLibraryApiClient.GetBookByIdAsync(Guid.Parse(bookId));
-            Book = response.Book;
+            if (BookId != null)
+            {
+                var response = await MarthasLibraryApiClient.GetBookByIdAsync(Guid.Parse(BookId));
+                Book = response.Book;
+            }
         }
         catch (Exception e)
         {
             Logger.LogError("Failed to load book details: {Exception}", e);
-            // Consider showing an error message to the user
+    // Consider showing an error message to the user
         }
     }
+
+    private async Task ReserveBookAsync()
+    {
+        try
+        {
+            if (BookId != null)
+            {
+                var response = await MarthasLibraryApiClient.ReserveBookAsync(new Reservations_MakeReservation_Request
+                {
+                    BookId = Guid.Parse(BookId)
+                });
+
+                if (response.ReservationDetails is not null)
+                {
+                    IsReservationSuccessful = true;
+                    ReservationMessage = "Reservation successful!";
+
+                    await LoadBook();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Failed to reserve book: {Exception}", e);
+            IsReservationSuccessful = false;
+            ReservationMessage = $"{e.Message}";
+        }
+    }
+
+    private async Task NotifyForBookAsync()
+    {
+        try
+        {
+            if (BookId != null)
+            {
+                var response = await MarthasLibraryApiClient.SubscribeToBookAvailabilityAlertAsync(Guid.Parse(BookId));
+
+                if (response is not null)
+                {
+                    IsReservationSuccessful = true;
+                    ReservationMessage = "You will be notified when the book is available.";
+
+                    await LoadBook();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("Failed to subscribe: {Exception}", e);
+            IsReservationSuccessful = false;
+            ReservationMessage = $"{e.Message}";
+        }
+    }
+
 }
