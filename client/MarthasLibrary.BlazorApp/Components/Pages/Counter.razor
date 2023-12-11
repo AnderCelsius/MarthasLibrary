@@ -1,18 +1,65 @@
-﻿@page "/counter"
+﻿@page "/dashboard/counter"
+@layout DashboardLayout
+@attribute [StreamRendering]
 
-<PageTitle>Counter</PageTitle>
+@using MarthasLibrary.BlazorApp.Components.Layout
+@using MarthasLibrary.APIClient
 
-<h1>Counter</h1>
+@inject MarthasLibraryAPIClient MarthasLibraryApiClient
 
-<p role="status">Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<PageTitle>Reservations</PageTitle>
+
+<h1>Reservations</h1>
+
+@if (ReservationDetails == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Book Title</th>
+            <th>Reservation Date</th>
+            <th>Expiry Date</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in ReservationDetails)
+        {
+            <tr>
+                <td>@reservation.Title</td>
+                <td>@reservation.ReservedDate</td>
+                <td>@reservation.ExpiryDate</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
 @code {
-    private int currentCount = 0;
+    public List<ReservationDetails>? ReservationDetails;
 
-    private void IncrementCount()
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        try
+        {
+            // var response = MarthasLibraryApiClient.GetReservationsForCustomerAsync()
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
 }

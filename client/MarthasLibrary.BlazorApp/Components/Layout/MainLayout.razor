@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div style="border-bottom: 1px solid gray">
     <div class="container @HeaderClass">
@@ -6,8 +7,8 @@
             <Typography class="app-logo" Color="none" Font="Bodoni" content="Martha's Library" />
         </NavLink>
         <div style="display: flex; align-items: center; gap: 20px;">
-            <NavLink href="/dashboard">
-                <Button text="@GetButtonText()"></Button>
+            <NavLink href="/dashboard/counter">
+                <Button text="@_buttonText"></Button>
             </NavLink>
         </div>
     </div>
@@ -25,13 +26,26 @@
 <RouterView />
 
 @code {
-    private bool isAuth = true;
 
     private static string HeaderClass => "header";
+    private string? _buttonText;
 
-    private string GetButtonText()
+    protected override async void OnInitialized()
     {
+        _buttonText = await GetButtonText();
+    }
+
+
+    private async Task<string?> GetButtonText()
+    {
+        bool isAuth = await IsUserAuthenticated();
         return isAuth ? "Dashboard" : "Get Started";
+    }
+
+    private async Task<bool> IsUserAuthenticated()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        return authState.User.Identity?.IsAuthenticated ?? false;
     }
 }
 

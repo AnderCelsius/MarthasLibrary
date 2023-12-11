@@ -2,6 +2,7 @@
 using MarthasLibrary.API.Features.Reservations;
 using MarthasLibrary.API.Filters;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarthasLibrary.API.Controllers
@@ -21,13 +22,22 @@ namespace MarthasLibrary.API.Controllers
       return await mediator.Send(new GetAll.Request(), cancellationToken);
     }
 
-    [HttpGet("reserve/{customerId}", Name = "GetReservationsForCustomer")]
+    [HttpGet("reserve/{customerId}", Name = "GetReservationsByCustomerId")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsForCustomer(
+    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsByCustomerId(
       [FromRoute] Guid customerId,
       CancellationToken cancellationToken)
     {
       return Ok(await mediator.Send(new GetReservationsByCustomerId.Request(customerId), cancellationToken));
+    }
+
+    [Authorize(Roles = "Customer")]
+    [HttpGet("reservations/_me", Name = "GetReservationsForCurrentUser")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsForCurrentUser(
+      CancellationToken cancellationToken)
+    {
+      return Ok(await mediator.Send(new GetReservationsForCurrentUser.Request(), cancellationToken));
     }
 
     [HttpGet("reservation/{reservationId}", Name = "GetReservationById")]

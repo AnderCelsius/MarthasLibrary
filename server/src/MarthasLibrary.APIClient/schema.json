@@ -1059,7 +1059,7 @@
         "tags": [
           "ReservationManagement"
         ],
-        "operationId": "GetReservationsForCustomer",
+        "operationId": "GetReservationsByCustomerId",
         "parameters": [
           {
             "name": "customerId",
@@ -1071,6 +1071,36 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books/reservations/_me": {
+      "get": {
+        "tags": [
+          "ReservationManagement"
+        ],
+        "operationId": "GetReservationsForCurrentUser",
         "responses": {
           "200": {
             "description": "Success",

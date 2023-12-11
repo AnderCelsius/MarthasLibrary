@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="header container @Class">
-    <button @onclick="onClick">
+<div class="header container @ClassName">
+    <button onclick="@onClick">
         <img src="img/ham.svg" alt="Ham Icon" style="font-size: 1.5rem;" />
     </button>
     <div>
@@ -12,9 +12,9 @@
 
 @code {
     [Parameter] public EventCallback onClick { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter] public string ClassName { get; set; }
 
-    private async Task HandleClick()
+    private async Task HandleClick(MouseEventArgs e)
     {
         await onClick.InvokeAsync();
     }
