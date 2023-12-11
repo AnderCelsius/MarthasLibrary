@@ -2382,11 +2382,11 @@ namespace MarthasLibrary.APIClient
     public partial class Borrow_GetBorrowingForCurrentUser_Response
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("reservations")]
+        [System.Text.Json.Serialization.JsonPropertyName("borrowings")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<BorrowDetails> Reservations { get; set; } = new System.Collections.ObjectModel.Collection<BorrowDetails>();
+        public System.Collections.Generic.ICollection<BorrowDetails> Borrowings { get; set; } = new System.Collections.ObjectModel.Collection<BorrowDetails>();
 
     }
 

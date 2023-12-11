@@ -27,11 +27,11 @@ public static class GetBorrowingForCurrentUser
   /// <summary>
   /// Represents the response containing borrow records for a specific customer.
   /// </summary>
-  /// <param name="Reservations">A read-only collection of borrow details for the specified customer.</param>
+  /// <param name="Borrowings">A read-only collection of borrow details for the specified customer.</param>
   /// <remarks>
   /// This record encapsulates the response data for a request to fetch borrow records for a specific customer, providing the details as a read-only collection.
   /// </remarks>
-  public record Response(IReadOnlyCollection<BorrowDetails> Reservations);
+  public record Response(IReadOnlyCollection<BorrowDetails> Borrowings);
 
   /// <summary>
   /// Handles the retrieval of borrow records for a specific customer.

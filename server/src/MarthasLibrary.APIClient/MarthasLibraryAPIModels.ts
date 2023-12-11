@@ -57,7 +57,7 @@ export interface Borrow_GetAll_Response {
 }
 
 export interface Borrow_GetBorrowingForCurrentUser_Response {
-    reservations: BorrowDetails[];
+    borrowings: BorrowDetails[];
 }
 
 export interface Borrow_GetByCustomerId_Response {

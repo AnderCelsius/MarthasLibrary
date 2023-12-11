@@ -16,7 +16,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<AuthorizationHeaderHandler>();
 
 builder.Services.AddSingleton<BookService>();
-
+builder.Services.AddScoped<AuthenticationService>();
 // Configure a retry policy
 var retryPolicy = HttpPolicyExtensions
     .HandleTransientHttpError() // This handles most of the transient errors (5xx, 408, etc.)

@@ -1,6 +1,8 @@
-﻿@implements IDisposable
+﻿@using MarthasLibrary.BlazorApp.Services
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
+@inject AuthenticationService AuthenticationService
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
@@ -13,13 +15,13 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="dashboard/counter">
+            <NavLink class="nav-link" href="dashboard/reservations">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Reservations
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
+            <NavLink class="nav-link" href="dashboard/borrowings">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Borrow History
             </NavLink>
         </div>
@@ -38,27 +40,15 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
+                    <form>
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
+                        <button type="button" class="nav-link" @onclick="Logout">
                             <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
                         </button>
                     </form>
                 </div>
             </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
         </AuthorizeView>
     </nav>
 </div>
@@ -70,6 +60,12 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private async Task Logout()
+    {
+        await AuthenticationService.Logout();
+        NavigationManager.NavigateTo("/"); 
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)

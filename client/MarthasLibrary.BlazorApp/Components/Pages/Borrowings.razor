@@ -11,7 +11,7 @@
 @inject NavigationManager NavigationManager
 
 
-<PageTitle>Reservations</PageTitle>
+<PageTitle>Borrowings</PageTitle>
 
 <h1>Reservations</h1>
 
@@ -63,9 +63,9 @@ else
         try
         {
             var response = await MarthasLibraryApiClient.GetBorrowingsByCustomerIdAsync(Guid.NewGuid());
-            if (response?.Reservations != null)
+            if (response?.Borrowings != null)
             {
-                BorrowDetailsList = response.Reservations.ToList();
+                BorrowDetailsList = response.Borrowings.ToList();
             }
         }
         catch (Exception e)

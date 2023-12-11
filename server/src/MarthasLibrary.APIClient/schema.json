@@ -1677,11 +1677,11 @@
       },
       "MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response": {
         "required": [
-          "reservations"
+          "borrowings"
         ],
         "type": "object",
         "properties": {
-          "reservations": {
+          "borrowings": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
