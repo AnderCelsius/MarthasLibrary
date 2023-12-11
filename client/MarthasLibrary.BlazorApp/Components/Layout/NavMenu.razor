@@ -15,13 +15,13 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="dashboard/reservations">
+            <NavLink class="nav-link" href="reservations">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Reservations
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="dashboard/borrowings">
+            <NavLink class="nav-link" href="borrowings">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Borrow History
             </NavLink>
         </div>
@@ -64,8 +64,8 @@
 
     private async Task Logout()
     {
-        await AuthenticationService.Logout();
-        NavigationManager.NavigateTo("/"); 
+        // await AuthenticationService.Logout();
+        // NavigationManager.NavigateTo("/"); 
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)

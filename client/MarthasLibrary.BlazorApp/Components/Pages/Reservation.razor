@@ -1,4 +1,4 @@
-﻿@page "/dashboard/reservations"
+﻿@page "/reservations"
 @layout DashboardLayout
 @attribute [StreamRendering]
 
@@ -33,7 +33,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @if (ReservationDetails == null || !ReservationDetails.Any())
+        @if (!ReservationDetails.Any())
         {
                 <p>You do not have any reservations. Click <NavLink href="/">here</NavLink> to find books</p>
         }

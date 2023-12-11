@@ -1,4 +1,4 @@
-﻿@page "/dashboard/borrowings"
+﻿@page "/borrowings"
 @layout DashboardLayout
 @attribute [StreamRendering]
 
@@ -9,11 +9,13 @@
 
 @inject IMarthasLibraryAPIClient MarthasLibraryApiClient
 @inject NavigationManager NavigationManager
+@inject ILogger<Borrowings> Logger
+
 
 
 <PageTitle>Borrowings</PageTitle>
 
-<h1>Reservations</h1>
+<h1>Borrowings</h1>
 
 @if (BorrowDetailsList == null)
 {
@@ -32,7 +34,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @if (BorrowDetailsList == null || !BorrowDetailsList.Any())
+        @if (!BorrowDetailsList.Any())
         {
             <p>You do not have any reservations. Click <NavLink href="/">here</NavLink> to find books</p>
         }
@@ -58,11 +60,13 @@ else
 @code {
     public List<BorrowDetails>? BorrowDetailsList;
 
+    public string ReservationMessage = "";
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var response = await MarthasLibraryApiClient.GetBorrowingsByCustomerIdAsync(Guid.NewGuid());
+            var response = await MarthasLibraryApiClient.GetBorrowingsForCurrentCustomerAsync();
             if (response?.Borrowings != null)
             {
                 BorrowDetailsList = response.Borrowings.ToList();
@@ -70,8 +74,9 @@ else
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            Logger.LogError("Unexpected error: {Error}", e.Message);
+            ReservationMessage = "An unexpected error occurred. Please contact support.";
+            Console.WriteLine(ReservationMessage);
         }
     }
 
