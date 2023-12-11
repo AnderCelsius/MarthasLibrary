@@ -56,8 +56,12 @@ export interface Borrow_GetAll_Response {
     books: BorrowDetails[];
 }
 
-export interface Borrow_GetByCustomerId_Response {
+export interface Borrow_GetBorrowingForCurrentUser_Response {
     reservations: BorrowDetails[];
+}
+
+export interface Borrow_GetByCustomerId_Response {
+    borrowings: BorrowDetails[];
 }
 
 export interface Customers_GetAll_Response {
@@ -77,6 +81,10 @@ export interface Reservations_GetById_Response {
 }
 
 export interface Reservations_GetReservationsByCustomerId_Response {
+    reservations: ReservationDetails[];
+}
+
+export interface Reservations_GetReservationsForCurrentUser_Response {
     reservations: ReservationDetails[];
 }
 

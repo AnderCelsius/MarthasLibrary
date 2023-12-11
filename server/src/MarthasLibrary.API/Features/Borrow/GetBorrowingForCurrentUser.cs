@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MarthasLibrary.API.Shared;
+using MarthasLibrary.Application.UserData;
 using MarthasLibrary.Core.Entities;
 using MarthasLibrary.Core.Repository;
 using MediatR;
@@ -13,25 +14,24 @@ namespace MarthasLibrary.API.Features.Borrow;
 /// <remarks>
 /// This static class contains nested types to handle the request and response for fetching borrow records for a specific customer.
 /// </remarks>
-public static class GetByCustomerId
+public static class GetBorrowingForCurrentUser
 {
   /// <summary>
   /// Represents a request for retrieving borrow records by customer ID.
   /// </summary>
-  /// <param name="CustomerId">The unique identifier of the customer.</param>
   /// <remarks>
   /// This record is used to indicate a request for borrow records associated with a specific customer.
   /// </remarks>
-  public record Request(Guid CustomerId) : IRequest<Response>;
+  public record Request : IRequest<Response>;
 
   /// <summary>
   /// Represents the response containing borrow records for a specific customer.
   /// </summary>
-  /// <param name="Borrowings">A read-only collection of borrow details for the specified customer.</param>
+  /// <param name="Reservations">A read-only collection of borrow details for the specified customer.</param>
   /// <remarks>
   /// This record encapsulates the response data for a request to fetch borrow records for a specific customer, providing the details as a read-only collection.
   /// </remarks>
-  public record Response(IReadOnlyCollection<BorrowDetails> Borrowings);
+  public record Response(IReadOnlyCollection<BorrowDetails> Reservations);
 
   /// <summary>
   /// Handles the retrieval of borrow records for a specific customer.
@@ -45,6 +45,7 @@ public static class GetByCustomerId
   /// <exception cref="ArgumentException">Thrown when a null argument is passed for any of the repositories or the mapper.</exception>
   public class Handler
   (IGenericRepository<Core.Entities.Borrow> borrowRepository,
+    IUserDataProvider<UserData> userDataProvider,
     IGenericRepository<Book> bookRepository,
     IMapper mapper) : BaseBorrowHandler(bookRepository, mapper), IRequestHandler<Request, Response>
   {
@@ -56,8 +57,11 @@ public static class GetByCustomerId
 
     private readonly IMapper _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
 
+    private readonly IUserDataProvider<UserData> _userDataProvider =
+      userDataProvider ?? throw new ArgumentException(nameof(userDataProvider));
+
     /// <summary>
-    /// Handles the incoming request to retrieve borrow records for a specific customer.
+    /// Handles the incoming request to retrieve borrow records for the logged in customer.
     /// </summary>
     /// <remarks>
     /// This method asynchronously processes the request to fetch borrow records associated with a specific customer, returning the relevant details.
@@ -67,8 +71,12 @@ public static class GetByCustomerId
     /// <returns>A task representing the asynchronous operation, with a result of the response containing the borrow details for the specified customer.</returns>
     public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
     {
+      var currentUserData = (await _userDataProvider
+          .GetCurrentUserData(cancellationToken))
+        .EnsureAuthenticated();
+
       var borrows = await _borrowRepository.TableNoTracking
-        .Where(r => r.Id == request.CustomerId)
+        .Where(r => r.Id == currentUserData.Id)
         .ToListAsync(cancellationToken);
 
       var borrowDetails = await GetBorrowDetails(borrows, cancellationToken);

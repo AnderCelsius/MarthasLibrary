@@ -739,6 +739,96 @@
         }
       }
     },
+    "/borrow/history/_me": {
+      "get": {
+        "tags": [
+          "BorrowManagement"
+        ],
+        "operationId": "GetBorrowingsForCurrentCustomer",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Microsoft.AspNetCore.Mvc.ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/return/{borrowId}": {
       "post": {
         "tags": [
@@ -1107,17 +1197,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response"
+                  "$ref": "#/components/schemas/MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response"
                 }
               }
             }
@@ -1585,13 +1675,28 @@
         },
         "additionalProperties": false
       },
-      "MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response": {
+      "MarthasLibrary.API.Features.Borrow_GetBorrowingForCurrentUser_Response": {
         "required": [
           "reservations"
         ],
         "type": "object",
         "properties": {
           "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Borrow_GetByCustomerId_Response": {
+        "required": [
+          "borrowings"
+        ],
+        "type": "object",
+        "properties": {
+          "borrowings": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MarthasLibrary.API.Shared.BorrowDetails"
@@ -1662,6 +1767,21 @@
         "additionalProperties": false
       },
       "MarthasLibrary.API.Features.Reservations_GetReservationsByCustomerId_Response": {
+        "required": [
+          "reservations"
+        ],
+        "type": "object",
+        "properties": {
+          "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarthasLibrary.API.Shared.ReservationDetails"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarthasLibrary.API.Features.Reservations_GetReservationsForCurrentUser_Response": {
         "required": [
           "reservations"
         ],

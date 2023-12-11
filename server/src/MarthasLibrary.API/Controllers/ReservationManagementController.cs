@@ -2,7 +2,6 @@
 using MarthasLibrary.API.Features.Reservations;
 using MarthasLibrary.API.Filters;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarthasLibrary.API.Controllers
@@ -31,10 +30,9 @@ namespace MarthasLibrary.API.Controllers
       return Ok(await mediator.Send(new GetReservationsByCustomerId.Request(customerId), cancellationToken));
     }
 
-    [Authorize(Roles = "Customer")]
     [HttpGet("reservations/_me", Name = "GetReservationsForCurrentUser")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<GetReservationsByCustomerId.Response>> GetReservationsForCurrentUser(
+    public async Task<ActionResult<GetReservationsForCurrentUser.Response>> GetReservationsForCurrentUser(
       CancellationToken cancellationToken)
     {
       return Ok(await mediator.Send(new GetReservationsForCurrentUser.Request(), cancellationToken));

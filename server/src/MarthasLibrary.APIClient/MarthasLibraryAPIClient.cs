@@ -103,6 +103,15 @@ namespace MarthasLibrary.APIClient
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Borrow_GetByCustomerId_Response> GetBorrowingsByCustomerIdAsync(System.Guid customerId, System.Threading.CancellationToken cancellationToken);
 
+        /// <returns>Created</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Borrow_GetBorrowingForCurrentUser_Response> GetBorrowingsForCurrentCustomerAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Created</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<Borrow_GetBorrowingForCurrentUser_Response> GetBorrowingsForCurrentCustomerAsync(System.Threading.CancellationToken cancellationToken);
+
         /// <returns>No Content</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
         System.Threading.Tasks.Task ReturnBookAsync(System.Guid borrowId);
@@ -159,12 +168,12 @@ namespace MarthasLibrary.APIClient
 
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Reservations_GetReservationsByCustomerId_Response> GetReservationsForCurrentUserAsync();
+        System.Threading.Tasks.Task<Reservations_GetReservationsForCurrentUser_Response> GetReservationsForCurrentUserAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<Reservations_GetReservationsByCustomerId_Response> GetReservationsForCurrentUserAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<Reservations_GetReservationsForCurrentUser_Response> GetReservationsForCurrentUserAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
@@ -1089,6 +1098,110 @@ namespace MarthasLibrary.APIClient
             }
         }
 
+        /// <returns>Created</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<Borrow_GetBorrowingForCurrentUser_Response> GetBorrowingsForCurrentCustomerAsync()
+        {
+            return GetBorrowingsForCurrentCustomerAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Created</returns>
+        /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<Borrow_GetBorrowingForCurrentUser_Response> GetBorrowingsForCurrentCustomerAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("borrow/history/_me");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 201)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<Borrow_GetBorrowingForCurrentUser_Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new MarthasLibraryAPIException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new MarthasLibraryAPIException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new MarthasLibraryAPIException<ProblemDetails>("Conflict", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new MarthasLibraryAPIException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
         /// <returns>No Content</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task ReturnBookAsync(System.Guid borrowId)
@@ -1623,7 +1736,7 @@ namespace MarthasLibrary.APIClient
 
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<Reservations_GetReservationsByCustomerId_Response> GetReservationsForCurrentUserAsync()
+        public virtual System.Threading.Tasks.Task<Reservations_GetReservationsForCurrentUser_Response> GetReservationsForCurrentUserAsync()
         {
             return GetReservationsForCurrentUserAsync(System.Threading.CancellationToken.None);
         }
@@ -1631,7 +1744,7 @@ namespace MarthasLibrary.APIClient
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="MarthasLibraryAPIException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Reservations_GetReservationsByCustomerId_Response> GetReservationsForCurrentUserAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<Reservations_GetReservationsForCurrentUser_Response> GetReservationsForCurrentUserAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/books/reservations/_me");
@@ -1668,7 +1781,7 @@ namespace MarthasLibrary.APIClient
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Reservations_GetReservationsByCustomerId_Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Reservations_GetReservationsForCurrentUser_Response>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new MarthasLibraryAPIException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2266,7 +2379,7 @@ namespace MarthasLibrary.APIClient
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Borrow_GetByCustomerId_Response
+    public partial class Borrow_GetBorrowingForCurrentUser_Response
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reservations")]
@@ -2274,6 +2387,18 @@ namespace MarthasLibrary.APIClient
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<BorrowDetails> Reservations { get; set; } = new System.Collections.ObjectModel.Collection<BorrowDetails>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Borrow_GetByCustomerId_Response
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("borrowings")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<BorrowDetails> Borrowings { get; set; } = new System.Collections.ObjectModel.Collection<BorrowDetails>();
 
     }
 
@@ -2327,6 +2452,18 @@ namespace MarthasLibrary.APIClient
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Reservations_GetReservationsByCustomerId_Response
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("reservations")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Collections.Generic.ICollection<ReservationDetails> Reservations { get; set; } = new System.Collections.ObjectModel.Collection<ReservationDetails>();
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Reservations_GetReservationsForCurrentUser_Response
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("reservations")]

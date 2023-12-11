@@ -52,7 +52,7 @@ public static class GetReservationsForCurrentUser
         /// <returns>A task representing the asynchronous operation, with a result of the response containing the reservation details for the specified customer.</returns>
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            var currentUserData = (await userDataProvider
+            var currentUserData = (await _userDataProvider
                     .GetCurrentUserData(cancellationToken))
                 .EnsureAuthenticated();
 
